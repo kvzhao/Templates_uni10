@@ -112,9 +112,44 @@ ifeq ($(LINUX), 1)
 	LIBRARIES += boost_thread stdc++
 endif
 
+# OS X:
+# clang++ instead of g++
+# libstdc++ for NVCC compatibility on OS X >= 10.9 with CUDA < 7.0
+ifeq ($(OSX), 1)
+	CXX := /usr/bin/clang++
+	ifneq ($(CPU_ONLY), 1)
+		CUDA_VERSION := $(shell $(CUDA_DIR)/bin/nvcc -V | grep -o 'release \d' | grep -o '\d')
+		ifeq ($(shell echo | awk '{exit $(CUDA_VERSION) < 7.0;}'), 1)
+			CXXFLAGS += -stdlib=libstdc++
+			LINKFLAGS += -stdlib=libstdc++
+		endif
+		# clang throws this warning for cuda headers
+		WARNINGS += -Wno-unneeded-internal-declaration
+	endif
+	# gtest needs to use its own tuple to not conflict with clang
+	COMMON_FLAGS += -DGTEST_USE_OWN_TR1_TUPLE=1
+	# boost::thread is called boost_thread-mt to mark multithreading on OS X
+	LIBRARIES += boost_thread-mt
+	# we need to explicitly ask for the rpath to be obeyed
+	DYNAMIC_FLAGS := -install_name @rpath/libcaffe.so
+	ORIGIN := @loader_path
+else
+	ORIGIN := \$$ORIGIN
+endif
+
 # Custom compiler
 ifdef CUSTOM_CXX
 	CXX := $(CUSTOM_CXX)
+endif
+
+# Static linking
+ifneq (,$(findstring clang++,$(CXX)))
+	STATIC_LINK_COMMAND := -Wl,-force_load $(STATIC_NAME)
+else ifneq (,$(findstring g++,$(CXX)))
+	STATIC_LINK_COMMAND := -Wl,--whole-archive $(STATIC_NAME) -Wl,--no-whole-archive
+else
+  # The following line must not be indented with a tab, since we are not inside a target
+  $(error Cannot static link with the $(CXX) compiler)
 endif
 
 print-%  : 
