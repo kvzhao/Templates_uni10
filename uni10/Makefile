@@ -41,7 +41,10 @@ DYNAMIC_NAME := $(LIB_BUILD_DIR)/lib$(PROJECT).so
 ##############################
 
 # CXX_SRCS are the source files excluding the test ones.
-CXX_SRCS := $(shell find src/$(PROJECT) ! -name "test_*.cpp" -name "*.cpp")
+CXX_SRCS :=
+ifeq ($(CPU_ONLY), 1)
+	CXX_SRCS += $(shell find src/$(PROJECT) ! -name "*_gpu.cpp" ! -name "test_*.cpp" -name "*.cpp")
+endif
 
 # EXAMPLE_SRCS are the source files for the example binaries
 EXAMPLE_SRCS := $(shell find example -name "*.cpp")
@@ -106,7 +109,7 @@ ifeq ($(CPU_ONLY), 1)
 	OBJS := $(CXX_OBJS)
 	ALL_WARNS := $(ALL_CXX_WARNS)
 	TEST_FILTER := --gtest_filter="-*GPU*"
-	COMMON_FLAGS += -DCPU_ONLY
+	COMMON_FLAGS += -DCPU
 endif
 
 

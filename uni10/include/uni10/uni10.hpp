@@ -31,7 +31,6 @@
 #ifndef UNI10_HPP
 #define UNI10_HPP
 
-#include "uni10/datatype.hpp"
-#include "uni10/tensor-network.hpp"
+#include "uni10/uni10_elem.h"
 
 #endif

@@ -5,4 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+namespace uni10{
+
+}
+
 #endif
