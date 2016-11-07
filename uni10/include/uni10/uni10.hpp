@@ -31,7 +31,7 @@
 #ifndef UNI10_HPP
 #define UNI10_HPP
 
-#include "uni10_env_info.h"
+#include "uni10/uni10_auxiliary.h"
 #include "uni10/uni10_elem.h"
 
 #endif

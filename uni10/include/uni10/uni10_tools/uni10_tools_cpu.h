@@ -30,6 +30,12 @@ namespace uni10{
   void uni10_setDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
 
   void uni10_getDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
+  
+  // Convert
+  void uni10_elem_cast(uni10_complex128* des, uni10_double64* src, uni10_uint64 N);
+
+  void uni10_elem_cast(uni10_double64 *des, uni10_complex128 *src, uni10_uint64 N);
+
 
 }/* namespace uni10 */
 #endif /* UNI10_TOOLS_H */

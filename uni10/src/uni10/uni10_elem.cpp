@@ -2,7 +2,7 @@
 #include "uni10/uni10_elem.h"
 
 namespace uni10{
-  
+
   template<typename uni10_type>
     uni10_elem<uni10_type>::uni10_elem(): __isdiag(false), __elemNum(0), elem(NULL){};
 
@@ -28,7 +28,7 @@ namespace uni10{
     uni10_elem<uni10_type>::uni10_elem(const uni10_elem& _elem): __isdiag(_elem.isdiag()), __elemNum(_elem.elemNum()){
 
 #ifdef CPU 
-       init_cpu(1, __elemNum, false, _elem.elem);
+      init_cpu(1, __elemNum, false, _elem.elem);
 #endif
 
     };
@@ -47,11 +47,11 @@ namespace uni10{
 
       uni10_error_msg( elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
       uni10_error_msg( src  == NULL, "The source ptr is NULL.");
-      
+
 #ifdef CPU 
       uni10_elem_copy( elem, src, __elemNum * sizeof(uni10_type) );
 #endif
-      
+
     };
 
   template<typename uni10_type>

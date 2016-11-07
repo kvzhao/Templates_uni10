@@ -15,7 +15,28 @@
 *
 *****************************************************************************/
 
-#include<stdio.h>
+#ifndef __UNI10_AUXILIARY_H__
+#define __UNI10_AUXILIARY_H__
 
+#include <stdio.h>
 
+#include "uni10/uni10_type.h"
+#include "uni10/uni10_env_info.h"
 
+namespace uni10{
+
+  void uni10_create();
+
+  void uni10_destroy();
+
+  void uni10_print_env_info();
+
+  bool uni10_func(load_uni10_rc, _type)(uni10_env& );
+
+  //inline void get_real_memsize(uni10_unit64& real_memsize){
+
+  //}
+
+}
+
+#endif

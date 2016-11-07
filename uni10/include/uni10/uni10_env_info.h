@@ -3,27 +3,24 @@
 
 #include <stdio.h>
 
-#define CPU 1
-
-#include "uni10/uni10_type.h"
+#include "uni10/uni10_error.h"
+#include "uni10/uni10_sys_info.h"
 
 namespace uni10{
 
   enum exu_type{
-    exu_no    =   0,
-    exu_cpu   =   1,
-    exu_gpu   =   2,
-    exu_mpi   =   3
+    _no    =   0,
+    _cpu   =   1,
+    _gpu   =   2,
+    _mpi   =   3,
+    _mgpu  =   4
   };
-
-  void uni10_create();
-  void uni10_destroy();
 
   class uni10_env{
 
     public:
 
-      uni10_env(): communicate(false), etype(0), total_memsize(0), free_memsize(0){};
+      uni10_env(): communicate(false), etype(0){};
 
       void clear();
 
@@ -35,32 +32,17 @@ namespace uni10{
 
       void use_memsize(const uni10_uint64& memsize);
 
-#ifdef CPU
-      friend bool load_uni10_rc_cpu(uni10_env& );
-#endif
-#ifdef GPU
-      friend bool load_uni10_rc_gpu(uni10_env& );
-#endif
+      friend bool uni10_func(load_uni10_rc, _type)(uni10_env& );
+
       friend void uni10_print_env_info();
 
     private:
 
-      uni10_exu_type    communicate;
-      uni10_exu_type    etype;
-      uni10_uint64      total_memsize;
-      uni10_uint64      free_memsize;
+      uni10_exu_type             communicate;
+      uni10_exu_type             etype;
+      info_type(sysinfo, _type)  uni10_sys_info;
 
   };
-
-
-#ifdef CPU
-  bool load_uni10_rc_cpu(uni10_env& );
-#endif
-
-#ifdef GPU
-  bool load_uni10_rc_gpu(uni10_env& );
-#endif
-  void uni10_print_env_info();
 
   static uni10_env env_variables;
 

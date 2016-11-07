@@ -75,6 +75,16 @@ namespace uni10{
       diag_elem[i] = elem[i * n + i];
 
   }
+  
+  // Convert
+  void uni10_elem_cast(uni10_complex128* des, uni10_double64* src, uni10_uint64 N){
+    for(uni10_uint64 i = 0; i < N; i++)
+      des[i] = src[i];
+  }
 
+  void uni10_elem_cast(uni10_double64* des, uni10_complex128* src, uni10_uint64 N){
+    for(uni10_uint64 i = 0; i < N; i++)
+      des[i] = src[i].real();
+  }
 
 } /* namespace uni10 */
