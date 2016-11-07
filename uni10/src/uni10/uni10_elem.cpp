@@ -1,3 +1,4 @@
+#include "uni10/uni10_env_info.h"
 #include "uni10/uni10_type.h"
 #include "uni10/uni10_elem.h"
 
@@ -7,7 +8,7 @@ namespace uni10{
     uni10_elem<uni10_type>::uni10_elem(): __isdiag(false), __elemNum(0), elem(NULL){};
 
   template<typename uni10_type>
-    uni10_elem<uni10_type>::uni10_elem(uni10_int _Rnum, uni10_int _Cnum, bool _isdiag): elem(NULL){
+    uni10_elem<uni10_type>::uni10_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag): elem(NULL){
 
 #ifdef CPU 
       init_cpu(_Rnum, _Cnum, _isdiag, NULL);
@@ -16,7 +17,7 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-    uni10_elem<uni10_type>::uni10_elem(uni10_type* src, uni10_int _Rnum, uni10_int _Cnum, bool _isdiag): elem(NULL){
+    uni10_elem<uni10_type>::uni10_elem(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag): elem(NULL){
 
 #ifdef CPU 
       init_cpu(_Rnum, _Cnum, _isdiag, src);
@@ -45,7 +46,7 @@ namespace uni10{
   template<typename uni10_type>
     void uni10_elem<uni10_type>::setElem(uni10_type* src){
 
-      uni10_error_msg( elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_int, uni10_int, bool) befero setting the elements.");
+      uni10_error_msg( elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
       uni10_error_msg( src  == NULL, "The source ptr is NULL.");
       
 #ifdef CPU 
@@ -55,13 +56,13 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem<uni10_type>::init_cpu(uni10_int _Rnum, uni10_int _Cnum, bool _isdiag, uni10_type* src){
+    void uni10_elem<uni10_type>::init_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag, uni10_type* src){
 
       __isdiag = _isdiag;
 
       __elemNum = __isdiag ? fmax(_Rnum, _Cnum) : _Rnum * _Cnum ;
 
-      uni10_int memsize = __elemNum * sizeof(uni10_type);
+      uni10_uint64 memsize = __elemNum * sizeof(uni10_type);
 
       if ( memsize ){
 
@@ -77,7 +78,7 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem<uni10_type>::print_elem(uni10_int _Rnum, uni10_int _Cnum) const{
+    void uni10_elem<uni10_type>::print_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum) const{
 
       for(int i = 0; i < (int)_Rnum; i++){
 
@@ -104,7 +105,7 @@ namespace uni10{
 
     }
 
-  template class uni10_elem<uni10_double>;
-  template class uni10_elem<uni10_complex>;
+  template class uni10_elem<uni10_double64>;
+  template class uni10_elem<uni10_complex128>;
 
 } /* namespace uni10 */

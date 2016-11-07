@@ -15,9 +15,9 @@ namespace uni10{
 
         uni10_elem();
 
-        uni10_elem(uni10_int _Rnum, uni10_int _Cnum, bool _isdiag = false);
+        uni10_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        uni10_elem(uni10_type* src, uni10_int _Rnum, uni10_int _Cnum, bool _isdiag = false);
+        uni10_elem(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
         uni10_elem(const uni10_elem& _elem);
 
@@ -25,23 +25,23 @@ namespace uni10{
 
         inline uni10_type* getElem() const { return elem; };
 
-        inline uni10_int elemNum() const { return __elemNum; };
+        inline uni10_uint64 elemNum() const { return __elemNum; };
 
         inline bool isdiag() const { return __isdiag; };
 
         void setElem(uni10_type* src);
 
-        void print_elem(uni10_int _Rnum, uni10_int _Cnum) const;
+        void print_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum) const;
 
       private:
 
         bool __isdiag;
 
-        uni10_int __elemNum;
+        uni10_uint64 __elemNum;
 
         uni10_type* elem;
 
-        void init_cpu(uni10_int _Rnum, uni10_int _Cnum, bool _isdiag, uni10_type* src=NULL);
+        void init_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag, uni10_type* src=NULL);
 
     };
 

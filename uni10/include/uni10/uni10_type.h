@@ -6,12 +6,16 @@
 
 #include <complex>
 
-typedef double uni10_double;
-typedef size_t uni10_int;  // MKL uses long long int, not int64_t
-typedef std::complex<double> uni10_complex;
+typedef long long int          uni10_int64;       // MKL uses long long int, not int64_t.
+typedef size_t                 uni10_uint64;      
+typedef float                  uni10_float32;
+typedef double                 uni10_double64;
+typedef std::complex<float>    uni10_complex64;
+typedef std::complex<double>   uni10_complex128;
 
-typedef double* uni10_double_ptr;
-typedef std::complex<double>* uni10_complex_ptr;
+typedef int                    uni10_exu_type;    // To store the exu_type.
 
+//typedef double*               uni10_double_ptr;
+//typedef std::complex<double>* uni10_complex_ptr;
 
 #endif
