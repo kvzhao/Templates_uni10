@@ -3,6 +3,31 @@
 
 namespace uni10{
 
+  void uni10_env::set_etype(exu_type _etype){
+    etype = _etype;
+  }
+
+  void uni10_env::set_communicate(uni10_exu_type _communicate){
+    communicate = _communicate;
+  };
+
+  void uni10_env::set_memory_info(){
+      uni10_error_msg(true, "Developping !!!");
+  }
+
+  void uni10_env::use_memsize(const uni10_uint64& memsize){
+      free_memsize -= memsize;
+  }
+
+  void uni10_env::clear(){
+
+    communicate   = false;
+    etype         = exu_no;
+    total_memsize = 0;
+    free_memsize  = 0;
+    
+  }
+
   void uni10_create(){
     
     // Loading the environment setting from .uni10rc or by default.
@@ -11,7 +36,7 @@ namespace uni10{
       //Uni10 is running with CPU only by default.
       env_variables.set_etype(exu_cpu);
       env_variables.set_communicate(false);
-      env_variables.set_free_memsize();
+      env_variables.set_memory_info();
       //uni10_error_msg(true, "Developping !!!");
 
     }
@@ -49,12 +74,6 @@ namespace uni10{
     }
     
     return exsist_rc;
-
-  }
-
-  void uni10_env::set_free_memsize(){
-
-      uni10_error_msg(true, "Developping !!!");
 
   }
 

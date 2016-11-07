@@ -1,4 +1,3 @@
-#include "uni10/uni10_env_info.h"
 #include "uni10/uni10_type.h"
 #include "uni10/uni10_elem.h"
 
@@ -38,7 +37,7 @@ namespace uni10{
     uni10_elem<uni10_type>::~uni10_elem(){
 
 #ifdef CPU 
-      uni10_elem_free(elem, 0);
+      uni10_elem_free(elem, __elemNum * sizeof(uni10_type));
 #endif
 
     };

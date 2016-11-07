@@ -23,25 +23,17 @@ namespace uni10{
 
     public:
 
-      uni10_env(): communicate(false), etype(0), free_memsize(0){};
+      uni10_env(): communicate(false), etype(0), total_memsize(0), free_memsize(0){};
 
-      void clear(){
+      void clear();
 
-        communicate   = false;
-        etype         = exu_no;
-        free_memsize  = 0;
-        
-      };
+      void set_etype(exu_type _etype);
 
-      void set_etype(exu_type _etype){
-        etype = _etype;
-      };
+      void set_communicate(uni10_exu_type _communicate);
 
-      void set_communicate(uni10_exu_type _communicate){
-        communicate = _communicate;
-      };
+      void set_memory_info();
 
-      void set_free_memsize();
+      void use_memsize(const uni10_uint64& memsize);
 
 #ifdef CPU
       friend bool load_uni10_rc_cpu(uni10_env& );
@@ -51,11 +43,11 @@ namespace uni10{
 #endif
       friend void uni10_print_env_info();
 
-
     private:
 
       uni10_exu_type    communicate;
       uni10_exu_type    etype;
+      uni10_uint64      total_memsize;
       uni10_uint64      free_memsize;
 
   };

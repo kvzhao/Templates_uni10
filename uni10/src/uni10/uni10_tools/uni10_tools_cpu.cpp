@@ -1,11 +1,14 @@
+#include "uni10/uni10_env_info.h"
 #include "uni10/uni10_tools/uni10_tools_cpu.h"
 
 namespace uni10{
 
   void* uni10_elem_alloc(uni10_uint64 memsize){
+
     void* ptr = NULL;
     ptr = malloc(memsize);
 
+    env_variables.use_memsize(memsize);
     uni10_error_msg(ptr==NULL,"Fails in allocating memory.");
 
     return ptr;
@@ -16,8 +19,11 @@ namespace uni10{
   }
 
   void uni10_elem_free(void* ptr, uni10_uint64 memsize){
+
     free(ptr);
     ptr = NULL;
+    env_variables.use_memsize(-memsize);
+
   }
 
   void uni10_elemBzero(void* ptr, uni10_uint64 memsize){
