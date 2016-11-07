@@ -32,6 +32,6 @@
 #define UNI10_HPP
 
 #include "uni10/uni10_auxiliary.h"
-#include "uni10/uni10_elem.h"
+#include "uni10/uni10_elem/uni10_elem_cpu.h"
 
 #endif

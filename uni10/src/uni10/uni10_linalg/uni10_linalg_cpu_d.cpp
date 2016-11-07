@@ -192,7 +192,7 @@ namespace uni10{
     uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dgetrf': Lapack INFO = ", info);
 
     int lwork = -1;
-    double worktest;
+    double worktest = 0.;
     dgetri(&N, A, &N, ipiv, &worktest, &lwork, &info);
 
     uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dgetri': Lapack INFO = ", info);

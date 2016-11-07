@@ -1,5 +1,5 @@
-#ifndef __UNI10_ELEM_H__
-#define __UNI10_ELEM_H__
+#ifndef __UNI10_ELEM_CPU_H__
+#define __UNI10_ELEM_CPU_H__
 
 #include <iostream>
 
@@ -9,19 +9,19 @@ namespace uni10{
   
   template<typename uni10_type>
 
-    class uni10_elem{
+    class uni10_elem_cpu{
       
       public:
 
-        uni10_elem();
+        uni10_elem_cpu();
 
-        uni10_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        uni10_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        uni10_elem(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        uni10_elem_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        uni10_elem(const uni10_elem& _elem);
+        uni10_elem_cpu(const uni10_elem_cpu& _elem);
 
-        ~uni10_elem();
+        ~uni10_elem_cpu();
 
         inline uni10_type* getElem() const { return elem; };
 
@@ -41,7 +41,7 @@ namespace uni10{
 
         uni10_type* elem;
 
-        void init_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag, uni10_type* src=NULL);
+        void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag, uni10_type* src=NULL);
 
     };
 

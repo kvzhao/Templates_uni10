@@ -35,6 +35,10 @@ typedef int                    uni10_exu_type;    // To store the exu_type.
 #define uni10_func_helper(func, type)  func##type
 #define uni10_func(func, type)  uni10_func_helper(func, type)
 
+// Generate the class name of uni10_elem.
+#define elem_type_helper(UNI10ELEM, type)  UNI10ELEM##type
+#define elem_type(UNI10ELEM, type)  elem_type_helper(UNI10ELEM, type)
+
 //typedef double*               uni10_double_ptr;
 //typedef std::complex<double>* uni10_complex_ptr;
 

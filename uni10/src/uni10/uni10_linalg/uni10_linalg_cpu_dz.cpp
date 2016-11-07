@@ -43,7 +43,7 @@ namespace uni10{
 
   void eigDecompose(double* Kij_ori, int N, std::complex<double>* Eig, std::complex<double>* EigVec){
     std::complex<double> *Kij = (std::complex<double>*) malloc(N * N * sizeof(std::complex<double>));
-    uni10_elem_cast(Kij, Kij_ori, N * N);
+    uni10_elem_cast_cpu(Kij, Kij_ori, N * N);
     eigDecompose(Kij, N, Eig, EigVec);
     free(Kij);
   }

@@ -11,30 +11,30 @@
 
 namespace uni10{
 
-  void* uni10_elem_alloc(uni10_uint64 memsize);
+  void* uni10_elem_alloc_cpu(uni10_uint64 memsize);
 
-  void* uni10_elem_copy(void* des, const void* src, uni10_uint64 memsize);
+  void* uni10_elem_copy_cpu(void* des, const void* src, uni10_uint64 memsize);
 
-  void uni10_elem_free(void* ptr, uni10_uint64 memsize);
+  void uni10_elem_free_cpu(void* ptr, uni10_uint64 memsize);
 
-  void uni10_elemBzero(void* ptr, uni10_uint64 memsize);
+  void uni10_elemBzero_cpu(void* ptr, uni10_uint64 memsize);
 
   //For double ptr.
   //
-  void uni10_setDiag(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
+  void uni10_setDiag_cpu(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
 
-  void uni10_getDiag(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
+  void uni10_getDiag_cpu(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
 
   //For complex ptr.
   //
-  void uni10_setDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
+  void uni10_setDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
 
-  void uni10_getDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
+  void uni10_getDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
   
   // Convert
-  void uni10_elem_cast(uni10_complex128* des, uni10_double64* src, uni10_uint64 N);
+  void uni10_elem_cast_cpu(uni10_complex128* des, uni10_double64* src, uni10_uint64 N);
 
-  void uni10_elem_cast(uni10_double64 *des, uni10_complex128 *src, uni10_uint64 N);
+  void uni10_elem_cast_cpu(uni10_double64 *des, uni10_complex128 *src, uni10_uint64 N);
 
 
 }/* namespace uni10 */

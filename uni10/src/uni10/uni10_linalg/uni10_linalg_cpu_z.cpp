@@ -20,7 +20,7 @@ namespace uni10{
     int min = std::min(M, N);
     double* S = (double*)malloc(min * sizeof(double));
     matrixSVD(Mij_ori, M, N, U, S, vT);
-    uni10_elem_cast(S_ori, S, min);
+    uni10_elem_cast_cpu(S_ori, S, min);
     free(S);
 
   }

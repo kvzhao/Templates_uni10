@@ -3,7 +3,7 @@
 
 namespace uni10{
 
-  void* uni10_elem_alloc(uni10_uint64 memsize){
+  void* uni10_elem_alloc_cpu(uni10_uint64 memsize){
 
     void* ptr = NULL;
     ptr = malloc(memsize);
@@ -14,11 +14,11 @@ namespace uni10{
     return ptr;
   }
 
-  void* uni10_elem_copy(void* des, const void* src, uni10_uint64 memsize){
+  void* uni10_elem_copy_cpu(void* des, const void* src, uni10_uint64 memsize){
     return memcpy(des, src, memsize);
   }
 
-  void uni10_elem_free(void* ptr, uni10_uint64 memsize){
+  void uni10_elem_free_cpu(void* ptr, uni10_uint64 memsize){
 
     free(ptr);
     ptr = NULL;
@@ -26,13 +26,13 @@ namespace uni10{
 
   }
 
-  void uni10_elemBzero(void* ptr, uni10_uint64 memsize){
+  void uni10_elemBzero_cpu(void* ptr, uni10_uint64 memsize){
     memset(ptr, 0, memsize);
   }
 
   // For double 
   //
-  void uni10_setDiag(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
+  void uni10_setDiag_cpu(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
 
     uni10_uint64 min = m < n ? m : n;
 
@@ -42,7 +42,7 @@ namespace uni10{
       elem[i * n + i] = diag_elem[i];
 
   }
-  void uni10_getDiag(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
+  void uni10_getDiag_cpu(uni10_double64* elem, uni10_double64* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
 
     uni10_uint64 min = m < n ? m : n;
 
@@ -55,7 +55,7 @@ namespace uni10{
 
   // For complex 
   //
-  void uni10_setDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
+  void uni10_setDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
 
     uni10_uint64 min = m < n ? m : n;
 
@@ -65,7 +65,7 @@ namespace uni10{
       elem[i * n + i] = diag_elem[i];
 
   }
-  void uni10_getDiag(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
+  void uni10_getDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
 
     uni10_uint64 min = m < n ? m : n;
 
@@ -77,14 +77,18 @@ namespace uni10{
   }
   
   // Convert
-  void uni10_elem_cast(uni10_complex128* des, uni10_double64* src, uni10_uint64 N){
+  void uni10_elem_cast_cpu(uni10_complex128* des, uni10_double64* src, uni10_uint64 N){
+
     for(uni10_uint64 i = 0; i < N; i++)
       des[i] = src[i];
+
   }
 
-  void uni10_elem_cast(uni10_double64* des, uni10_complex128* src, uni10_uint64 N){
+  void uni10_elem_cast_cpu(uni10_double64* des, uni10_complex128* src, uni10_uint64 N){
+
     for(uni10_uint64 i = 0; i < N; i++)
       des[i] = src[i].real();
+
   }
 
 } /* namespace uni10 */
