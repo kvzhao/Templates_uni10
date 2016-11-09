@@ -13,13 +13,13 @@ namespace uni10{
       
       public:
 
-        uni10_elem_cpu();
+        explicit uni10_elem_cpu();
 
-        uni10_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        explicit uni10_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        uni10_elem_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        explicit uni10_elem_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        uni10_elem_cpu(const uni10_elem_cpu& _elem);
+        explicit uni10_elem_cpu(const uni10_elem_cpu& _elem);
 
         ~uni10_elem_cpu();
 

@@ -31,7 +31,9 @@
 #ifndef UNI10_HPP
 #define UNI10_HPP
 
+#define CPU 1
+
 #include "uni10/uni10_auxiliary.h"
-#include "uni10/uni10_elem/uni10_elem_cpu.h"
+#include "uni10/uni10_elem/uni10_elem.h"
 
 #endif
