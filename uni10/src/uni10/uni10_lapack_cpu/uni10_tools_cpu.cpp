@@ -1,5 +1,5 @@
 #include "uni10/uni10_env_info.h"
-#include "uni10/uni10_tools/uni10_tools_cpu.h"
+#include "uni10/uni10_lapack_cpu/uni10_tools_cpu.h"
 
 namespace uni10{
 

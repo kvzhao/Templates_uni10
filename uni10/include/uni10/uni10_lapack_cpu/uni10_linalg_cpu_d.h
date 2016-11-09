@@ -5,6 +5,8 @@
 
 namespace uni10{
 
+  namespace uni10_linalg{
+
   // Blas 
   void matrixMul(uni10_double64* A, uni10_double64* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_double64* C);
 
@@ -52,6 +54,8 @@ namespace uni10{
   void matrixQL(uni10_double64* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_double64* Q, uni10_double64* L);
 
   void matrixLQ(uni10_double64* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_double64* Q, uni10_double64* L);
+
+  }/* namespace uni10_linalg */
 
 };/* namespace uni10 */
 

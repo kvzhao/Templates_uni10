@@ -3,25 +3,25 @@
 
 #include <iostream>
 
-#include "uni10/uni10_tools/uni10_tools.h"
+#include "uni10/uni10_tools.h"
 
 namespace uni10{
   
   template<typename uni10_type>
 
-    class uni10_elem_cpu{
+    class uni10_elem_lapack_cpu{
       
       public:
 
-        explicit uni10_elem_cpu();
+        explicit uni10_elem_lapack_cpu();
 
-        explicit uni10_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        explicit uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        explicit uni10_elem_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
+        explicit uni10_elem_lapack_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag = false);
 
-        explicit uni10_elem_cpu(const uni10_elem_cpu& _elem);
+        explicit uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem);
 
-        ~uni10_elem_cpu();
+        ~uni10_elem_lapack_cpu();
 
         inline uni10_type* getElem() const { return elem; };
 

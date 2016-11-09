@@ -11,12 +11,12 @@ int main(){
   double elemA[] = {1., 2., 3, 4.};
   double elemB[] = {1., 4., 3, 4.};
   //cout << "==========" << endl;
-  uni10_elem_cpu<double> A(elemA, 2, 2);
+  uni10_elem_lapack_cpu<double> A(elemA, 2, 2);
   //cout << "==========" << endl;
   A.setElem(elemB);
   //A.print_elem_cpu(2, 2);
 
-  uni10_elem_cpu<double> B(A);
+  uni10_elem_lapack_cpu<double> B(A);
   //B.print_elem_cpu(4, 1);
   B.setElem(NULL);
 

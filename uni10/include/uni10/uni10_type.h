@@ -7,6 +7,7 @@
 #include <complex>
 
 #define CPU 1
+#define LAPACK 1
 // The excute type of Uni10.
 #ifdef CPU
 #define _type _cpu
@@ -14,6 +15,16 @@
 #define _type _gpu
 #elif  MPI
 #define _type _mpi
+#endif
+
+#ifdef LAPACK
+#define _package _lapack
+#elif ARMADILLO
+#define _package _armadillo
+#elif MAGMA
+#define _package _magma
+#elif CUDAONLY
+#define _package _cuda
 #endif
 
 
@@ -39,6 +50,8 @@ typedef int                    uni10_exu_type;    // To store the exu_type.
 #define elem_type_helper(UNI10ELEM, type)  UNI10ELEM##type
 #define elem_type(UNI10ELEM, type)  elem_type_helper(UNI10ELEM, type)
 
+#define UELEM_helper(UNI10ELEM, package, type) UNI10ELEM##package##type
+#define UELEM(UNI10ELEM, package, type) UELEM_helper(UNI10ELEM, package, type)
 //typedef double*               uni10_double_ptr;
 //typedef std::complex<double>* uni10_complex_ptr;
 

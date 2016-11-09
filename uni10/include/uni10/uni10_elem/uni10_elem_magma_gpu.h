@@ -1,10 +1,10 @@
 // Have to write something.
-#ifndef __UNI10_ELEM_GPU_H__
-#define __UNI10_ELEM_GPU_H__
+#ifndef __UNI10_ELEM_MAGMA_GPU_H__
+#define __UNI10_ELEM_MAGMA_GPU_H__
 
 #include <iostream>
 
-#include "uni10/uni10_tools/uni10_tools.h"
+#include "uni10/uni10_tools.h"
 
 namespace uni10{
   
