@@ -1,6 +1,26 @@
 PROJECT := uni10
-
+VERSION :=
+VNUM    := 0
 CONFIG_FILE := Makefile.config
+
+####### Check the version of Uni10 #######
+
+ifeq ($(USE_ARMADILLO), 1)
+	VERSION = armadillo_cpu
+	VNUM = 2
+else ifeq ($(USE_MAGMA), 1)	
+	VERSION = magma_gpu
+	VNUM = 3
+else ifeq ($(USE_CUSOLVER), 1)	
+	VERSION = cuda_gpu
+	VNUM = 4
+else
+	VERSION = lapack_cpu
+	VNUM = 1
+endif
+
+##########################################
+
 # Explicitly check for the config file, otherwise make -k will proceed anyway.
 ifeq ($(wildcard $(CONFIG_FILE)),)
 $(error $(CONFIG_FILE) not found.)
@@ -24,6 +44,7 @@ else
 	OTHER_BUILD_DIR := $(DEBUG_BUILD_DIR)
 endif
 
+
 SRC_DIRS := $(shell find * -type d -exec bash -c "find {} -maxdepth 1 \
 	\( -name '*.cpp' \) | grep -q ." \; -print)
 
@@ -42,8 +63,15 @@ DYNAMIC_NAME := $(LIB_BUILD_DIR)/lib$(PROJECT).so
 
 # CXX_SRCS are the source files excluding the test ones.
 CXX_SRCS :=
-ifeq ($(CPU_ONLY), 1)
-	CXX_SRCS += $(shell find src/$(PROJECT) ! -name "*_gpu.cpp" ! -name "test_*.cpp" -name "*.cpp")
+ifeq ($(VNUM), 1)
+	#Find the auxiliary files
+	CXX_SRCS += $(shell find src/$(PROJECT) -maxdepth 1 ! -name "*_gpu.cpp" ! -name "test_*.cpp" -name "*.cpp")
+	#Find UNI10_API FILES
+	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_api -name "*.cpp")
+	#Find uni10_elem FILES
+	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_elem -name "*.cpp")
+	#Find the others sources of the specified version.
+	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_$(VERSION) -name "*.cpp")
 endif
 
 # EXAMPLE_SRCS are the source files for the example binaries
@@ -57,7 +85,6 @@ BUILD_INCLUDE_DIR := $(BUILD_DIR)/include
 ##############################
 
 GTEST_SRC := gtest
-
 
 # handle IO dependencies
 USE_OPENCV ?= 1
@@ -97,11 +124,19 @@ EXAMPLE_WARNS := $(addprefix $(BUILD_DIR)/, ${EXAMPLE_SRCS:.cpp=.o.$(WARNS_EXT)}
 
 INCLUDE_DIRS += $(BUILD_INCLUDE_DIR) ./src ./include
 # CPU-only configuration
-ifeq ($(CPU_ONLY), 1)
+ifeq ($(VNUM), 1)
 	OBJS := $(CXX_OBJS)
 	ALL_WARNS := $(ALL_CXX_WARNS)
-	TEST_FILTER := --gtest_filter="-*GPU*"
-	COMMON_FLAGS += -DCPU
+	COMMON_FLAGS += -DCPU -DLAPACK
+else ifeq ($(VNUM), 2)
+	OBJS := $(CXX_OBJS)
+	COMMON_FLAGS += -DCPU -DARMADILLO
+else ifeq ($(VNUM), 3)
+	OBJS := $(CXX_OBJS)
+	COMMON_FLAGS += -DGPU -DMAGMA
+else ifeq ($(VNUM), 4)
+	OBJS := $(CXX_OBJS)
+	COMMON_FLAGS += -DCPU -DCUDAONLY
 endif
 
 
@@ -145,7 +180,7 @@ endif
 # libstdc++ for NVCC compatibility on OS X >= 10.9 with CUDA < 7.0
 ifeq ($(OSX), 1)
 	CXX := /usr/bin/clang++
-	ifneq ($(CPU_ONLY), 1)
+	ifneq ($(VNUM), 1)
 		CUDA_VERSION := $(shell $(CUDA_DIR)/bin/nvcc -V | grep -o 'release \d' | grep -o '\d')
 		ifeq ($(shell echo | awk '{exit $(CUDA_VERSION) < 7.0;}'), 1)
 			CXXFLAGS += -stdlib=libstdc++

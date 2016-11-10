@@ -4,26 +4,26 @@
 namespace uni10{
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __isdiag(false), __elemNum(0), elem(NULL){};
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_id(UNI10_TYPE_ID(uni10_type)), __elemNum(0), elem(NULL){};
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag): elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_id(UNI10_TYPE_ID(uni10_type)), elem(NULL){
 
-      init(_Rnum, _Cnum, _isdiag, NULL);
+      init(_Rnum, _Cnum, NULL);
 
     }
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag): elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_id(UNI10_TYPE_ID(uni10_type)), elem(NULL){
 
-      init(_Rnum, _Cnum, _isdiag, src);
+      init(_Rnum, _Cnum, src);
 
     };
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __isdiag(_elem.isdiag()), __elemNum(_elem.elemNum()){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_id(_elem.__uni10_id), __elemNum(_elem.__elemNum){
 
-      init(1, __elemNum, false, _elem.elem);
+      init(1, __elemNum, _elem.elem);
 
     };
 
@@ -35,8 +35,9 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::setElem(uni10_type* src){
+    void uni10_elem_lapack_cpu<uni10_type>::setElem(const uni10_type* src, bool src_ongpu){
 
+      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
       uni10_error_msg( elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
       uni10_error_msg( src  == NULL, "The source ptr is NULL.");
 
@@ -45,11 +46,9 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag, uni10_type* src){
+    void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src){
 
-      __isdiag = _isdiag;
-
-      __elemNum = __isdiag ? fmax(_Rnum, _Cnum) : _Rnum * _Cnum ;
+      __elemNum =  _Rnum * _Cnum ;
 
       uni10_uint64 memsize = __elemNum * sizeof(uni10_type);
 
@@ -67,28 +66,74 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::print_elem_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum) const{
+    void uni10_elem_lapack_cpu<uni10_type>::assign(uni10_uint64& _Rnum, uni10_uint64& _Cnum){
 
-      for(int i = 0; i < (int)_Rnum; i++){
+      __elemNum = _Rnum * _Cnum;
 
-        for(int j = 0; j < (int)_Cnum; j++){
+      uni10_uint64 memsize = __elemNum * sizeof(uni10_type);
 
-          if(__isdiag){
+      if ( memsize ){
 
-            if(i == j)
-              std::cout << elem[i*_Cnum + j] << " ";
-            else
-              std::cout << 0.000 << " ";
+        elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
+        uni10_elemBzero_cpu( elem, memsize );
 
-          }else{
+      }
 
-            std::cout << elem[i*_Cnum + j] << " ";
+    }
 
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag) const{
+
+      if ( _Rnum == 1 ) {
+        fprintf(stdout, "[ " );
+      }
+      else {
+        fprintf(stdout, "[\n" );
+      }
+
+      if(_isdiag){
+
+        for( int i = 0; i < (int)_Rnum; ++i ) {
+          for( int j = 0; j < (int)_Cnum; ++j ) {
+            if ( i != j) {
+              if(__uni10_id == 2)
+                fprintf(stdout, "   0.              " );
+              else
+                fprintf(stdout, "   0.    " );
+            }
+            else {
+              uni10_print_elem_i(elem[ i ]);
+            }
           }
-
+          if ( _Rnum > 1 ) 
+            fprintf(stdout, "\n" );
+          else 
+            fprintf(stdout, " " );
         }
+        fprintf(stdout, "];\n" );
 
-        std::cout << std::endl;
+      }
+      else{
+
+        for( int i = 0; i < (int)_Rnum; ++i ) {
+          for( int j = 0; j < (int)_Cnum; ++j ) {
+            if ( elem[ i * _Cnum + j] == 0.) {
+              if(typeID() == 2)
+                fprintf(stdout, "   0.              " );
+              else
+                fprintf(stdout, "   0.    " );
+            }
+            else {
+              uni10_print_elem_i(elem[ i * _Cnum + j ]);
+            }
+          }
+          if ( _Rnum > 1 ) 
+            fprintf(stdout, "\n" );
+          else 
+            fprintf(stdout, " " );
+        }
+        fprintf(stdout, "];\n" );
 
       }
 

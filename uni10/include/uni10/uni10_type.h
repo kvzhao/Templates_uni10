@@ -37,6 +37,7 @@ typedef std::complex<float>    uni10_complex64;
 typedef std::complex<double>   uni10_complex128;
 
 typedef int                    uni10_exu_type;    // To store the exu_type.
+typedef int                    uni10_type_id;     // To store the typeid of the objects.
 
 // Generate the typename of the uni10 system information.
 #define info_type_helper(sysinfo, type)  sysinfo##type
@@ -54,5 +55,18 @@ typedef int                    uni10_exu_type;    // To store the exu_type.
 #define UELEM(UNI10ELEM, package, type) UELEM_helper(UNI10ELEM, package, type)
 //typedef double*               uni10_double_ptr;
 //typedef std::complex<double>* uni10_complex_ptr;
+//
+//
+#define UNI10_TYPE_ID(x)     (sizeof(x)/8)
+
+#define Z_REAL(x)       (x).real()
+#define Z_IMAG(x)       (x).imag()
+//#define UNI10_CZ_ADD(a, b)     ((a)+(b))
+//#define UNI10_CZ_SUB(a, b)     ((a)-(b))
+//#define UNI10_CZ_MUL(a, b)     ((a)*(b))
+//#define UNI10_CZ_DIV(a, b)     ((a)/(b))
+//#define UNI10_CZ_ABS(a)        abs(a)
+//#define UNI10_CZ_SQFN(a)       (a).real()*(a).real() + (a).imag()*(a).imag() 
+//#define UNI10_CZ_CONJ(a)       conj(a)
 
 #endif

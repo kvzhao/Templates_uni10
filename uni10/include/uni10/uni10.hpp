@@ -34,6 +34,7 @@
 #define CPU 1
 
 #include "uni10/uni10_auxiliary.h"
-#include "uni10/uni10_elem/uni10_elem.h"
+#include "uni10/uni10_api/Qnum.h"
+#include "uni10/uni10_api/Matrix.h"
 
 #endif

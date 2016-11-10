@@ -53,6 +53,12 @@ namespace uni10{
 
   }
 
+  void uni10_print_elem_i(const uni10_double64& elem_i){
+
+    fprintf(stdout, " %8.4f", elem_i);
+
+  }
+
   // For complex 
   //
   void uni10_setDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 m, uni10_uint64 n, uni10_uint64 diag_n){
@@ -73,6 +79,12 @@ namespace uni10{
 
     for(uni10_uint64 i = 0; i < min; i++)
       diag_elem[i] = elem[i * n + i];
+
+  }
+
+  void uni10_print_elem_i(const uni10_complex128& elem_i){
+
+    fprintf(stdout, " %8.4f+%8.4fi", Z_REAL( elem_i ), Z_IMAG( elem_i ) );
 
   }
   

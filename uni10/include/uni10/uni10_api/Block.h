@@ -42,21 +42,27 @@
 #include "uni10/uni10_elem/uni10_elem.h"
 
 namespace uni10{
+
+  template<typename uni10_type>
+    class Matrix;
+
+  template<typename uni10_type>
+    class Block;
+
+  template<typename uni10_type>
+    std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b);
     
   template<typename uni10_type>
-
-    class Block{
-      public:
-
-        friend std::ostream& operator<< (std::ostream& os, const Block& b); // --> uni10_elem().print_elem()
+    class Block{ public: 
+        friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 
         uni10_double64 operator[](uni10_uint64 idx)const;
 
-        Block();
+        explicit Block();
 
-        Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag = false);
+        explicit Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag = false);
 
-        Block(const Block& _b);
+        explicit Block(const Block& _b);
 
         virtual ~Block();
 
@@ -68,9 +74,6 @@ namespace uni10{
 
         void save(const std::string& fname)const;
 
-
-        uni10_double64 at(uni10_uint64 i, uni10_uint64 j)const;
-
         bool empty()const;              // --> uni10_elem().empty()
 
         uni10_uint64 elemNum()const;    // --> uni10_elem().elemNum()
@@ -81,14 +84,40 @@ namespace uni10{
 
         uni10_double64* getElem()const; // --> uni10_elem().getElem()
 
+        uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
+
+        friend class Matrix<uni10_type>;
+
       protected:
 
         UELEM(uni10_elem, _package, _type)<uni10_type> elem;     // pointer to a real matrix
+
         uni10_uint64 Rnum;      
+
         uni10_uint64 Cnum;     
+
         bool diag;
 
     };
+
+  template<typename uni10_type>
+    std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b){
+
+      fprintf(stdout, "\n%ld x %ld = %ld", _b.Rnum, _b.Cnum, _b.elemNum());
+
+      if(_b.typeID() == 1)  fprintf(stdout, ", REAL");
+      else if(_b.typeID() == 2)   os << ", COMPLEX";
+
+      if(_b.diag)
+        fprintf(stdout, ", Diagonal");
+      fprintf(stdout, "\n\n");
+
+      _b.elem.print_elem(_b.Rnum, _b.Cnum, _b.diag);
+
+      os << "\n";
+
+      return os;
+    }
 
 };
 
