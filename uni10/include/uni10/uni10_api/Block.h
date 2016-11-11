@@ -39,7 +39,8 @@
 #include <vector>
 
 #include "uni10/uni10_type.h"
-#include "uni10/uni10_elem/uni10_elem.h"
+#include "uni10/uni10_elem.h"
+#include "uni10/uni10_lapack_cpu/uni10_elem_linalg_lapack_cpu.h"
 
 namespace uni10{
 
@@ -54,7 +55,11 @@ namespace uni10{
     
   template<typename uni10_type>
     class Block{ public: 
+
         friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
+
+    template<typename _uni10_type>
+        friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
 
         uni10_double64 operator[](uni10_uint64 idx)const;
 
@@ -119,7 +124,22 @@ namespace uni10{
       return os;
     }
 
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& M ){
+
+      uni10_error_msg(M.Rnum < M.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(M.Rnum, M.Rnum));
+      outs.push_back(Matrix<uni10_type>(M.Cnum, M.Cnum));
+      if(!M.diag)
+        uni10::matrixQR(M.elem, M.Rnum, M.Cnum, outs[0].elem, outs[1].elem);
+
+    }
+//#include "uni10/uni10_api/linalg.h"
+
 };
+
 
 /*
  *      Move to linalg

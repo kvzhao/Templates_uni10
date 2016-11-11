@@ -31,10 +31,9 @@
 #ifndef UNI10_HPP
 #define UNI10_HPP
 
-#define CPU 1
-
 #include "uni10/uni10_auxiliary.h"
 #include "uni10/uni10_api/Qnum.h"
 #include "uni10/uni10_api/Matrix.h"
+//#include "uni10/uni10_api/linalg.h"
 
 #endif

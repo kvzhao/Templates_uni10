@@ -1,5 +1,5 @@
 #include "uni10/uni10_type.h"
-#include "uni10/uni10_elem/uni10_elem_lapack_cpu.h"
+#include "uni10/uni10_lapack_cpu/uni10_elem_lapack_cpu.h"
 
 namespace uni10{
 

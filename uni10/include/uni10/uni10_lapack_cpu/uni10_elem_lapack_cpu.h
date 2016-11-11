@@ -3,15 +3,15 @@
 
 #include <iostream>
 
-#include "uni10/uni10_tools.h"
+#include "uni10/uni10_lapack_cpu/uni10_tools_cpu.h"
 
 namespace uni10{
 
   
-  template<typename uni10_type>
-    class Block;
-  template<typename uni10_type>
-    class Matrix;
+  //template<typename uni10_type>
+  //  class Block;
+  //template<typename uni10_type>
+  //  class Matrix;
 
   template<typename uni10_type>
     class uni10_elem_lapack_cpu{
@@ -42,11 +42,9 @@ namespace uni10{
 
         void print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag) const;
 
-        friend class Block<uni10_type>;
+        //friend class Block<uni10_type>;
 
-        friend class Matrix<uni10_type>;
-
-      private:
+        //friend class Matrix<uni10_type>;
 
         uni10_type_id __uni10_id;  
 

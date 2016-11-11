@@ -1,5 +1,5 @@
 /****************************************************************************
-*  @file uni10.hpp
+*  @file uni10_auxiliary.hpp
 *  @license
 *    Universal Tensor Network Library
 *    Copyright (c) 2013-2016
@@ -11,7 +11,7 @@
 *  @endlicense
 *  @author Yun-Hsuan Chou
 *  @date 2014-05-06
-*  @since 2.1.0
+*  @since
 *
 *****************************************************************************/
 
