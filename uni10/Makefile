@@ -68,8 +68,6 @@ ifeq ($(VNUM), 1)
 	CXX_SRCS += $(shell find src/$(PROJECT) -maxdepth 1 ! -name "*_gpu.cpp" ! -name "test_*.cpp" -name "*.cpp")
 	#Find UNI10_API FILES
 	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_api -name "*.cpp")
-	#Find uni10_elem FILES
-	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_elem -name "*.cpp")
 	#Find the others sources of the specified version.
 	CXX_SRCS += $(shell find src/$(PROJECT)/uni10_$(VERSION) -name "*.cpp")
 endif
@@ -232,7 +230,7 @@ BLAS ?= atlas
 ifeq ($(BLAS), mkl)
 	# MKL
 	LIBRARIES += mkl_rt
-	COMMON_FLAGS += -DUSE_MKL
+	COMMON_FLAGS += -DMKL
 	MKL_DIR ?= /opt/intel/mkl
 	BLAS_INCLUDE ?= $(MKL_DIR)/include
 	BLAS_LIB ?= $(MKL_DIR)/lib $(MKL_DIR)/lib/intel64

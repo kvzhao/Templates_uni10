@@ -56,10 +56,26 @@ namespace uni10{
   template<typename uni10_type>
     class Block{ public: 
 
-        friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
+      friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 
-    template<typename _uni10_type>
+      //UNI10_LINALG_RETURN_VALUE
+      template<typename _uni10_type>
         friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
+
+      template<typename _uni10_type>
+        friend std::vector< Matrix<_uni10_type> > rq( const Block<_uni10_type>& M );
+
+      template<typename _uni10_type>
+        friend std::vector< Matrix<_uni10_type> > lq( const Block<_uni10_type>& M );
+
+      template<typename _uni10_type>
+        friend std::vector< Matrix<_uni10_type> > ql( const Block<_uni10_type>& M );
+
+      template<typename _uni10_type>
+        friend std::vector< Matrix<_uni10_type> > svd( const Block<_uni10_type>& M );
+
+      template<typename _uni10_type>
+        friend Matrix<_uni10_type> inverse( const Block<_uni10_type>& Mij );
 
         uni10_double64 operator[](uni10_uint64 idx)const;
 
@@ -97,9 +113,9 @@ namespace uni10{
 
         UELEM(uni10_elem, _package, _type)<uni10_type> elem;     // pointer to a real matrix
 
-        uni10_uint64 Rnum;      
+        uni10_uint64 Rnum;
 
-        uni10_uint64 Cnum;     
+        uni10_uint64 Cnum;
 
         bool diag;
 
@@ -125,17 +141,114 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& M ){
+    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
 
-      uni10_error_msg(M.Rnum < M.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
-      outs.push_back(Matrix<uni10_type>(M.Rnum, M.Rnum));
-      outs.push_back(Matrix<uni10_type>(M.Cnum, M.Cnum));
-      if(!M.diag)
-        uni10::matrixQR(M.elem, M.Rnum, M.Cnum, outs[0].elem, outs[1].elem);
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
+
+      if(!Mij.diag)
+        matrixQR(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+      else
+        uni10_error_msg(true, "Developping!!!");
+      //
+      return outs;
 
     }
+
+  template<typename uni10_type>
+
+    std::vector< Matrix<uni10_type> > rq( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform RQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+
+      if(!Mij.diag)
+        matrixRQ(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+      else
+        uni10_error_msg(true, "Developping!!!");
+      //
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > lq( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform LQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+
+      if(!Mij.diag)
+        matrixLQ(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+      else
+        uni10_error_msg(true, "Developping!!!");
+      //
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > ql( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QL decomposition when Rnum < Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
+
+      if(!Mij.diag)
+        matrixQL(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+      else
+        uni10_error_msg(true, "Developping!!!");
+      //
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > svd( const Block<uni10_type>& Mij ){
+
+      std::vector<Matrix<uni10_type> > outs;
+
+      uni10_uint64 min = Mij.Rnum < Mij.Cnum ? Mij.Rnum : Mij.Cnum;      //min = min(Rnum,Cnum)
+      //GPU_NOT_READY
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, min));
+      outs.push_back(Matrix<uni10_type>(min, min, true));
+      outs.push_back(Matrix<uni10_type>(min, Mij.Cnum));
+
+      if(!Mij.diag)
+        matrixSVD(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
+      else
+        uni10_error_msg(true, "Developping!!!");
+      //
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    Matrix<uni10_type> inverse( Block<uni10_type> const& Mij ){
+
+      Matrix<uni10_type> invM(Mij);
+
+      uni10_error_msg(!(Mij.Rnum == Mij.Cnum), "Cannot perform inversion on a non-square matrix." );
+
+      if(!invM.diag)
+        matrixInv(&invM.elem, &Mij.Rnum);
+      else
+        uni10_error_msg(true, "Developping!!!");
+
+      return invM;
+
+    }
+
 //#include "uni10/uni10_api/linalg.h"
 
 };
@@ -151,14 +264,6 @@ namespace uni10{
         uni10_double64 trace()const;
 
         uni10_double64 sum()const;
-
-        std::vector<Block> qr()const;
-
-        std::vector<Block> rq()const;
-
-        std::vector<Block> ql()const;
-
-        std::vector<Block> lq()const;
 
         std::vector<Block> svd()const;
 

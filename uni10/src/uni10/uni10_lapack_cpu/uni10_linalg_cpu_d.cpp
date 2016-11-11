@@ -181,12 +181,8 @@ namespace uni10{
       free(Mij);
     }
 
-    void matrixInv(double* A, int N, bool diag){
-      if(diag){
-        for(int i = 0; i < N; i++)
-          A[i] = A[i] == 0 ? 0 : 1.0/A[i];
-        return;
-      }
+    void matrixInv(double* A, int N){
+
       int *ipiv = (int*)malloc((N+1)*sizeof(int));
       int info;
       dgetrf(&N, &N, A, &N, ipiv, &info);
@@ -216,7 +212,7 @@ namespace uni10{
     // dorgql -> rq
     void matrixQR(double* Mij_ori, int M, int N, double* Q, double* R){
 
-      uni10_error_msg(M >= N, "M must be larger than N in matrixQR()");
+      uni10_error_msg(M < N, "M must be larger than N in matrixQR()");
 
       double* Mij = (double*)malloc(N*M*sizeof(double));
       memcpy(Mij, Mij_ori, N*M*sizeof(double));
@@ -249,7 +245,7 @@ namespace uni10{
 
     void matrixRQ(double* Mij_ori, int M, int N, double* Q, double* R){
 
-      uni10_error_msg(N >= M, "M must be larger than N in matrixRQ()");
+      uni10_error_msg(N < M, "N must be larger than M in matrixRQ()");
 
       double* Mij = (double*)malloc(M*N*sizeof(double));
       memcpy(Mij, Mij_ori, M*N*sizeof(double));
@@ -284,7 +280,7 @@ namespace uni10{
 
     void matrixLQ(double* Mij_ori, int M, int N, double* Q, double* L){
 
-      uni10_error_msg(N >= M, "M must be larger than N in matrixLQ()");
+      uni10_error_msg(N < M, "N must be larger than M in matrixLQ()");
 
       double* Mij = (double*)malloc(M*N*sizeof(double));
       memcpy(Mij, Mij_ori, M*N*sizeof(double));
@@ -317,7 +313,7 @@ namespace uni10{
 
     void matrixQL(double* Mij_ori, int M, int N, double* Q, double* R){
 
-      uni10_error_msg(M >= N, "M must be larger than N in matrixQL()");
+      uni10_error_msg(M < N, "M must be larger than N in matrixQL()");
 
       double* Mij = (double*)malloc(N*M*sizeof(double));
       memcpy(Mij, Mij_ori, N*M*sizeof(double));

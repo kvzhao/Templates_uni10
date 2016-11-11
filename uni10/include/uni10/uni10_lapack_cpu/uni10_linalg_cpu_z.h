@@ -37,7 +37,7 @@ namespace uni10{
     // Lapack
     void matrixSVD(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* U, uni10_complex128* S, uni10_complex128* vT);
 
-    void matrixInv(uni10_complex128* A, uni10_int32 N, bool diag);
+    void matrixInv(uni10_complex128* A, uni10_int32 N);
 
     void eigDecompose(uni10_complex128* Kij, uni10_int32 N, uni10_complex128* Eig, uni10_complex128 *EigVec);
 

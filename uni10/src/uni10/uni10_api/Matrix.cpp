@@ -44,12 +44,13 @@ namespace uni10{
     };
 
   template <typename uni10_type>
-    Matrix<uni10_type>::Matrix(const Matrix<uni10_type>& _m): Block<uni10_type>(_m.Rnum, _m.Cnum, _m.diag){
+    Matrix<uni10_type>::Matrix(Matrix const& _m): Block<uni10_type>(_m.Rnum, _m.Cnum, _m.diag){
       init(_m.elem.elem);
     };
 
+  // Copy constructor
   template <typename uni10_type>
-    Matrix<uni10_type>::Matrix(const Block<uni10_type>& _b): Block<uni10_type>(_b.Rnum, _b.Cnum, _b.diag){
+    Matrix<uni10_type>::Matrix(Block<uni10_type> const& _b): Block<uni10_type>(_b.Rnum, _b.Cnum, _b.diag){
       init(_b.elem.elem);
     };
 

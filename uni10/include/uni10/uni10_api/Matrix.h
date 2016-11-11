@@ -40,15 +40,23 @@ namespace uni10{
 
       public:
 
+        Matrix& operator=(const Matrix& _m){
+          this->Rnum = _m.Rnum;
+          this->Cnum = _m.Cnum;
+          this->diag = _m.diag;
+          init(_m.elem.elem);
+          return *this;
+        };
+
         explicit Matrix();
 
         explicit Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag=false);
 
-        explicit Matrix(const Matrix& _m);
-
-        explicit Matrix(const Block<uni10_type>& _b);
+        explicit Matrix<uni10_type>(Block<uni10_type> const& _b);
 
         explicit Matrix(const std::string& fname);
+
+        Matrix(Matrix const& _m);
 
         ~Matrix();
 

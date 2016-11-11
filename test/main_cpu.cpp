@@ -5,12 +5,6 @@ using namespace uni10;
 
 int main(){
 
-  Qnum D;
-
-  cout << D;
-
-  exit(0);
-
   uni10_create();
   uni10_print_env_info();
 

@@ -45,7 +45,7 @@ namespace uni10{
 
     void matrixSVD(uni10_double64* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_double64* U, uni10_double64* S, uni10_double64* vT);
 
-    void matrixInv(uni10_double64* A, uni10_int32 N, bool diag);
+    void matrixInv(uni10_double64* A, uni10_int32 N);
 
     void matrixQR(uni10_double64* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_double64* Q, uni10_double64* R);
 

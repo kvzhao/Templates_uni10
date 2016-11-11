@@ -68,5 +68,11 @@ typedef int                    uni10_type_id;     // To store the typeid of the 
 //#define UNI10_CZ_ABS(a)        abs(a)
 //#define UNI10_CZ_SQFN(a)       (a).real()*(a).real() + (a).imag()*(a).imag() 
 //#define UNI10_CZ_CONJ(a)       conj(a)
+//
+#if defined(CPU) && defined(LAPACK)
+#include "uni10/uni10_lapack_cpu/uni10_elem_lapack_cpu.h"
+typedef uni10::uni10_elem_lapack_cpu<uni10_double64>     uni10_elem_double64;
+typedef uni10::uni10_elem_lapack_cpu<uni10_complex128>   uni10_elem_complex128;
+#endif
 
 #endif

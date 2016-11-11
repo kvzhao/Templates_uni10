@@ -54,12 +54,12 @@ namespace uni10{
     }
 
 
-    void matrixInv(std::complex<double>* A, int N, bool diag){
-      if(diag){
-        for(int i = 0; i < N; i++)
-          A[i] = std::abs(A[i]) == 0 ? 0.0 : 1.0/A[i];
-        return;
-      }
+    void matrixInv(std::complex<double>* A, int N){
+      //if(diag){
+      //  for(int i = 0; i < N; i++)
+      //    A[i] = std::abs(A[i]) == 0 ? 0.0 : 1.0/A[i];
+      //  return;
+      //}
       int *ipiv = (int*)malloc((N+1) * sizeof(int));
       int info;
       zgetrf(&N, &N, A, &N, ipiv, &info);
