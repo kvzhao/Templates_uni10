@@ -40,5 +40,7 @@ namespace uni10{
 
   void uni10_elem_cast_cpu(uni10_double64 *des, uni10_complex128 *src, uni10_uint64 N);
 
+  void shrinkWithoutFree(uni10_uint64 memsize);
+
 }/* namespace uni10 */
 #endif /* UNI10_TOOLS_H */

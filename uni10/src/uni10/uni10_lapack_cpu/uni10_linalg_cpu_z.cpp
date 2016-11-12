@@ -17,6 +17,78 @@ namespace uni10{
 
   namespace uni10_linalg{
 
+    void vectorAdd(std::complex<double>* Y, std::complex<double>* X, size_t N){
+
+      std::complex<double> a = 1.0;
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        zaxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+
+    }
+
+    void vectorSub(std::complex<double>* Y, std::complex<double>* X, size_t N){
+
+      std::complex<double> a = -1.0;
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        zaxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+
+    }
+
+    void vectorScal(const std::complex<double>& a, std::complex<double>* X, size_t N){
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        zscal(&chunk, &a, X + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
+
+    void matrixMul(std::complex<double>* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
+      std::complex<double> alpha = 1.0, beta = 0.0;
+      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, A, &K, &beta, C, &N);
+    }
+
+    void diagRowMul(std::complex<double>* mat, std::complex<double>* diag, size_t M, size_t N){
+      for(size_t i = 0; i < M; i++)
+        vectorScal(diag[i], &(mat[i * N]), N);
+    }
+
+    void diagColMul(std::complex<double> *mat, std::complex<double>* diag, size_t M, size_t N){
+      for(size_t i = 0; i < M; i++){
+        size_t ridx = i * N;
+        for(size_t j = 0; j < N; j++)
+          mat[ridx + j] *= diag[j];
+      }
+    }
+
     void matrixSVD(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* U, std::complex<double>* S_ori, std::complex<double>* vT){
 
       int min = std::min(M, N);
@@ -111,62 +183,9 @@ namespace uni10{
       return sum;
     }
 
-    void matrixMul(std::complex<double>* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
-      std::complex<double> alpha = 1.0, beta = 0.0;
-      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, A, &K, &beta, C, &N);
-    }
-
-    void vectorAdd(std::complex<double>* Y, std::complex<double>* X, size_t N){
-
-      std::complex<double> a = 1.0;
-      int inc = 1;
-      int64_t left = N;
-      size_t offset = 0;
-      int chunk;
-      while(left > 0){
-        if(left > INT_MAX)
-          chunk = INT_MAX;
-        else
-          chunk = left;
-        zaxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
-        offset += chunk;
-        left -= INT_MAX;
-      }
-
-    }
-
-    void vectorScal(const std::complex<double>& a, std::complex<double>* X, size_t N){
-      int inc = 1;
-      int64_t left = N;
-      size_t offset = 0;
-      int chunk;
-      while(left > 0){
-        if(left > INT_MAX)
-          chunk = INT_MAX;
-        else
-          chunk = left;
-        zscal(&chunk, &a, X + offset, &inc);
-        offset += chunk;
-        left -= INT_MAX;
-      }
-    }
-
     void vectorMul(std::complex<double>* Y, std::complex<double>* X, size_t N){ 
       for(size_t i = 0; i < N; i++)
         Y[i] *= X[i];
-    }
-
-    void diagRowMul(std::complex<double>* mat, std::complex<double>* diag, size_t M, size_t N){
-      for(size_t i = 0; i < M; i++)
-        vectorScal(diag[i], &(mat[i * N]), N);
-    }
-
-    void diagColMul(std::complex<double> *mat, std::complex<double>* diag, size_t M, size_t N){
-      for(size_t i = 0; i < M; i++){
-        size_t ridx = i * N;
-        for(size_t j = 0; j < N; j++)
-          mat[ridx + j] *= diag[j];
-      }
     }
 
     void vectorExp(const std::complex<double>& a, std::complex<double>* X, size_t N){

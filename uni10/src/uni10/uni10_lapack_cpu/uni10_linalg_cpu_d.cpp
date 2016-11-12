@@ -15,6 +15,56 @@ namespace uni10{
 
   namespace uni10_linalg{
 
+    void vectorAdd(double* Y, double* X, size_t N){   // Y = Y + X
+      double a = 1.0;
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        daxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
+
+    void vectorSub(double* Y, double* X, size_t N){   // Y = Y + X
+      double a = -1.0;
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        daxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
+
+    void vectorScal(double a, double* X, size_t N){
+      int inc = 1;
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        dscal(&chunk, &a, X + offset, &inc);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
+
     void matrixMul(double* A, double* B, int M, int N, int K, double* C){
       double alpha = 1, beta = 0;
       dgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, A, &K, &beta, C, &N);
@@ -92,39 +142,6 @@ namespace uni10{
         left -= INT_MAX;
       }
       return sqrt(norm2);
-    }
-
-    void vectorAdd(double* Y, double* X, size_t N){   // Y = Y + X
-      double a = 1.0;
-      int inc = 1;
-      int64_t left = N;
-      size_t offset = 0;
-      int chunk;
-      while(left > 0){
-        if(left > INT_MAX)
-          chunk = INT_MAX;
-        else
-          chunk = left;
-        daxpy(&chunk, &a, X + offset, &inc, Y + offset, &inc);
-        offset += chunk;
-        left -= INT_MAX;
-      }
-    }
-
-    void vectorScal(double a, double* X, size_t N){
-      int inc = 1;
-      int64_t left = N;
-      size_t offset = 0;
-      int chunk;
-      while(left > 0){
-        if(left > INT_MAX)
-          chunk = INT_MAX;
-        else
-          chunk = left;
-        dscal(&chunk, &a, X + offset, &inc);
-        offset += chunk;
-        left -= INT_MAX;
-      }
     }
 
     void vectorMul(double* Y, double* X, size_t N){ // Y = Y * X, element-wise multiplication;

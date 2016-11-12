@@ -58,7 +58,7 @@ namespace uni10{
     uni10_uint64 Block<uni10_type>::elemNum()const{ return elem.__elemNum; }
 
   template<typename uni10_type>
-    int Block<uni10_type>::typeID()const{ return elem.__uni10_id;}
+    int Block<uni10_type>::typeID()const{ return elem.__uni10_typeid;}
 
   template<typename uni10_type>
     void Block<uni10_type>::save(const std::string& fname)const{
@@ -70,7 +70,7 @@ namespace uni10{
 
   template<typename uni10_type>
     uni10_type Block<uni10_type>::at(uni10_uint64 r, uni10_uint64 c)const{
-      return elem.elem[r*Cnum+c];
+      return elem.__elem[r*Cnum+c];
     }
 
 #if defined(GPU)

@@ -140,6 +140,20 @@ namespace uni10{
       return os;
     }
 
+  template<typename uni10_type> 
+    Matrix<uni10_type> dot( const Block<uni10_type>& A, const Block<uni10_type>& B ){
+
+      //uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+      //
+      Matrix<uni10_type> C(A.Rnum, B.Cnum, A.diag && B.diag);
+
+      matrixMul(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, C);
+
+      //
+      return C;
+
+    }
+
   template<typename uni10_type>
     std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
 
@@ -150,7 +164,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
       if(!Mij.diag)
-        matrixQR(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+        matrixQR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
       else
         uni10_error_msg(true, "Developping!!!");
       //
@@ -169,7 +183,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
       if(!Mij.diag)
-        matrixRQ(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+        matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
       else
         uni10_error_msg(true, "Developping!!!");
       //
@@ -187,7 +201,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
       if(!Mij.diag)
-        matrixLQ(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+        matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
       else
         uni10_error_msg(true, "Developping!!!");
       //
@@ -204,10 +218,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
       outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
-      if(!Mij.diag)
-        matrixQL(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
-      else
-        uni10_error_msg(true, "Developping!!!");
+      matrixQL(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
       //
       return outs;
 
@@ -224,11 +235,8 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(min, min, true));
       outs.push_back(Matrix<uni10_type>(min, Mij.Cnum));
 
-      if(!Mij.diag)
-        matrixSVD(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
-      else
-        uni10_error_msg(true, "Developping!!!");
-      //
+      matrixSVD(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
+
       return outs;
 
     }
@@ -240,10 +248,7 @@ namespace uni10{
 
       uni10_error_msg(!(Mij.Rnum == Mij.Cnum), "Cannot perform inversion on a non-square matrix." );
 
-      if(!invM.diag)
-        matrixInv(&invM.elem, &Mij.Rnum);
-      else
-        uni10_error_msg(true, "Developping!!!");
+      matrixInv(&invM.elem, &Mij.Rnum, &Mij.diag);
 
       return invM;
 
@@ -252,7 +257,6 @@ namespace uni10{
 //#include "uni10/uni10_api/linalg.h"
 
 };
-
 
 /*
  *      Move to linalg
@@ -264,8 +268,6 @@ namespace uni10{
         uni10_double64 trace()const;
 
         uni10_double64 sum()const;
-
-        std::vector<Block> svd()const;
 
         std::vector<Block> eig()const;
 

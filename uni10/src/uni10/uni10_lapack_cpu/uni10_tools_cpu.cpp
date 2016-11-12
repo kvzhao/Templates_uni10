@@ -103,4 +103,10 @@ namespace uni10{
 
   }
 
+  void shrinkWithoutFree(uni10_uint64 memsize){
+
+    env_variables.use_memsize(-memsize);
+
+  }
+
 } /* namespace uni10 */

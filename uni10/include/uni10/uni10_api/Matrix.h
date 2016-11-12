@@ -44,9 +44,20 @@ namespace uni10{
           this->Rnum = _m.Rnum;
           this->Cnum = _m.Cnum;
           this->diag = _m.diag;
-          init(_m.elem.elem);
+          init(_m.elem.__elem);
           return *this;
         };
+
+        Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
+          vectorAdd(&this->elem, &_m.elem, &_m.elem.__elemNum);
+        };
+
+        Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
+          vectorSub(&this->elem, &_m.elem, &_m.elem.__elemNum);
+        };
+
+        template<typename _uni10_type> 
+          friend void resize( Matrix<_uni10_type>& A , uni10_uint64 row, uni10_uint64 col);
 
         explicit Matrix();
 
@@ -77,6 +88,13 @@ namespace uni10{
         void init(const uni10_type* elem = NULL);
 
     };
+
+  template<typename uni10_type> 
+    void resize( Matrix<uni10_type>& A , uni10_uint64 row, uni10_uint64 col){
+
+      A.elem.resize(row, col, A.Rnum, A.Cnum, A.diag);
+
+    }
 
 };  /* namespace uni10 */
 

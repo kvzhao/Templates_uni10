@@ -45,13 +45,13 @@ namespace uni10{
 
   template <typename uni10_type>
     Matrix<uni10_type>::Matrix(Matrix const& _m): Block<uni10_type>(_m.Rnum, _m.Cnum, _m.diag){
-      init(_m.elem.elem);
+      init(_m.elem.__elem);
     };
 
   // Copy constructor
   template <typename uni10_type>
     Matrix<uni10_type>::Matrix(Block<uni10_type> const& _b): Block<uni10_type>(_b.Rnum, _b.Cnum, _b.diag){
-      init(_b.elem.elem);
+      init(_b.elem.__elem);
     };
 
   template <typename uni10_type>
@@ -82,7 +82,7 @@ namespace uni10{
 
       uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install the MAGMA or CUDAONLY gpu version instead.");
 
-      if(this->elem.__uni10_id != UNI10_TYPE_ID(uni10_type)){
+      if(this->elem.__uni10_typeid != UNI10_TYPE_ID(uni10_type)){
 
         uni10_error_msg( true, " Developping !!!");
 

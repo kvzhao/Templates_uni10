@@ -39,6 +39,9 @@ typedef std::complex<double>   uni10_complex128;
 typedef int                    uni10_exu_type;    // To store the exu_type.
 typedef int                    uni10_type_id;     // To store the typeid of the objects.
 
+typedef bool                   uni10_bool;   
+typedef const bool             uni10_const_bool;  
+
 // Generate the typename of the uni10 system information.
 #define info_type_helper(sysinfo, type)  sysinfo##type
 #define info_type(sysinfo, type)  info_type_helper(sysinfo, type)

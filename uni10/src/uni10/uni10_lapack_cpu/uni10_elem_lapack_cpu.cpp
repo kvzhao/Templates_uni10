@@ -4,33 +4,33 @@
 namespace uni10{
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_id(UNI10_TYPE_ID(uni10_type)), __elemNum(0), elem(NULL){};
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elemNum(0), __elem(NULL){};
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_id(UNI10_TYPE_ID(uni10_type)), elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
 
       init(_Rnum, _Cnum, NULL);
 
     }
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_id(UNI10_TYPE_ID(uni10_type)), elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
 
       init(_Rnum, _Cnum, src);
 
     };
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_id(_elem.__uni10_id), __elemNum(_elem.__elemNum){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __elemNum(_elem.__elemNum){
 
-      init(1, __elemNum, _elem.elem);
+      init(1, __elemNum, _elem.__elem);
 
     };
 
   template<typename uni10_type>
     uni10_elem_lapack_cpu<uni10_type>::~uni10_elem_lapack_cpu(){
 
-      uni10_elem_free_cpu(elem, __elemNum * sizeof(uni10_type));
+      uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
 
     };
 
@@ -38,12 +38,36 @@ namespace uni10{
     void uni10_elem_lapack_cpu<uni10_type>::setElem(const uni10_type* src, bool src_ongpu){
 
       uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
-      uni10_error_msg( elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
+      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
       uni10_error_msg( src  == NULL, "The source ptr is NULL.");
 
-      uni10_elem_copy_cpu( elem, src, __elemNum * sizeof(uni10_type) );
+      uni10_elem_copy_cpu( __elem, src, __elemNum * sizeof(uni10_type) );
 
     };
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::setElem_fixCol(const uni10_type* src, uni10_uint64 srclen, uni10_bool src_ongpu){
+
+      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
+      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
+      uni10_error_msg( src  == NULL, "The source ptr is NULL.");
+
+      uni10_elem_copy_cpu( __elem, src, srclen * sizeof(uni10_type) );
+
+    }
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::setElem_fixRow(const uni10_type* src, uni10_uint64 src_row, uni10_uint64 src_col, uni10_bool src_ongpu){
+
+      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
+      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
+      uni10_error_msg( src  == NULL, "The source ptr is NULL.");
+
+      uni10_uint64 ori_col = __elemNum / src_row;
+      for(int r = 0; r < (int)src_row; r++)
+        uni10_elem_copy_cpu( &__elem[r*ori_col], &src[r*src_col], src_col * sizeof(uni10_type) );
+
+    }
 
   template<typename uni10_type>
     void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src){
@@ -54,12 +78,12 @@ namespace uni10{
 
       if ( memsize ){
 
-        elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
+        __elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
 
         if(src != NULL)
-          uni10_elem_copy_cpu( elem, src, memsize );
+          uni10_elem_copy_cpu( __elem, src, memsize );
         else
-          uni10_elemBzero_cpu( elem, memsize );
+          uni10_elemBzero_cpu( __elem, memsize );
 
       }
 
@@ -74,8 +98,8 @@ namespace uni10{
 
       if ( memsize ){
 
-        elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
-        uni10_elemBzero_cpu( elem, memsize );
+        __elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
+        uni10_elemBzero_cpu( __elem, memsize );
 
       }
 
@@ -97,13 +121,13 @@ namespace uni10{
         for( int i = 0; i < (int)_Rnum; ++i ) {
           for( int j = 0; j < (int)_Cnum; ++j ) {
             if ( i != j) {
-              if(__uni10_id == 2)
+              if(__uni10_typeid == 2)
                 fprintf(stdout, "   0.              " );
               else
                 fprintf(stdout, "   0.    " );
             }
             else {
-              uni10_print_elem_i(elem[ i ]);
+              uni10_print_elem_i(__elem[ i ]);
             }
           }
           if ( _Rnum > 1 ) 
@@ -118,14 +142,14 @@ namespace uni10{
 
         for( int i = 0; i < (int)_Rnum; ++i ) {
           for( int j = 0; j < (int)_Cnum; ++j ) {
-            if ( elem[ i * _Cnum + j] == 0.) {
-              if(typeID() == 2)
+            if ( __elem[ i * _Cnum + j] == 0.) {
+              if(__uni10_typeid == 2)
                 fprintf(stdout, "   0.              " );
               else
                 fprintf(stdout, "   0.    " );
             }
             else {
-              uni10_print_elem_i(elem[ i * _Cnum + j ]);
+              uni10_print_elem_i(__elem[ i * _Cnum + j ]);
             }
           }
           if ( _Rnum > 1 ) 
@@ -134,6 +158,98 @@ namespace uni10{
             fprintf(stdout, " " );
         }
         fprintf(stdout, "];\n" );
+
+      }
+
+    }
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::resize(uni10_uint64 _row, uni10_uint64 _col, uni10_uint64& Rnum, uni10_uint64& Cnum, uni10_bool& isdiag, uni10_const_bool& _fixHead){
+
+      if(_fixHead){
+
+        if(isdiag){
+
+          uni10_uint64 _elemNum = _row < _col ? _row : _col;
+
+          if(_elemNum > __elemNum){
+
+            uni10_type* _elem = (uni10_type*)uni10_elem_alloc_cpu(_elemNum * sizeof(uni10_type));
+
+            uni10_elemBzero_cpu(_elem, _elemNum * sizeof(uni10_type));
+
+            uni10_elem_copy_cpu(_elem, __elem, __elemNum * sizeof(uni10_type));
+
+            if(__elem != NULL)
+              uni10_elem_free_cpu( __elem, __elemNum * sizeof(uni10_type) );
+
+            __elem = _elem;
+
+          }
+          else
+            shrinkWithoutFree( (__elemNum - _elemNum) * sizeof(uni10_type) );
+
+          __elemNum = _elemNum;
+
+          Rnum = _row;
+          Cnum = _col;
+
+        }
+        else{
+
+          uni10_uint64 _elemNum = _row * _col;
+
+          if(_col == Cnum){
+
+            if(_row > Rnum){
+
+              uni10_type* _elem = (uni10_type*)uni10_elem_alloc_cpu( _elemNum * sizeof(uni10_type) );
+
+              uni10_elemBzero_cpu( _elem, _elemNum * sizeof(uni10_type) );
+
+              uni10_elem_copy_cpu(_elem, __elem, __elemNum * sizeof(uni10_type) );
+
+              if(__elem != NULL)
+                uni10_elem_free_cpu( __elem, __elemNum * sizeof(uni10_type) );
+
+              __elem = _elem;
+
+            }
+            else
+              shrinkWithoutFree( (__elemNum - _elemNum) * sizeof(uni10_type) );
+
+            __elemNum = _elemNum;
+
+            Rnum = _row;
+          }
+          else{
+
+            uni10_uint64 data_row = _row < Rnum ? _row : Rnum;
+            uni10_uint64 data_col = _col < Cnum ? _col : Cnum;
+
+            uni10_type* _elem = (uni10_type*)uni10_elem_alloc_cpu( _elemNum * sizeof(uni10_type) );
+
+            uni10_elemBzero_cpu( _elem, _elemNum * sizeof(uni10_type) );
+
+            for(int r = 0; r < (int)data_row; r++)
+              uni10_elem_copy_cpu( &(_elem[r * _col]), &(__elem[r * Cnum]), data_col * sizeof(uni10_type) );
+
+            if(__elem != NULL)
+              uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type) );
+
+            __elem    = _elem;
+            __elemNum = _elemNum;
+
+            Rnum = _row;
+            Cnum = _col;
+
+          }
+
+        }
+
+      }else{
+
+        uni10_error_msg(true, "Resize fixTail is developping !!!");
 
       }
 

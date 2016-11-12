@@ -9,8 +9,6 @@ int main(){
                       2.1,3.9,4.1,
                       2.1,4.1,1.1};
 
-  vector<int> CC(3, 2);
-
   Matrix<double> A(3, 3);
 
   Matrix< std::complex<double> > C(3, 3);
@@ -19,34 +17,27 @@ int main(){
 
   Matrix<double> B(A);
 
-  cout << A;
-
-  A += A;
+  fprintf(stdout, "-----     Reszie [3,3]->[3,5]  -----\n");
 
   cout << A;
 
-  A -= B;
+  resize( A, 3, 5 );
 
   cout << A;
 
-  cout << B;
+  fprintf(stdout, "-----     Reszie [3,5]->[5,5]  -----\n");
+
+  resize( A, 5, 5 );
+
+  cout << A;
+
+  fprintf(stdout, "-----     Reszie [5,5]->[2,2]  -----\n");
   
-
-  fprintf(stdout, "-----     M_ori   -----\n");
+  resize( A, 2, 2 );
 
   cout << A;
 
-  fprintf(stdout, "----- SVD Example -----\n");
-
-  cout << svd( A )[0];
-  cout << svd( A )[1];
-  cout << svd( A )[2];
-
-  fprintf(stdout, "----- INV Example -----\n");
-
-  cout << inverse( A );
-
-  fprintf(stdout, "-----     End    -----\n");
+  fprintf(stdout, "------------------------\n");
 
   return 0;
 }

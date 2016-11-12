@@ -8,9 +8,32 @@ namespace uni10{
   namespace uni10_linalg{
 
     // Blas
+    //
+    void vectorAdd(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N);// Y = Y + X
+
+    void vectorSub(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N);// Y = Y - X
+
     void matrixMul(uni10_complex128* A, uni10_complex128* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_complex128* C);
 
-    void vectorAdd(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N);// Y = Y + X
+    void diagRowMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
+
+    void diagColMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
+
+    // Lapack
+    //
+    void matrixSVD(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* U, uni10_complex128* S, uni10_complex128* vT);
+
+    void matrixQR(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
+
+    void matrixRQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
+
+    void matrixQL(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
+
+    void matrixLQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
+
+    void matrixInv(uni10_complex128* A, uni10_int32 N);
+
+    //=================================================================================//
 
     uni10_complex128 vectorSum(uni10_complex128* X, uni10_uint64 N, uni10_int32 inc);
 
@@ -28,16 +51,7 @@ namespace uni10{
 
     void vectorMul(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N); // Y = Y * X, element-wise multiplication;
 
-    void diagRowMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
-
-    void diagColMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
-
     void vectorExp(const uni10_complex128& a, uni10_complex128* X, uni10_uint64 N);
-
-    // Lapack
-    void matrixSVD(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* U, uni10_complex128* S, uni10_complex128* vT);
-
-    void matrixInv(uni10_complex128* A, uni10_int32 N);
 
     void eigDecompose(uni10_complex128* Kij, uni10_int32 N, uni10_complex128* Eig, uni10_complex128 *EigVec);
 
@@ -45,13 +59,6 @@ namespace uni10{
 
     void setIdentity(uni10_complex128* elem, uni10_uint64 M, uni10_uint64 N);
 
-    void matrixQR(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
-
-    void matrixRQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
-
-    void matrixQL(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
-
-    void matrixLQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
 
   };/* namespace uni10_linalg */
 

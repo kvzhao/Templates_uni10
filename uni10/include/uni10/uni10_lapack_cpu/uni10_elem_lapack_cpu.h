@@ -7,12 +7,6 @@
 
 namespace uni10{
 
-  
-  //template<typename uni10_type>
-  //  class Block;
-  //template<typename uni10_type>
-  //  class Matrix;
-
   template<typename uni10_type>
     class uni10_elem_lapack_cpu{
       
@@ -28,29 +22,26 @@ namespace uni10{
 
         ~uni10_elem_lapack_cpu();
 
-        inline bool empty() const{ return elem == NULL; };
-
-        inline uni10_type_id typeID() const { return __uni10_id; };
-
-        inline uni10_type* getElem() const { return elem; };
-
-        inline uni10_uint64 elemNum() const { return __elemNum; };
+        inline bool empty() const{ return __elem == NULL; };
 
         void setElem(const uni10_type* src, bool src_ongpu = false);
 
         void assign(uni10_uint64& _Rnum, uni10_uint64& _Cnum);
 
-        void print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag) const;
+        void print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag) const;
 
-        //friend class Block<uni10_type>;
-
-        //friend class Matrix<uni10_type>;
-
-        uni10_type_id __uni10_id;  
+        uni10_type_id __uni10_typeid;  
 
         uni10_uint64 __elemNum;
 
-        uni10_type* elem;
+        uni10_type* __elem;
+
+        void resize(uni10_uint64 _row, uni10_uint64 _col, uni10_uint64& _Rnum, uni10_uint64& _Cnum, uni10_bool& _isdiag, uni10_const_bool& _fixHead = true);
+
+        void setElem_fixCol(const uni10_type* src, uni10_uint64 srclen, uni10_bool src_ongpu = false);
+
+        void setElem_fixRow(const uni10_type* src, uni10_uint64 src_row, uni10_uint64 src_col, uni10_bool src_ongpu =false);
+
 
         void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src=NULL);
 
