@@ -46,30 +46,6 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::setElem_fixCol(const uni10_type* src, uni10_uint64 srclen, uni10_bool src_ongpu){
-
-      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
-      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
-      uni10_error_msg( src  == NULL, "The source ptr is NULL.");
-
-      uni10_elem_copy_cpu( __elem, src, srclen * sizeof(uni10_type) );
-
-    }
-
-  template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::setElem_fixRow(const uni10_type* src, uni10_uint64 src_row, uni10_uint64 src_col, uni10_bool src_ongpu){
-
-      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
-      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
-      uni10_error_msg( src  == NULL, "The source ptr is NULL.");
-
-      uni10_uint64 ori_col = __elemNum / src_row;
-      for(int r = 0; r < (int)src_row; r++)
-        uni10_elem_copy_cpu( &__elem[r*ori_col], &src[r*src_col], src_col * sizeof(uni10_type) );
-
-    }
-
-  template<typename uni10_type>
     void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src){
 
       __elemNum =  _Rnum * _Cnum ;

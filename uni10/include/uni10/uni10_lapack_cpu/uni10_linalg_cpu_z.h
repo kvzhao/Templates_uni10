@@ -13,11 +13,31 @@ namespace uni10{
 
     void vectorSub(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N);// Y = Y - X
 
+    void vectorMul(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N); // Y = Y * X, element-wise multiplication;
+
+    void vectorScal(uni10_complex128 a, uni10_complex128* X, uni10_uint64 N);// X = a * X
+
+    void vectorExp(uni10_complex128 a, uni10_complex128* X, uni10_uint64 N);
+
+    uni10_complex128 vectorSum(uni10_complex128* X, uni10_uint64 N, uni10_int32 inc);
+
+    uni10_double64 vectorNorm(uni10_complex128* X, uni10_uint64 N, uni10_int32 inc);
+
     void matrixMul(uni10_complex128* A, uni10_complex128* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_complex128* C);
 
     void diagRowMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
 
     void diagColMul(uni10_complex128* mat, uni10_complex128* diag, uni10_uint64 M, uni10_uint64 N);
+
+    void setTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N, uni10_complex128* AT);
+
+    void setTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N);
+
+    void setDagger(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N, uni10_complex128* AT);
+
+    void setDagger(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N);
+
+    void setConjugate(uni10_complex128 *A, uni10_uint64 N);
 
     // Lapack
     //
@@ -35,30 +55,9 @@ namespace uni10{
 
     //=================================================================================//
 
-    uni10_complex128 vectorSum(uni10_complex128* X, uni10_uint64 N, uni10_int32 inc);
-
-    double vectorNorm(uni10_complex128* X, uni10_uint64 N, uni10_int32 inc);
-
-    void setTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N, uni10_complex128* AT);
-
-    void setTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N);
-
-    void setCTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N, uni10_complex128* AT);
-
-    void setCTranspose(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N);
-
-    void vectorScal(const uni10_complex128& a, uni10_complex128* X, uni10_uint64 N);	// X = a * X
-
-    void vectorMul(uni10_complex128* Y, uni10_complex128* X, uni10_uint64 N); // Y = Y * X, element-wise multiplication;
-
-    void vectorExp(const uni10_complex128& a, uni10_complex128* X, uni10_uint64 N);
-
     void eigDecompose(uni10_complex128* Kij, uni10_int32 N, uni10_complex128* Eig, uni10_complex128 *EigVec);
 
-    void setConjugate(uni10_complex128 *A, uni10_uint64 N);
-
     void setIdentity(uni10_complex128* elem, uni10_uint64 M, uni10_uint64 N);
-
 
   };/* namespace uni10_linalg */
 

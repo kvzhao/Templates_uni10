@@ -38,11 +38,6 @@ namespace uni10{
 
         void resize(uni10_uint64 _row, uni10_uint64 _col, uni10_uint64& _Rnum, uni10_uint64& _Cnum, uni10_bool& _isdiag, uni10_const_bool& _fixHead = true);
 
-        void setElem_fixCol(const uni10_type* src, uni10_uint64 srclen, uni10_bool src_ongpu = false);
-
-        void setElem_fixRow(const uni10_type* src, uni10_uint64 src_row, uni10_uint64 src_col, uni10_bool src_ongpu =false);
-
-
         void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src=NULL);
 
     };

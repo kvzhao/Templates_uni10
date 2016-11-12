@@ -56,6 +56,10 @@ namespace uni10{
           vectorSub(&this->elem, &_m.elem, &_m.elem.__elemNum);
         };
 
+        Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
+          vectorMul(&this->elem, &_m.elem, &_m.elem.__elemNum);
+        };
+
         template<typename _uni10_type> 
           friend void resize( Matrix<_uni10_type>& A , uni10_uint64 row, uni10_uint64 col);
 

@@ -27,22 +27,9 @@ namespace uni10{
         Y[i] -= X[i];
     }
 
-    void matrixMul(double* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
-
-      int size_A = M * K;
-      std::complex<double>* CA = (std::complex<double>*)malloc(size_A*sizeof(std::complex<double>));
-      uni10_elem_cast_cpu(CA, A, size_A);
-      std::complex<double> alpha = 1.0, beta = 0.0;
-      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, CA, &K, &beta, C, &N);
-    }
-
-    void matrixMul(std::complex<double>* A, double* B, int M, int N, int K, std::complex<double>* C){
-
-      int size_B = K * N;
-      std::complex<double>* CB = (std::complex<double>*)malloc(size_B*sizeof(std::complex<double>));
-      std::complex<double> alpha = 1.0, beta = 0.0;
-      uni10_elem_cast_cpu(CB, B, size_B);
-      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, CB, &N, A, &K, &beta, C, &N);
+    void vectorMul(std::complex<double>* Y, double* X, size_t N){
+      for(size_t i = 0; i < N; i++)
+        Y[i] *= X[i];
     }
 
     void vectorScal(double a, std::complex<double>* X, size_t N){
@@ -61,6 +48,29 @@ namespace uni10{
       }
     }
 
+    void vectorExp(double a, std::complex<double>* X, size_t N){
+      for(size_t i = 0; i < N; i++)
+        X[i] = std::exp(a * X[i]);
+    }
+
+    void matrixMul(double* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
+
+      int size_A = M * K;
+      std::complex<double>* CA = (std::complex<double>*)malloc(size_A*sizeof(std::complex<double>));
+      uni10_elem_cast_cpu(CA, A, size_A);
+      std::complex<double> alpha = 1.0, beta = 0.0;
+      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, CA, &K, &beta, C, &N);
+    }
+
+    void matrixMul(std::complex<double>* A, double* B, int M, int N, int K, std::complex<double>* C){
+
+      int size_B = K * N;
+      std::complex<double>* CB = (std::complex<double>*)malloc(size_B*sizeof(std::complex<double>));
+      std::complex<double> alpha = 1.0, beta = 0.0;
+      uni10_elem_cast_cpu(CB, B, size_B);
+      zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, CB, &N, A, &K, &beta, C, &N);
+    }
+
     void diagRowMul(std::complex<double>* mat, double* diag, size_t M, size_t N){
       for(size_t i = 0; i < M; i++)
         vectorScal(diag[i], &(mat[i * N]), N);
@@ -72,11 +82,6 @@ namespace uni10{
         for(size_t j = 0; j < N; j++)
           mat[ridx + j] *= diag[j];
       }
-    }
-
-    void vectorExp(double a, std::complex<double>* X, size_t N){
-      for(size_t i = 0; i < N; i++)
-        X[i] = std::exp(a * X[i]);
     }
 
     void eigDecompose(double* Kij_ori, int N, std::complex<double>* Eig, std::complex<double>* EigVec){

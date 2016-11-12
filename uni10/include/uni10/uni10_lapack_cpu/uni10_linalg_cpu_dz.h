@@ -7,9 +7,17 @@ namespace uni10{
 
   namespace uni10_linalg{
 
+    //Blas
+    //
     void vectorAdd(uni10_complex128* Y, uni10_double64* X, uni10_uint64 N);
 
     void vectorSub(uni10_complex128* Y, uni10_double64* X, uni10_uint64 N);
+
+    void vectorMul(uni10_complex128* Y, uni10_double64* X, uni10_uint64 N);
+    
+    void vectorScal(uni10_double64 a, uni10_complex128* X, uni10_uint64 N);
+
+    void vectorExp(uni10_double64 a, uni10_complex128* X, uni10_uint64 N);
  
     void matrixMul(uni10_double64* A, uni10_complex128* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_complex128* C);
 
@@ -19,11 +27,10 @@ namespace uni10{
 
     void diagColMul(uni10_complex128* mat, uni10_double64* diag, uni10_uint64 M, uni10_uint64 N);
 
-    //====================================================================//
+    //Lapack
     //
-    void vectorScal(uni10_double64 a, uni10_complex128* X, uni10_uint64 N);
 
-    void vectorExp(uni10_double64 a, uni10_complex128* X, uni10_uint64 N);
+    //====================================================================//
 
     void eigDecompose(uni10_double64* Kij, uni10_int32 N, uni10_complex128* Eig, uni10_complex128 *EigVec);
 

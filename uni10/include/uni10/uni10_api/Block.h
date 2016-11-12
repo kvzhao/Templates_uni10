@@ -143,13 +143,12 @@ namespace uni10{
   template<typename uni10_type> 
     Matrix<uni10_type> dot( const Block<uni10_type>& A, const Block<uni10_type>& B ){
 
-      //uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+      //Lack of error msgs.
       //
       Matrix<uni10_type> C(A.Rnum, B.Cnum, A.diag && B.diag);
 
       matrixMul(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, C);
 
-      //
       return C;
 
     }
@@ -163,11 +162,8 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
       outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
-      if(!Mij.diag)
-        matrixQR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
-      else
-        uni10_error_msg(true, "Developping!!!");
-      //
+      matrixQR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
       return outs;
 
     }
@@ -182,11 +178,8 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
-      if(!Mij.diag)
-        matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
-      else
-        uni10_error_msg(true, "Developping!!!");
-      //
+      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+
       return outs;
 
     }
@@ -200,11 +193,8 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
-      if(!Mij.diag)
-        matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
-      else
-        uni10_error_msg(true, "Developping!!!");
-      //
+      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+
       return outs;
 
     }
@@ -219,7 +209,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
       matrixQL(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
-      //
+
       return outs;
 
     }
