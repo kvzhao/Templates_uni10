@@ -37,6 +37,8 @@ namespace uni10{
 
     void setDagger(uni10_complex128* A, uni10_uint64 M, uni10_uint64 N);
 
+    void setConjugate(uni10_complex128 *A, uni10_uint64 N, uni10_complex128 *A_conj);
+
     void setConjugate(uni10_complex128 *A, uni10_uint64 N);
 
     // Lapack

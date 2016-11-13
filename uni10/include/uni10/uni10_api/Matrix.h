@@ -35,10 +35,44 @@
 
 namespace uni10{
 
+  enum UNI10_INPLACE{
+    INPLACE = 1
+  };
+
   template <typename uni10_type>
     class Matrix:public Block<uni10_type> {
 
       public:
+
+        template<typename _uni10_type> 
+          friend void dot( Matrix<_uni10_type>& A, const Block<_uni10_type>& B, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void qr( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& Q, Matrix<_uni10_type>& R, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void rq( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& R, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void lq( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void ql( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void svd( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& U, Matrix<_uni10_type>& S, Matrix<_uni10_type>& VT, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void inverse( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void transpose( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void dagger( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void conj( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
 
         Matrix& operator=(const Matrix& _m){
           this->Rnum = _m.Rnum;
@@ -75,7 +109,7 @@ namespace uni10{
 
         ~Matrix();
 
-        void assign(uni10_uint64 _Rnum, uni10_uint64 _Cnum);
+        void assign(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false);
 
         void load(const std::string& fname);
 

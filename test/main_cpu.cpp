@@ -18,15 +18,10 @@ int main(){
   cout << B;
 
   printf("\n------ Matrix A ------\n");
-  printf("# TYPEID : %d \n", A.typeID());
-  printf("# ELEMNUM: %ld\n", A.elemNum());
-
   A.setElem(elemA);
   cout << A;
 
   printf("\n------ Matrix B ------\n");
-  printf("# TYPEID : %d \n", B.typeID());
-  printf("# ELEMNUM: %ld\n", B.elemNum());
   B.setElem(elemB);
   cout << B;
 

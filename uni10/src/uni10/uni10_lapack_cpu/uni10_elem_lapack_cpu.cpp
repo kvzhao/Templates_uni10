@@ -55,11 +55,12 @@ namespace uni10{
       if ( memsize ){
 
         __elem = (uni10_type*)uni10_elem_alloc_cpu( memsize );
-
-        if(src != NULL)
+        if(src != NULL){
           uni10_elem_copy_cpu( __elem, src, memsize );
-        else
+        }
+        else{
           uni10_elemBzero_cpu( __elem, memsize );
+        }
 
       }
 

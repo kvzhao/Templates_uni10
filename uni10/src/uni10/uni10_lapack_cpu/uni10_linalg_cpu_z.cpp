@@ -157,6 +157,11 @@ namespace uni10{
       free(AT);
     }
 
+    void setConjugate(std::complex<double> *A, size_t N, std::complex<double> *A_conj){
+      for(size_t i = 0; i < N; i++)
+        A_conj[i] = std::conj(A[i]);
+    }
+
     void setConjugate(std::complex<double> *A, size_t N){
       for(size_t i = 0; i < N; i++)
         A[i] = std::conj(A[i]);
@@ -166,7 +171,7 @@ namespace uni10{
     //
     void matrixSVD(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* U, std::complex<double>* S_ori, std::complex<double>* vT){
 
-      int min = std::min(M, N);
+      int min = min(M, N);
       double* S = (double*)malloc(min * sizeof(double));
       matrixSVD(Mij_ori, M, N, U, S, vT);
       uni10_elem_cast_cpu(S_ori, S, min);

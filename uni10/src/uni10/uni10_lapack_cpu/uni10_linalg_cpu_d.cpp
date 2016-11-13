@@ -148,7 +148,7 @@ namespace uni10{
 
       double* Mij = (double*)malloc(M * N * sizeof(double));
       memcpy(Mij, Mij_ori, M * N * sizeof(double));
-      int min = std::min(M, N);
+      int min = min(M, N);
       int ldA = N, ldu = N, ldvT = min;
       int lwork = -1;
       double worktest;

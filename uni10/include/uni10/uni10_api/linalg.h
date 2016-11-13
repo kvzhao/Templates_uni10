@@ -3,9 +3,7 @@
 
 #include <vector>
 
-#include "uni10/uni10_type.h"
-#include "uni10/uni10_error.h"
-#include "uni10/uni10_api/Matrix.h"
+#include "uni10/uni10_api/Block.h"
 
 #if defined(CPU) && defined(LAPACK)
 #include "uni10/uni10_elem_linalg.h"
@@ -13,86 +11,164 @@
 
 namespace uni10{
 
-  template<typename uni10_type>
-    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& M ){
+  template<typename uni10_type> 
+    Matrix<uni10_type> dot( const Block<uni10_type>& A, const Block<uni10_type>& B ){
 
-      uni10_error_msg(M.row() < M.col(), "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+      uni10_error_msg(A.Cnum != B.Rnum, "The dimensions of the two matrices do not match for matrix multiplication.");
+      //Lack of error msgs.
+      //
+      Matrix<uni10_type> C(A.Rnum, B.Cnum, A.diag && B.diag );
+
+      matrixMul(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, &C.elem);
+
+      return C;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
-      outs.push_back(Matrix<uni10_type>(M.row(), M.row()));
-      outs.push_back(Matrix<uni10_type>(M.col(), M.col()));
-      if(!M->diag)
-        matrixQR(&M.elem, M.row(), M.col(), &outs[0].elem, &outs[1].elem);
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
-    };
+      matrixQR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
 
-  template<typename uni10_type>
-    void vectorScal(Block<uni10_type> a, Block<uni10_type>* X, uni10_uint64 N);	  // X = a * X
+      return outs;
 
-  template<typename uni10_type>
-    void matrixMul(Block<uni10_type>* A, Block<uni10_type>* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, Block<uni10_type>* C);
+    }
 
   template<typename uni10_type>
-    void vectorAdd(Block<uni10_type>* Y, Block<uni10_type>* X, uni10_uint64 N);
+
+    std::vector< Matrix<uni10_type> > rq( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform RQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+
+      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+
+      return outs;
+
+    }
 
   template<typename uni10_type>
-    void vectorMul(Block<uni10_type>* Y, Block<uni10_type>* X, uni10_uint64 N);   // Y = Y * X, element-wise multiplication;
+    std::vector< Matrix<uni10_type> > lq( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform LQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+
+      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+
+      return outs;
+
+    }
 
   template<typename uni10_type>
-    Block<uni10_type> vectorSum(Block<uni10_type>* X, uni10_uint64 N, uni10_int32 inc);
+    std::vector< Matrix<uni10_type> > ql( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QL decomposition when Rnum < Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
+
+      matrixQL(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
+
+    }
 
   template<typename uni10_type>
-    Block<uni10_type> vectorNorm(Block<uni10_type>* X, uni10_uint64 N, uni10_int32 inc);
+    std::vector< Matrix<uni10_type> > svd( const Block<uni10_type>& Mij ){
+
+      std::vector<Matrix<uni10_type> > outs;
+
+      uni10_uint64 min = Mij.Rnum < Mij.Cnum ? Mij.Rnum : Mij.Cnum;      //min = min(Rnum,Cnum)
+      //GPU_NOT_READY
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, min));
+      outs.push_back(Matrix<uni10_type>(min, min, true));
+      outs.push_back(Matrix<uni10_type>(min, Mij.Cnum));
+
+      matrixSVD(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
+
+      return outs;
+
+    }
 
   template<typename uni10_type>
-    void vectorExp(Block<uni10_type> a, Block<uni10_type>* X, uni10_uint64 N);
+    Matrix<uni10_type> inverse( const Block<uni10_type>& Mij ){
+
+      Matrix<uni10_type> invM(Mij);
+
+      uni10_error_msg(!(Mij.Rnum == Mij.Cnum), "Cannot perform inversion on a non-square matrix." );
+
+      matrixInv(&invM.elem, &Mij.Rnum, &Mij.diag);
+
+      return invM;
+
+    }
 
   template<typename uni10_type>
-    void diagRowMul(Block<uni10_type>* mat, Block<uni10_type>* diag, uni10_uint64 M, uni10_uint64 N);
+    uni10_type sum( const Block<uni10_type>& Mij ){
+
+      uni10_int32 inc = 1;
+      return vectorSum(&Mij.elem, &Mij.elem.__elemNum, &inc);
+
+    }
 
   template<typename uni10_type>
-    void diagColMul(Block<uni10_type>* mat, Block<uni10_type>* diag, uni10_uint64 M, uni10_uint64 N);
-    /*Generate a set of row vectors which form a othonormal basis
-     *For the incoming matrix "elem", the number of row <= the number of column, M <= N
-     */
-  template<typename uni10_type>
-    void setTranspose(Block<uni10_type>* A, uni10_uint64 M, uni10_uint64 N, Block<uni10_type>* AT);
+    uni10_double64 norm( const Block<uni10_type>& Mij ){
+
+      uni10_int32 inc = 1;
+      return vectorNorm(&Mij.elem, &Mij.elem.__elemNum, &inc);
+
+    }
 
   template<typename uni10_type>
-    void setTranspose(Block<uni10_type>* A, uni10_uint64 M, uni10_uint64 N);
+    Matrix<uni10_type> transpose( const Block<uni10_type>& Mij ){
+
+      Matrix<uni10_type> MijT(Mij.Cnum, Mij.Rnum, Mij.diag);
+      setTranspose(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &MijT.elem);
+
+      return MijT;
+
+    }
 
   template<typename uni10_type>
-    void setCTranspose(Block<uni10_type>* A, uni10_uint64 M, uni10_uint64 N, Block<uni10_type> *AT);
+    Matrix<uni10_type> dagger( const Block<uni10_type>& Mij ){
+
+      Matrix<uni10_type> MijD(Mij.Cnum, Mij.Rnum, Mij.diag);
+      setDagger(&Mij.elem, &Mij.Rnum, &Mij.Cnum, &MijD.elem);
+
+      return MijD;
+
+    }
 
   template<typename uni10_type>
-    void setCTranspose(Block<uni10_type>* A, uni10_uint64 M, uni10_uint64 N);
+    Matrix<uni10_type> conj( const Block<uni10_type>& Mij ){
 
-  template<typename uni10_type>
-    void setIdentity(Block<uni10_type>* elem, uni10_uint64 M, uni10_uint64 N);
+      Matrix<uni10_type> MijConj(Mij.Rnum, Mij.Cnum, Mij.diag);
+      setConjugate(&Mij.elem, &Mij.elem.__elemNum, &MijConj.elem);
 
-  template<typename uni10_type>
-    void reshapeElem(Block<uni10_type>* elem, uni10_uint64* transOffset);
+      return MijConj;
 
-    // Lapack
-  template<typename uni10_type>
-    void eigSyDecompose(Block<uni10_type>* Kij, uni10_int32 N, Block<uni10_type>* Eig, Block<uni10_type>* EigVec);
-
-  template<typename uni10_type>
-    void matrixSVD(Block<uni10_type>* Mij_ori, uni10_int32 M, uni10_int32 N, Block<uni10_type>* U, Block<uni10_type>* S, Block<uni10_type>* vT);
-
-  template<typename uni10_type>
-    void matrixInv(Block<uni10_type>* A, uni10_int32 N, bool diag);
-
-  template<typename uni10_type>
-    void matrixRQ(Block<uni10_type>* Mij_ori, uni10_int32 M, uni10_int32 N, Block<uni10_type>* Q, Block<uni10_type>* R);
-
-  template<typename uni10_type>
-    void matrixQL(Block<uni10_type>* Mij_ori, uni10_int32 M, uni10_int32 N, Block<uni10_type>* Q, Block<uni10_type>* L);
-
-  template<typename uni10_type>
-    void matrixLQ(Block<uni10_type>* Mij_ori, uni10_int32 M, uni10_int32 N, Block<uni10_type>* Q, Block<uni10_type>* L);
-
+    }
 
 }
+
+  //template<typename uni10_type>
+  //  void vectorExp(Block<uni10_type> a, Block<uni10_type>* X, uni10_uint64 N);
+
+  //// Lapack
+  //template<typename uni10_type>
+  //  void eigSyDecompose(Block<uni10_type>* Kij, uni10_int32 N, Block<uni10_type>* Eig, Block<uni10_type>* EigVec);
 
 #endif

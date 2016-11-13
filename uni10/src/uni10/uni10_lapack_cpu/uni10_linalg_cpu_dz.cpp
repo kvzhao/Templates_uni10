@@ -117,12 +117,12 @@ namespace uni10{
 
       std::complex<double>* Mij = (std::complex<double>*)malloc(M * N * sizeof(std::complex<double>));
       memcpy(Mij, Mij_ori, M * N * sizeof(std::complex<double>));
-      int min = std::min(M, N);
+      int min = min(M, N);
       int ldA = N, ldu = N, ldvT = min;
       int lwork = -1;
       std::complex<double> worktest;
       int info;
-      double *rwork = (double*) malloc(std::max(1, 5 * min) * sizeof(double));
+      double *rwork = (double*) malloc(max(1, 5 * min) * sizeof(double));
       zgesvd((char*)"S", (char*)"S", &N, &M, Mij, &ldA, S, vT, &ldu, U, &ldvT, &worktest, &lwork, rwork, &info);
 
       uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgesvd': Lapack INFO = ", info);

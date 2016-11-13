@@ -39,7 +39,7 @@ namespace uni10{
     Matrix<uni10_type>::Matrix(): Block<uni10_type>(){};
 
   template <typename uni10_type>
-    Matrix<uni10_type>::Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag): Block<uni10_type>(_Rnum, _Cnum, _diag){
+    Matrix<uni10_type>::Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _diag): Block<uni10_type>(_Rnum, _Cnum, _diag){
       init();
     };
 
@@ -64,7 +64,8 @@ namespace uni10{
     Matrix<uni10_type>::~Matrix(){};
 
   template <typename uni10_type>
-    void Matrix<uni10_type>::assign(uni10_uint64 _Rnum, uni10_uint64 _Cnum){
+    void Matrix<uni10_type>::assign(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag){
+      this->diag = _isdiag;
       this->Rnum = _Rnum;
       this->Cnum = _Cnum;
       init();
@@ -126,10 +127,12 @@ namespace uni10{
   template <typename uni10_type>
     void Matrix<uni10_type>::init(const uni10_type* elem){
 
-      if(this->diag)
+      if(this->diag){
         this->elem.init(1, fmin(this->Rnum, this->Cnum), elem);
-      else
+      }
+      else{
         this->elem.init(this->Rnum, this->Cnum, elem);
+      }
 
     };
 

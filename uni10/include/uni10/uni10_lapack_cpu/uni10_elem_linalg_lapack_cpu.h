@@ -22,20 +22,22 @@ namespace uni10{
 
   void vectorExp(uni10_double64* a, uni10_elem_double64* X, uni10_uint64* N);
 
-  uni10_double64 vectorSum(uni10_elem_double64* X, uni10_uint64* N, uni10_int32* inc);
+  uni10_double64 vectorSum (const uni10_elem_double64* X, const uni10_uint64* N, uni10_int32* inc);
 
-  uni10_double64 vectorNorm(uni10_elem_double64* X, uni10_uint64* N, uni10_int32* inc);
+  uni10_double64 vectorNorm(const uni10_elem_double64* X, const uni10_uint64* N, uni10_int32* inc);
 
-  void matrixMul(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
-      const uni10_uint64* M, uni10_uint64* N, uni10_uint64* K, uni10_elem_double64* C);
+  void matrixMul(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_double64* C);
 
-  void setTranspose(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N, uni10_elem_double64* AT);
+  void setTranspose(const uni10_elem_double64* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* AT);
 
   void setTranspose(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N);
 
-  void setCTranspose(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N, uni10_elem_double64* AT);
+  void setDagger(const uni10_elem_double64* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* AT);
 
-  void setCTranspose(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N);
+  void setDagger(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N);
+
+  void setConjugate(const uni10_elem_double64* A, const uni10_uint64* N, uni10_elem_double64* A_conj);
 
   void setConjugate(uni10_elem_double64* A, uni10_uint64* N);
 
@@ -52,20 +54,22 @@ namespace uni10{
 
   void vectorExp(uni10_complex128* a, uni10_elem_complex128* X, uni10_uint64* N);
 
-  uni10_complex128 vectorSum(uni10_elem_complex128* X, uni10_uint64* N, uni10_int32* inc);
+  uni10_complex128 vectorSum (const uni10_elem_complex128* X, const uni10_uint64* N, uni10_int32* inc);
 
-  uni10_double64   vectorNorm(uni10_elem_complex128* X, uni10_uint64* N, uni10_int32* inc);
+  uni10_double64   vectorNorm(const uni10_elem_complex128* X, const uni10_uint64* N, uni10_int32* inc);
 
   void matrixMul(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, 
-      const uni10_uint64* M, uni10_uint64* N, uni10_uint64* K, uni10_elem_complex128* C);
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C);
 
-  void setTranspose(uni10_elem_complex128* A, uni10_uint64* M, uni10_uint64* N, uni10_elem_complex128* AT);
+  void setTranspose(const uni10_elem_complex128* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* AT);
 
   void setTranspose(uni10_elem_complex128* A, uni10_uint64* M, uni10_uint64* N);
 
-  void setDagger(uni10_elem_complex128* A, uni10_uint64* M, uni10_uint64* N, uni10_elem_complex128* AT);
+  void setDagger(const uni10_elem_complex128* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* AT);
 
   void setDagger(uni10_elem_complex128* A, uni10_uint64* M, uni10_uint64* N);
+
+  void setConjugate(const uni10_elem_complex128* A, const uni10_uint64* N, uni10_elem_complex128* A_conj);
 
   void setConjugate(uni10_elem_complex128* A, uni10_uint64* N);
 
@@ -83,10 +87,10 @@ namespace uni10{
   void vectorExp(uni10_double64* a, uni10_elem_complex128* X, uni10_uint64* N);
 
   void matrixMul(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, 
-      const uni10_uint64* M, uni10_uint64* N, uni10_uint64* K, uni10_elem_complex128* C);
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C);
 
   void matrixMul(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
-      const uni10_uint64* M, uni10_uint64* N, uni10_uint64* K, uni10_elem_complex128* C);
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C);
 
   // LAPACK
   //

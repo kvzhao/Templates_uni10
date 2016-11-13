@@ -78,4 +78,12 @@ typedef uni10::uni10_elem_lapack_cpu<uni10_double64>     uni10_elem_double64;
 typedef uni10::uni10_elem_lapack_cpu<uni10_complex128>   uni10_elem_complex128;
 #endif
 
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif
+
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif
+
 #endif
