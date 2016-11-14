@@ -53,7 +53,7 @@ namespace uni10{
         X[i] = std::exp(a * X[i]);
     }
 
-    void matrixMul(double* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
+    void matrixDot(double* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
 
       int size_A = M * K;
       std::complex<double>* CA = (std::complex<double>*)malloc(size_A*sizeof(std::complex<double>));
@@ -62,7 +62,7 @@ namespace uni10{
       zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, CA, &K, &beta, C, &N);
     }
 
-    void matrixMul(std::complex<double>* A, double* B, int M, int N, int K, std::complex<double>* C){
+    void matrixDot(std::complex<double>* A, double* B, int M, int N, int K, std::complex<double>* C){
 
       int size_B = K * N;
       std::complex<double>* CB = (std::complex<double>*)malloc(size_B*sizeof(std::complex<double>));

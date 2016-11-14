@@ -27,22 +27,22 @@ int main(){
   Matrix<double> MR1(4, 3);
   MR1.setElem(elem_R);
 
-  Matrix<double> MR2(3, 4);
-  MR2.setElem(elem_R);
-
-  Matrix<double> diag1(4, 4, true);
+  Matrix<double> diag1(4, 3, true);
   diag1.setElem(elem_diag1);
-
-  Matrix<double> diag2(3, 3, true);
-  diag2.setElem(elem_diag2);
 
   cout << "======= Real =======\n";
 
   cout << MR1;
 
-  //cout << MR2;
+  cout << diag1;
 
-  cout << MR1 + MR1;
+  cout << MR1 * MR1;
+
+  cout << MR1 * diag1;
+
+  cout << diag1 * MR1;
+
+  cout << diag1 * diag1;
 
   exit(0);
   Matrix< std::complex<double> > MC1(3, 3);

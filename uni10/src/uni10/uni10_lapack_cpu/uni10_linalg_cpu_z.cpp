@@ -111,7 +111,7 @@ namespace uni10{
       return sqrt(norm2);
     }
 
-    void matrixMul(std::complex<double>* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
+    void matrixDot(std::complex<double>* A, std::complex<double>* B, int M, int N, int K, std::complex<double>* C){
       std::complex<double> alpha = 1.0, beta = 0.0;
       zgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, A, &K, &beta, C, &N);
     }

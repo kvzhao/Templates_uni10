@@ -21,7 +21,7 @@ namespace uni10{
       //
       C.assign(A.Rnum, B.Cnum, A.diag && B.diag);
 
-      matrixMul(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, C);
+      matrixDot(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, C);
 
       return C;
 

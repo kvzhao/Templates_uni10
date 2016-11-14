@@ -23,7 +23,7 @@ namespace uni10{
 
     uni10_double64 vectorNorm(uni10_double64* X, uni10_uint64 N, uni10_int32 inc);
 
-    void matrixMul(uni10_double64* A, uni10_double64* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_double64* C);
+    void matrixDot(uni10_double64* A, uni10_double64* B, uni10_int32 M, uni10_int32 N, uni10_int32 K, uni10_double64* C);
 
     void diagRowMul(uni10_double64* mat, uni10_double64* diag, uni10_uint64 M, uni10_uint64 N);
 

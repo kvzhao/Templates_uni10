@@ -104,7 +104,7 @@ namespace uni10{
       return sqrt(norm2);
     }
 
-    void matrixMul(double* A, double* B, int M, int N, int K, double* C){
+    void matrixDot(double* A, double* B, int M, int N, int K, double* C){
       double alpha = 1, beta = 0;
       dgemm((char*)"N", (char*)"N", &N, &M, &K, &alpha, B, &N, A, &K, &beta, C, &N);
     }

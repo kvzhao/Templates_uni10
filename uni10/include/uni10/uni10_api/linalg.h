@@ -19,7 +19,7 @@ namespace uni10{
       //
       Matrix<uni10_type> C(A.Rnum, B.Cnum, A.diag && B.diag );
 
-      matrixMul(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, &C.elem);
+      matrixDot(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, &C.elem);
 
       return C;
 

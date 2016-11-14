@@ -82,17 +82,17 @@ namespace uni10{
           return *this;
         };
 
-        Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
+        //Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
 
-        };
+        //}
 
-        Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
+        //Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
 
-        };
+        //}
 
-        Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
+        //Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
 
-        };
+        //}
 
         template<typename _uni10_type> 
           friend void resize( Matrix<_uni10_type>& A , uni10_uint64 row, uni10_uint64 col);
