@@ -52,50 +52,36 @@ namespace uni10{
 
   template<typename uni10_type>
     std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b);
-    
+
   template<typename uni10_type>
-    class Block{ public: 
+    Matrix<uni10_type> operator+(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
 
-      friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
+  template<typename uni10_type>
+    Matrix<uni10_type> operator-(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
 
-      //UNI10_LINALG_RETURN_VALUE
-      template<typename _uni10_type> 
-        friend Matrix<_uni10_type> dot( const Block<_uni10_type>& A, const Block<_uni10_type>& B );
+  template<typename uni10_type>
+    Matrix<uni10_type> operator*(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
 
-      template<typename _uni10_type>
-        friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
+  template<typename uni10_type>
+    uni10_bool operator==(const Block<uni10_type>& m1, const Block<uni10_type>& m2);
 
-      template<typename _uni10_type>
-        friend std::vector< Matrix<_uni10_type> > rq( const Block<_uni10_type>& M );
+  template<typename uni10_type>
+    uni10_bool operator!=(const Block<uni10_type>& m1, const Block<uni10_type>& m2);
 
-      template<typename _uni10_type>
-        friend std::vector< Matrix<_uni10_type> > lq( const Block<_uni10_type>& M );
+  template<typename uni10_type>
+    class Block{  
 
-      template<typename _uni10_type>
-        friend std::vector< Matrix<_uni10_type> > ql( const Block<_uni10_type>& M );
+      protected:
 
-      template<typename _uni10_type>
-        friend std::vector< Matrix<_uni10_type> > svd( const Block<_uni10_type>& M );
+        UELEM(uni10_elem, _package, _type)<uni10_type> elem;     // pointer to a real matrix
 
-      template<typename _uni10_type>
-        friend _uni10_type sum( const Block<_uni10_type>& Mij );
+        uni10_uint64 Rnum;
 
-      template<typename _uni10_type>
-        friend uni10_double64 norm( const Block<_uni10_type>& Mij );
+        uni10_uint64 Cnum;
 
-      template<typename _uni10_type>
-        friend Matrix<_uni10_type> inverse( const Block<_uni10_type>& Mij );
+        bool diag;
 
-      template<typename _uni10_type>
-        friend Matrix<_uni10_type> transpose( const Block<_uni10_type>& Mij );
-
-      template<typename _uni10_type>
-        friend Matrix<_uni10_type> dagger( const Block<_uni10_type>& Mij );
-      
-      template<typename _uni10_type>
-        friend Matrix<_uni10_type> conj( const Block<_uni10_type>& Mij );
-
-        uni10_double64 operator[](uni10_uint64 idx)const;
+      public:
 
         explicit Block();
 
@@ -127,15 +113,65 @@ namespace uni10{
 
         friend class Matrix<uni10_type>;
 
-      protected:
+        friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 
-        UELEM(uni10_elem, _package, _type)<uni10_type> elem;     // pointer to a real matrix
+        friend Matrix<uni10_type> operator- <>(const Block& m2, const Block& m1); // Elem-wise subtraction
 
-        uni10_uint64 Rnum;
+        friend Matrix<uni10_type> operator+ <>(const Block& m1, const Block& m2); // Elem-wise addition
 
-        uni10_uint64 Cnum;
+        friend uni10_bool operator== <>(const Block& m1, const Block& m2);
 
-        bool diag;
+        friend uni10_bool operator!= <>(const Block& m1, const Block& m2);
+
+        //friend Matrix<uni10_type> operator* <>(const Block& Ma, const Block& Mb); // Elem-wise multiplication
+        //
+        //friend Matrix<uni10_type> operator*<>(const uni10_double64 a, const Block& Ma);
+        //  
+        //friend Matrix<uni10_type> operator*<>(const Block& Ma, const uni10_double64 a);
+
+        //friend Matrix<uni10_type> operator*<>(const uni10_complex128& a, const Block& Ma);
+
+        //friend Matrix<uni10_type> operator*<>(const Block& Ma, const uni10_complex128& a);
+
+
+        //UNI10_LINALG_RETURN_VALUE
+        template<typename _uni10_type> 
+          friend Matrix<_uni10_type> dot( const Block<_uni10_type>& A, const Block<_uni10_type>& B );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > rq( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > lq( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > ql( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > svd( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend _uni10_type sum( const Block<_uni10_type>& Mij );
+
+        template<typename _uni10_type>
+          friend uni10_double64 norm( const Block<_uni10_type>& Mij );
+
+        template<typename _uni10_type>
+          friend Matrix<_uni10_type> inverse( const Block<_uni10_type>& Mij );
+
+        template<typename _uni10_type>
+          friend Matrix<_uni10_type> transpose( const Block<_uni10_type>& Mij );
+
+        template<typename _uni10_type>
+          friend Matrix<_uni10_type> dagger( const Block<_uni10_type>& Mij );
+
+        template<typename _uni10_type>
+          friend Matrix<_uni10_type> conj( const Block<_uni10_type>& Mij );
+
+        uni10_double64 operator[](uni10_uint64 idx)const;
 
     };
 
@@ -158,14 +194,21 @@ namespace uni10{
       return os;
     }
 
+  template<typename uni10_type>
+    Matrix<uni10_type> operator+ (const Block<uni10_type>& m1, const Block<uni10_type>& m2){
+
+      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "Lack err msg!!!");
+
+      Matrix<uni10_type> m3(m1);
+      vectorAdd(&m3.elem, &m2.elem, &m3.elem.__elemNum);
+
+      return m3;
+       
+    }
+
 };
 
 /*
- *      Move to linalg
- *
-        uni10_double64 norm()const;
-
-        Block getDiag()const;
 
         uni10_double64 trace()const;
 
@@ -174,8 +217,6 @@ namespace uni10{
         std::vector<Block> eig()const;
 
         std::vector<Block> eigh()const;
-
-        Block inverse()const;
 
         //friend Matrix operator*(const Block& Ma, const Block& Mb); //R*R C*C R*C C*R
 
@@ -188,18 +229,6 @@ namespace uni10{
         //friend Matrix operator*(const Block& Ma, const Complex& a);
 
         //friend Matrix operator+(const Block& Ma, const Block& Mb);
-
-        //friend bool operator==(const Block& m1, const Block& m2);
-
-        //friend bool operator!=(const Block& m1, const Block& m2){return !(m1 == m2);};
-
-        //friend Matrix RDotR(const Block& Ma, const Block& Mb);
-
-        //friend Matrix CDotR(const Block& Ma, const Block& Mb);
-
-        //friend Matrix RDotC(const Block& Ma, const Block& Mb);
-
-        //friend Matrix CDotC(const Block& Ma, const Block& Mb);
 
 */
 

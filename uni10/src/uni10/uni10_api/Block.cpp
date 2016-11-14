@@ -33,6 +33,25 @@
 
 namespace uni10{
 
+  //template<typename uni10_type>
+  //  std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b){
+
+  //    fprintf(stdout, "\n%ld x %ld = %ld", _b.Rnum, _b.Cnum, _b.elemNum());
+
+  //    if(_b.typeID() == 1)  fprintf(stdout, ", REAL");
+  //    else if(_b.typeID() == 2)   os << ", COMPLEX";
+
+  //    if(_b.diag)
+  //      fprintf(stdout, ", Diagonal");
+  //    fprintf(stdout, "\n\n");
+
+  //    _b.elem.print_elem(_b.Rnum, _b.Cnum, _b.diag);
+
+  //    os << "\n";
+
+  //    return os;
+  //  }
+
   template<typename uni10_type>
     Block<uni10_type>::Block(): Rnum(0), Cnum(0), diag(false){};
 

@@ -83,15 +83,15 @@ namespace uni10{
         };
 
         Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
-          vectorAdd(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
         };
 
         Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
-          vectorSub(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
         };
 
         Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
-          vectorMul(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
         };
 
         template<typename _uni10_type> 

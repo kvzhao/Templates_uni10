@@ -47,6 +47,76 @@ namespace uni10{
     return uni10_linalg::vectorNorm(X->__elem, *N, *inc);
 
   }
+  
+  void matrixAdd(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_double64* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_double64* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum*sizeof(uni10_complex128));
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
+
+  }
+
+  void matrixSub(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_double64* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_double64* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum*sizeof(uni10_complex128));
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
+
+  }
 
   void matrixMul(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_double64* B, uni10_const_bool* isBdiag, 
       const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_double64* C){
@@ -149,6 +219,76 @@ namespace uni10{
   void vectorExp(uni10_complex128* a, uni10_elem_complex128* X, uni10_uint64* N){
 
     uni10_linalg::vectorExp(*a, X->__elem, *N);
+
+  }
+  
+  void matrixAdd(const uni10_elem_complex128* A, uni10_const_bool* isAdiag, const uni10_elem_complex128* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum*sizeof(uni10_complex128));
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
+
+  }
+
+  void matrixSub(const uni10_elem_complex128* A, uni10_const_bool* isAdiag, const uni10_elem_complex128* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum*sizeof(uni10_complex128));
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
 
   }
 
@@ -258,6 +398,74 @@ namespace uni10{
 
   }
 
+  void matrixAdd(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_complex128* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum * sizeof(uni10_elem_complex128) );
+      uni10_linalg::vectorAdd(C->__elem, A->__elem, C->__elemNum);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum * sizeof(uni10_elem_complex128) );
+      uni10_uint64 min = min(*M, *N);
+      for(int i = 0; i < min, i++)
+        C->__elem[i * N + i] = A->__elem[i];
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_elem_cast_cpu(C->__elem, A->__elem, C->__elemNum);
+      uni10_uint64 min = min(*M, *N);
+      for(int i = 0; i < min, i++)
+        C->__elem[i * N + i] = B->__elem[i];
+
+    }
+    else{
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, min*sizeof(uni10_complex128));
+      uni10_linalg::vectorAdd(C->__elem, A->__elem, min);
+
+    }
+
+  }
+
+  void matrixSub(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_complex128* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum * sizeof(uni10_elem_complex128) );
+      uni10_linalg::vectorAdd(C->__elem, A->__elem, C->__elemNum);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, B->__elemNum * sizeof(uni10_elem_complex128) );
+      uni10_uint64 min = min(*M, *N);
+      for(int i = 0; i < min, i++)
+        C->__elem[i * N + i] = A->__elem[i];
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_elem_cast_cpu(C->__elem, A->__elem, C->__elemNum);
+      uni10_uint64 min = min(*M, *N);
+      for(int i = 0; i < min, i++)
+        C->__elem[i * N + i] = B->__elem[i];
+
+    }
+    else{
+
+      uni10_elem_copy_cpu(C->__elem, B->__elem, min*sizeof(uni10_complex128));
+      uni10_linalg::vectorAdd(C->__elem, A->__elem, min);
+
+    }
+
+  }
+
   void matrixMul(const uni10_elem_double64* A, uni10_const_bool* isAdiag, const uni10_elem_complex128* B, uni10_const_bool* isBdiag, 
       const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C){
 
@@ -278,6 +486,77 @@ namespace uni10{
 
       for(int r = 0; r < (int)*M; r++)
         uni10_elem_cast_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col);
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
+
+  }
+
+  void matrixAdd(const uni10_elem_complex128* A, uni10_const_bool* isAdiag, const uni10_elem_double64* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_cast_cpu(C->__elem, B->__elem, B->__elemNum);
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
+
+      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+
+    }
+    else{
+
+      uni10_uint64 min = min(A->__elemNum, B->__elemNum);
+      uni10_elem_copy_cpu(C->__elem, A->__elem, min*sizeof(uni10_complex128));
+
+      uni10_linalg::vectorMul(C->__elem, B->__elem, min);
+
+    }
+
+  }
+
+  
+  void matrixSub(const uni10_elem_complex128* A, uni10_const_bool* isAdiag, const uni10_elem_double64* B, uni10_const_bool* isBdiag, 
+      const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C){
+
+    if( !*isAdiag && !*isBdiag ){
+
+      uni10_linalg::matrixMul(A->__elem, B->__elem, *M, *N, *K, C->__elem);
+
+    }
+    else if( *isAdiag && !*isBdiag ){
+
+      uni10_elem_cast_cpu(C->__elem, B->__elem, B->__elemNum);
+      uni10_linalg::diagRowMul(C->__elem, A->__elem, min(*M, *K), *N);
+
+    }
+    else if( !*isAdiag && *isBdiag ){
+
+      uni10_uint64 data_col = min(*K, *N);
+
+      for(int r = 0; r < (int)*M; r++)
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
 
       uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
 
