@@ -3,6 +3,7 @@
 
 #include "uni10/uni10_type.h"
 #include "uni10/uni10_lapack_cpu/uni10_elem_lapack_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_tools_cpu.h"
 #include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_d.h"
 #include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_dz.h"
 #include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_z.h"
