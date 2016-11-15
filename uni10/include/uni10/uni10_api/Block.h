@@ -44,6 +44,10 @@
 
 namespace uni10{
 
+  enum UNI10_INPLACE{
+    INPLACE = 1
+  };
+
   template<typename uni10_type>
     class Matrix;
 
@@ -54,16 +58,19 @@ namespace uni10{
     std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b);
 
   template<typename uni10_type>
-    Matrix<uni10_type> operator+(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
+    Matrix<uni10_type> operator+(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); 
 
   template<typename uni10_type>
-    Matrix<uni10_type> operator-(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
+    Matrix<uni10_type> operator-(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); 
 
   template<typename uni10_type>
-    Matrix<uni10_type> operator*(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
+    Matrix<uni10_type> operator*(const Block<uni10_type>& Ma, const Block<uni10_type>& Mb); 
 
   template<typename uni10_type>
-    Matrix<uni10_type> operator*(const uni10_type a, const Block<uni10_type>& Mb); //R*R C*C R*C C*R
+    Matrix<uni10_type> operator*(uni10_type a, const Block<uni10_type>& Mb); 
+
+  template<typename uni10_type>
+    Matrix<uni10_type> operator*( const Block<uni10_type>& Mb, uni10_type a); 
 
   template<typename uni10_type>
     uni10_bool operator==(const Block<uni10_type>& m1, const Block<uni10_type>& m2);
@@ -85,6 +92,8 @@ namespace uni10{
         bool diag;
 
       public:
+
+        uni10_double64 operator[](uni10_uint64 idx)const;
 
         explicit Block();
 
@@ -124,26 +133,20 @@ namespace uni10{
 
         friend Matrix<uni10_type> operator* <>(const Block& Ma, const Block& Mb); // Elem-wise multiplication
 
-        friend Matrix<uni10_type> operator* <>(const uni10_type a, const Block& Ma);
+        friend Matrix<uni10_type> operator* <>(uni10_type a, const Block& Ma);
+
+        friend Matrix<uni10_type> operator* <>(const Block& Ma, uni10_type a);
 
         friend uni10_bool operator== <>(const Block& m1, const Block& m2);
 
         friend uni10_bool operator!= <>(const Block& m1, const Block& m2);
-
-        //  
-        //friend Matrix<uni10_type> operator*<>(const Block& Ma, const uni10_double64 a);
-
-        //friend Matrix<uni10_type> operator*<>(const uni10_complex128& a, const Block& Ma);
-
-        //friend Matrix<uni10_type> operator*<>(const Block& Ma, const uni10_complex128& a);
-
 
         //UNI10_LINALG_RETURN_VALUE
         template<typename _uni10_type> 
           friend Matrix<_uni10_type> dot( const Block<_uni10_type>& A, const Block<_uni10_type>& B );
 
         template<typename _uni10_type>
-          friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
+          friend const std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
 
         template<typename _uni10_type>
           friend std::vector< Matrix<_uni10_type> > rq( const Block<_uni10_type>& M );
@@ -175,7 +178,8 @@ namespace uni10{
         template<typename _uni10_type>
           friend Matrix<_uni10_type> conj( const Block<_uni10_type>& Mij );
 
-        uni10_double64 operator[](uni10_uint64 idx)const;
+        template<typename _uni10_type>
+          friend _uni10_type det( const Block<_uni10_type>& _Mij );
 
     };
 
@@ -201,7 +205,7 @@ namespace uni10{
   template<typename uni10_type>
     Matrix<uni10_type> operator+ (const Block<uni10_type>& m1, const Block<uni10_type>& m2){
 
-      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "Lack err msg!!!");
+      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "%s", "Lack err msg!!!");
 
       Matrix<uni10_type> m3(m1.Rnum, m1.Cnum, m1.diag && m2.diag);
       matrixAdd(&m1.elem, &m1.diag, &m2.elem, &m2.diag, &m1.Rnum, &m1.Cnum, &m3.elem);
@@ -213,7 +217,7 @@ namespace uni10{
   template<typename uni10_type>
     Matrix<uni10_type> operator- (const Block<uni10_type>& m1, const Block<uni10_type>& m2){
 
-      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "Lack err msg!!!");
+      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "%s", "Lack err msg!!!");
 
       Matrix<uni10_type> m3(m1.Rnum, m1.Cnum, m1.diag && m2.diag);
       matrixSub(&m1.elem, &m1.diag, &m2.elem, &m2.diag, &m1.Rnum, &m1.Cnum, &m3.elem);
@@ -225,7 +229,7 @@ namespace uni10{
   template<typename uni10_type>
     Matrix<uni10_type> operator* (const Block<uni10_type>& m1, const Block<uni10_type>& m2){
 
-      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "Lack err msg!!!");
+      uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "%s", "Lack err msg!!!");
 
       Matrix<uni10_type> m3(m1.Rnum, m1.Cnum, m1.diag && m2.diag);
       matrixMul(&m1.elem, &m1.diag, &m2.elem, &m2.diag, &m1.Rnum, &m1.Cnum, &m3.elem);
@@ -235,13 +239,32 @@ namespace uni10{
     }
 
   template<typename uni10_type>
+    Matrix<uni10_type> operator* (uni10_type a, const Block<uni10_type>& m1){
+       Matrix<uni10_type> m2(m1);
+       m2 *= a;
+       return m2;
+    }
+
+  template<typename uni10_type>
+    Matrix<uni10_type> operator* (const Block<uni10_type>& m1, uni10_type a){
+       return a * m1;
+    }
+
+  template<typename uni10_type>
     uni10_bool operator== (const Block<uni10_type>& m1, const Block<uni10_type>& m2){
 
       if( (m1.Rnum != m2.Rnum) || (m1.Cnum != m2.Cnum) || (m1.diag != m2.diag) )
         return false;
 
-      for(int i = 0; i < (int)m1.elem.__elemNum, i++)
-        if
+      //Check real part 
+      for(int i = 0; i < (int)m1.elem->__elemNum; i++)
+        if(UNI10_REAL(m1.elem.__elem[i] )- UNI10_REAL(m2.elem.__elem[i] )> 10E-12)
+          return false;
+
+      if(m1.elem.__uni10_typeid == 2)
+        for(int i = 0; i < (int)m1.elem->__elemNum; i++)
+          if(UNI10_IMAG(m1.elem.__elem[i]) - UNI10_IMAG(m2.elem.__elem[i]) > 10E-12)
+            return false;
 
       return true; 
     }

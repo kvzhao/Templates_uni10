@@ -57,7 +57,7 @@ namespace uni10{
   template <typename uni10_type>
     Matrix<uni10_type>::Matrix(const std::string& fname){
       const std::string f = fname;
-      uni10_error_msg(true, "Developping");
+      uni10_error_msg(true, "%s", "Developping");
     };
 
   template <typename uni10_type>
@@ -74,18 +74,18 @@ namespace uni10{
   template <typename uni10_type>
     void Matrix<uni10_type>::load(const std::string& fname){
       const std::string f = fname;
-      uni10_error_msg(true, "Developping");
+      uni10_error_msg(true, "%s", "Developping");
     };
 
   template <typename uni10_type>
 
     void Matrix<uni10_type>::setElem(const uni10_type* src, bool src_ongpu){
 
-      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install the MAGMA or CUDAONLY gpu version instead.");
+      uni10_error_msg( src_ongpu, "%s", " The source pointer is on the device. Please install the MAGMA or CUDAONLY gpu version instead.");
 
       if(this->elem.__uni10_typeid != UNI10_TYPE_ID(uni10_type)){
 
-        uni10_error_msg( true, " Developping !!!");
+        uni10_error_msg( true, "%s", " Developping !!!");
 
       }
 
@@ -96,19 +96,13 @@ namespace uni10{
   template <typename uni10_type>
     void Matrix<uni10_type>::setElem(const std::vector<uni10_type>& elem, bool src_ongpu){
 
-      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install the MAGMA or CUDAONLY gpu version instead.");
+      uni10_error_msg( src_ongpu, "%s", " The source pointer is on the device. Please install the MAGMA or CUDAONLY gpu version instead.");
 
-      if(this->diag == false && this->Rnum*this->Cnum != elem.size()){
-        char err[512];
-        sprintf(err, "Number of the input elements is: %ld, and it doesn't match to the size of matrix: %ld", elem.size(), this->Rnum*this->Cnum);
-        uni10_error_msg(true, err);
-      }
+      uni10_error_msg(this->diag == false && this->Rnum*this->Cnum != elem.size(),
+          "Number of the input elements is: %ld, and it doesn't match to the size of matrix: %ld", elem.size(), this->Rnum*this->Cnum);
 
-      if(this->diag == true && fmin(this->Rnum, this->Cnum) != elem.size()){
-        char err[512];
-        sprintf(err, "Number of the input elements is: %ld, and it doesn't match to the size of matrix: %.0f", elem.size(), fmin(this->Rnum,this->Cnum));
-        uni10_error_msg(true, err);
-      }
+      uni10_error_msg(this->diag == true && fmin(this->Rnum, this->Cnum) != elem.size(), 
+          "Number of the input elements is: %ld, and it doesn't match to the size of matrix: %.0f", elem.size(), fmin(this->Rnum,this->Cnum));
 
       setElem(&elem[0], src_ongpu);
 
@@ -116,12 +110,12 @@ namespace uni10{
 
   template <typename uni10_type>
     void Matrix<uni10_type>::uni10_elem_free(){
-      uni10_error_msg(true, "Developping");
+      uni10_error_msg(true, "%s","Developping");
     };
 
   template <typename uni10_type>
     void Matrix<uni10_type>::set_elem_null(){
-      uni10_error_msg(true, "Developping");
+      uni10_error_msg(true, "%s", "Developping");
     };
 
   template <typename uni10_type>

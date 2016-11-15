@@ -1,21 +1,29 @@
 #include <limits.h>
 
 #include "uni10/uni10_error.h"
-#include "uni10/uni10_lapack_cpu/uni10_tools_cpu.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_z.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_dz.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_tools_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_z.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_dz.h"
 
 #ifdef MKL
 #define MKL_Complex8  std::complex<float>
 #define MKL_Complex16 std::complex<double>
 #include "mkl.h"
 #else
-#include "uni10/uni10_lapack_cpu/uni10_lapack_wrapper_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_lapack_wrapper_cpu.h"
 #endif
 
 namespace uni10{
 
   namespace uni10_linalg{
+
+    void vectorAdd(double a, double* X, int incx, std::complex<double>* Y, int incy, size_t N){   // Y = aX + Y
+      size_t x_idx = 0;
+      for(size_t i = 0; i < N; i+=incy){
+        Y[i] += a * X[x_idx];
+        x_idx += incx;
+      }
+    }
 
     void vectorAdd(std::complex<double>* Y, double* X, size_t N){
       for(size_t i = 0; i < N; i++)
@@ -101,13 +109,13 @@ namespace uni10{
       int info;
       zheev((char*)"V", (char*)"U", &N, EigVec, &ldA, Eig, &worktest, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zheev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zheev': Lapack INFO = ", info);
 
       lwork = (int)worktest.real();
       std::complex<double>* work= (std::complex<double>*)malloc(sizeof(std::complex<double>)*lwork);
       zheev((char*)"V", (char*)"U", &N, EigVec, &ldA, Eig, work, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zheev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zheev': Lapack INFO = ", info);
 
       free(work);
       free(rwork);
@@ -117,21 +125,21 @@ namespace uni10{
 
       std::complex<double>* Mij = (std::complex<double>*)malloc(M * N * sizeof(std::complex<double>));
       memcpy(Mij, Mij_ori, M * N * sizeof(std::complex<double>));
-      int min = min(M, N);
+      int min = std::min(M, N);
       int ldA = N, ldu = N, ldvT = min;
       int lwork = -1;
       std::complex<double> worktest;
       int info;
-      double *rwork = (double*) malloc(max(1, 5 * min) * sizeof(double));
+      double *rwork = (double*) malloc(std::max(1, 5 * min) * sizeof(double));
       zgesvd((char*)"S", (char*)"S", &N, &M, Mij, &ldA, S, vT, &ldu, U, &ldvT, &worktest, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgesvd': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zgesvd': Lapack INFO = ", info);
 
       lwork = (int)(worktest.real());
       std::complex<double> *work = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zgesvd((char*)"S", (char*)"S", &N, &M, Mij, &ldA, S, vT, &ldu, U, &ldvT, work, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgesvd': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zgesvd': Lapack INFO = ", info);
 
       free(rwork);
       free(work);

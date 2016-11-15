@@ -14,21 +14,21 @@ namespace uni10{
   template<typename uni10_type> 
     Matrix<uni10_type> dot( const Block<uni10_type>& A, const Block<uni10_type>& B ){
 
-      uni10_error_msg(A.Cnum != B.Rnum, "The dimensions of the two matrices do not match for matrix multiplication.");
+      uni10_error_msg(A.Cnum != B.Rnum, "%s", "The dimensions of the two matrices do not match for matrix multiplication.");
       //Lack of error msgs.
       //
       Matrix<uni10_type> C(A.Rnum, B.Cnum, A.diag && B.diag );
 
-      matrixDot(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Rnum, &C.elem);
+      matrixDot(&A.elem, &A.diag, &B.elem, &B.diag, &A.Rnum, &B.Cnum, &A.Cnum, &C.elem);
 
       return C;
 
     }
 
   template<typename uni10_type>
-    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
+    const std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
 
-      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "%s", "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
@@ -41,10 +41,9 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-
     std::vector< Matrix<uni10_type> > rq( const Block<uni10_type>& Mij ){
 
-      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform RQ decomposition when Rnum > Cnum. Nothing to do." );
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "%s", "Cannot perform RQ decomposition when Rnum > Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
@@ -59,7 +58,7 @@ namespace uni10{
   template<typename uni10_type>
     std::vector< Matrix<uni10_type> > lq( const Block<uni10_type>& Mij ){
 
-      uni10_error_msg(Mij.Rnum > Mij.Cnum, "Cannot perform LQ decomposition when Rnum > Cnum. Nothing to do." );
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "%s", "Cannot perform LQ decomposition when Rnum > Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
@@ -74,7 +73,7 @@ namespace uni10{
   template<typename uni10_type>
     std::vector< Matrix<uni10_type> > ql( const Block<uni10_type>& Mij ){
 
-      uni10_error_msg(Mij.Rnum < Mij.Cnum, "Cannot perform QL decomposition when Rnum < Cnum. Nothing to do." );
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "%s", "Cannot perform QL decomposition when Rnum < Cnum. Nothing to do." );
 
       std::vector<Matrix<uni10_type> > outs;
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
@@ -108,7 +107,7 @@ namespace uni10{
 
       Matrix<uni10_type> invM(Mij);
 
-      uni10_error_msg(!(Mij.Rnum == Mij.Cnum), "Cannot perform inversion on a non-square matrix." );
+      uni10_error_msg(!(Mij.Rnum == Mij.Cnum), "%s", "Cannot perform inversion on a non-square matrix." );
 
       matrixInv(&invM.elem, &Mij.Rnum, &Mij.diag);
 
@@ -159,6 +158,15 @@ namespace uni10{
       setConjugate(&Mij.elem, &Mij.elem.__elemNum, &MijConj.elem);
 
       return MijConj;
+
+    }
+
+  template<typename uni10_type>
+    uni10_type det( const Block<uni10_type>& Mij ){
+
+      uni10_type res = matrixDet(&Mij.elem, &Mij.Rnum, &Mij.diag);
+
+      return res;
 
     }
 

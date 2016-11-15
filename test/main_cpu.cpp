@@ -22,7 +22,7 @@ int main(){
   cout << A;
 
   printf("\n------ Matrix B ------\n");
-  B.setElem(elemB);
+  B.setElem(NULL);
   cout << B;
 
    return 0;

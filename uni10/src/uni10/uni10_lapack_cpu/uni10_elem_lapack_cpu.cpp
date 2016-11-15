@@ -1,4 +1,5 @@
 #include "uni10/uni10_type.h"
+#include "uni10/uni10_error.h"
 #include "uni10/uni10_lapack_cpu/uni10_elem_lapack_cpu.h"
 
 namespace uni10{
@@ -30,16 +31,17 @@ namespace uni10{
   template<typename uni10_type>
     uni10_elem_lapack_cpu<uni10_type>::~uni10_elem_lapack_cpu(){
 
-      uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
+      if(__elem != NULL)
+        uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
 
     };
 
   template<typename uni10_type>
     void uni10_elem_lapack_cpu<uni10_type>::setElem(const uni10_type* src, bool src_ongpu){
 
-      uni10_error_msg( src_ongpu, " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
-      uni10_error_msg( __elem == NULL, "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
-      uni10_error_msg( src  == NULL, "The source ptr is NULL.");
+      uni10_error_msg( src_ongpu, "%s", " The source pointer is on the device. Please install MAGMA or CUDAONLY gpu version instead.");
+      uni10_error_msg( __elem == NULL, "%s", "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
+      uni10_error_msg( src  == NULL, "%s", "The source ptr is NULL.");
 
       uni10_elem_copy_cpu( __elem, src, __elemNum * sizeof(uni10_type) );
 
@@ -49,6 +51,9 @@ namespace uni10{
     void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src){
 
       __elemNum =  _Rnum * _Cnum ;
+
+      if(__elem != NULL)
+        uni10_elem_free_cpu(__elem, __elemNum*sizeof(uni10_type));
 
       uni10_uint64 memsize = __elemNum * sizeof(uni10_type);
 
@@ -79,6 +84,16 @@ namespace uni10{
         uni10_elemBzero_cpu( __elem, memsize );
 
       }
+
+    }
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::clear(){
+      
+      __elemNum = 0;
+
+      if(__elem != NULL)
+        uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
 
     }
 
@@ -226,7 +241,7 @@ namespace uni10{
 
       }else{
 
-        uni10_error_msg(true, "Resize fixTail is developping !!!");
+        uni10_error_msg(true, "%s", "Resize fixTail is developping !!!");
 
       }
 

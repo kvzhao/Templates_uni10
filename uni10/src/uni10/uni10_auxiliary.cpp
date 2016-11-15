@@ -45,7 +45,7 @@ namespace uni10{
       _env.etype = _cpu;
       _env.communicate = false;
 
-      uni10_error_msg(true, "Developping !!!");
+      uni10_error_msg(true, "%s", "Developping !!!");
 
     }
 
@@ -61,7 +61,7 @@ namespace uni10{
     bool exsist_rc = true;
     FILE* rcfp = fopen("~/.uni10rc", "r");
 
-    uni10_error_msg(true, "Developping !!!");
+    uni10_error_msg(true, "%s", "Developping !!!");
 
     return exsist_rc;
 
@@ -75,7 +75,7 @@ namespace uni10{
     bool exsist_rc = true;
     FILE* rcfp = fopen("~/.uni10rc", "r");
 
-    uni10_error_msg(true, "Developping !!!");
+    uni10_error_msg(true, "%s", "Developping !!!");
 
     return exsist_rc;
 

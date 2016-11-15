@@ -9,6 +9,8 @@ namespace uni10{
 
     //Blas
     //
+    void vectorAdd(uni10_double64 a, uni10_double64* X, uni10_int32 incx, uni10_complex128* Y, uni10_int32 incy, uni10_uint64 N);   // Y = a*X + Y
+
     void vectorAdd(uni10_complex128* Y, uni10_double64* X, uni10_uint64 N);
 
     void vectorSub(uni10_complex128* Y, uni10_double64* X, uni10_uint64 N);

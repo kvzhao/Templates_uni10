@@ -27,6 +27,9 @@ namespace uni10{
 
   void uni10_print_elem_i(const uni10_double64& elem_i);
 
+  void uni10_getUpTri_cpu(uni10_double64* elem, uni10_double64* tri_elem, uni10_uint64 m, uni10_uint64 n); // elem -> tri_elem
+
+  void uni10_getDnTri_cpu(uni10_double64* elem, uni10_double64* tri_elem, uni10_uint64 m, uni10_uint64 n);
   //For complex ptr.
   //
   void uni10_setDiag_cpu(uni10_complex128* elem, uni10_complex128* diag_elem, uni10_uint64 M, uni10_uint64 N, uni10_uint64 diag_N);
@@ -35,6 +38,9 @@ namespace uni10{
 
   void uni10_print_elem_i(const uni10_complex128& elem_i);
   
+  void uni10_getUpTri_cpu(uni10_complex128* elem, uni10_complex128* tri_elem, uni10_uint64 m, uni10_uint64 n); // elem -> tri_elem
+
+  void uni10_getDnTri_cpu(uni10_complex128* elem, uni10_complex128* tri_elem, uni10_uint64 m, uni10_uint64 n);
   // Convert
   void uni10_elem_cast_cpu(uni10_complex128* des, uni10_double64* src, uni10_uint64 N);
 

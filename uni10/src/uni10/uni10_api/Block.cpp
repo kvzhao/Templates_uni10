@@ -83,7 +83,7 @@ namespace uni10{
     void Block<uni10_type>::save(const std::string& fname)const{
 
       std::string a = fname;
-      uni10_error_msg(true, "Developping !!!");
+      uni10_error_msg(true, "%s", "Developping !!!");
 
     }
 

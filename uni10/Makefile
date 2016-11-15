@@ -19,6 +19,8 @@ else
 	VNUM = 1
 endif
 
+COMMON_FLAGS = -std=c++11
+
 ##########################################
 
 # Explicitly check for the config file, otherwise make -k will proceed anyway.
@@ -126,6 +128,9 @@ ifeq ($(VNUM), 1)
 	OBJS := $(CXX_OBJS)
 	ALL_WARNS := $(ALL_CXX_WARNS)
 	COMMON_FLAGS += -DCPU -DLAPACK
+  ifeq ($(USE_BOOST), 1)
+		COMMON_FLAGS += -DBOOST
+	endif
 else ifeq ($(VNUM), 2)
 	OBJS := $(CXX_OBJS)
 	COMMON_FLAGS += -DCPU -DARMADILLO

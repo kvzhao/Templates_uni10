@@ -35,67 +35,18 @@
 
 namespace uni10{
 
-  enum UNI10_INPLACE{
-    INPLACE = 1
-  };
-
   template <typename uni10_type>
     class Matrix:public Block<uni10_type> {
 
+      private:
+
+        void uni10_elem_free();
+
+        void set_elem_null();
+
+        void init(const uni10_type* elem = NULL);
+
       public:
-
-        template<typename _uni10_type> 
-          friend void dot( Matrix<_uni10_type>& A, const Block<_uni10_type>& B, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void qr( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& Q, Matrix<_uni10_type>& R, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void rq( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& R, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
-
-        template<typename _uni10_type>
-          friend void lq( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
-
-        template<typename _uni10_type>
-          friend void ql( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
-
-        template<typename _uni10_type>
-          friend void svd( const Block<_uni10_type>& Mij, Matrix<_uni10_type>& U, Matrix<_uni10_type>& S, Matrix<_uni10_type>& VT, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void inverse( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void transpose( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void dagger( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
-
-        template<typename _uni10_type>
-          friend void conj( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
-
-        Matrix& operator=(const Matrix& _m){
-          this->Rnum = _m.Rnum;
-          this->Cnum = _m.Cnum;
-          this->diag = _m.diag;
-          init(_m.elem.__elem);
-          return *this;
-        };
-
-        //Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
-
-        //}
-
-        //Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
-
-        //}
-
-        //Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
-
-        //}
-
-        template<typename _uni10_type> 
-          friend void resize( Matrix<_uni10_type>& A , uni10_uint64 row, uni10_uint64 col);
 
         explicit Matrix();
 
@@ -117,22 +68,161 @@ namespace uni10{
 
         void setElem(const std::vector<uni10_type>& elem, bool src_ongpu = false);
 
-      private:
+        Matrix& operator=(const Matrix& _m){
+          this->Rnum = _m.Rnum;
+          this->Cnum = _m.Cnum;
+          this->diag = _m.diag;
+          init(_m.elem.__elem);
+          return *this;
+        };
 
-        void uni10_elem_free();
+        uni10_type& operator[](const uni10_uint64 idx){
+          return this->elem.__elem[idx];
+        }
 
-        void set_elem_null();
+        Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
 
-        void init(const uni10_type* elem = NULL);
+          if(this->diag && !_m.diag){
+
+            uni10_uint64 elemNum = this->elem.__elemNum;
+
+            uni10_type* _elem = (uni10_type*)malloc(this->elem.__elemNum * sizeof(uni10_type));
+
+            uni10_elem_copy_cpu(_elem, this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
+
+            this->diag = false;
+
+            this->elem.init(_m.Rnum, _m.Cnum, _m.elem.__elem);
+
+            for(int i = 0; i < (int)elemNum; i++)
+              this->elem.__elem[i*_m.Cnum+i] += _elem[i];
+
+            free(_elem);
+
+          }
+          else if(!this->diag && _m.diag){
+
+            uni10_uint64 elemNum = _m.elem.__elemNum;
+
+            for(int i = 0; i < (int)elemNum; i++)
+              this->elem.__elem[i*this->Cnum+i] += _m.elem.__elem[i];
+
+          }
+          else
+            vectorAdd(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
+        }
+
+        Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
+
+          if(this->diag && !_m.diag){
+
+            uni10_uint64 elemNum = this->elem.__elemNum;
+
+            uni10_type* _elem = (uni10_type*)malloc(this->elem.__elemNum * sizeof(uni10_type));
+
+            uni10_elem_copy_cpu(_elem, this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
+
+            this->diag = false;
+
+            this->elem.init(_m.Rnum, _m.Cnum, _m.elem.__elem);
+
+            uni10_double64 alpha = -1.;
+
+            vectorScal(&alpha , &this->elem, &this->elem.__elemNum);
+
+            for(int i = 0; i < (int)elemNum; i++)
+              this->elem.__elem[i*_m.Cnum+i] += _elem[i];
+
+            free(_elem);
+
+          }
+          else if(!this->diag && _m.diag){
+
+            uni10_uint64 elemNum = _m.elem.__elemNum;
+
+            for(int i = 0; i < (int)elemNum; i++)
+              this->elem.__elem[i*this->Cnum+i] -= _m.elem.__elem[i];
+
+          }
+          else
+            vectorSub(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
+        }
+
+        Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
+
+          if(this->diag && !_m.diag){
+            for(int i = 0; i < (int)this->elem.__elemNum; i++)
+              this->elem.__elem[i] *= _m.elem.__elem[i*_m.Cnum+i];
+          }
+          else if(!this->diag && _m.diag){
+
+            this->diag = true;
+
+            this->elem.__elemNum == _m.elem.__elemNum;
+
+            uni10_type* _elem = (uni10_type*)malloc(_m.elem.__elemNum * sizeof(uni10_type));
+
+            for(int i = 0; i < (int)_m.elem.__elemNum; i++)
+              _elem[i] = this->elem.__elem[i*this->Cnum+i] * _m.elem.__elem[i];
+
+            if(this->elem.__elem != NULL)
+              uni10_elem_free_cpu(this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
+
+            this->elem.__elem = _elem;
+          }
+          else{
+            vectorMul(&this->elem, &_m.elem, &_m.elem.__elemNum);
+
+          }
+
+        }
+
+        Matrix<uni10_type>& operator*=(uni10_type a){ 
+            vectorScal(&a, &this->elem, &this->elem.__elemNum);
+        }
+
+        template<typename Mat, typename... Args> 
+          friend void dots(Mat& _m1, const Mat& _m2, const Args&... args);
+
+        template<typename _uni10_type> 
+          friend void resize( Matrix<_uni10_type>& A , uni10_uint64 row, uni10_uint64 col);
+
+        template<typename _uni10_type> 
+          friend void dot( Matrix<_uni10_type>& A, const Matrix<_uni10_type>& B, UNI10_INPLACE on );
+
+        template<typename _uni10_type> 
+          friend void dot( const Matrix<_uni10_type>& A, const Matrix<_uni10_type>& B, Matrix<_uni10_type>& C, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void qr( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& Q, Matrix<_uni10_type>& R, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void rq( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& R, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void lq( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void ql( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void svd( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& U, Matrix<_uni10_type>& S, Matrix<_uni10_type>& VT, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void inverse( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void transpose( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void dagger( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void conj( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
 
     };
-
-  template<typename uni10_type> 
-    void resize( Matrix<uni10_type>& A , uni10_uint64 row, uni10_uint64 col){
-
-      A.elem.resize(row, col, A.Rnum, A.Cnum, A.diag);
-
-    }
 
 };  /* namespace uni10 */
 

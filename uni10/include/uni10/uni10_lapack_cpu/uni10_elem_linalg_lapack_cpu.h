@@ -3,9 +3,9 @@
 
 #include "uni10/uni10_type.h"
 #include "uni10/uni10_lapack_cpu/uni10_elem_lapack_cpu.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_d.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_dz.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_z.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_d.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_dz.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_z.h"
 
 namespace uni10{
 
@@ -148,6 +148,8 @@ namespace uni10{
 
   void matrixInv(const uni10_elem_double64* A, const uni10_uint64* N, uni10_const_bool* isdiag);
 
+  uni10_double64 matrixDet(const uni10_elem_double64* A, const uni10_uint64* N, uni10_const_bool* isdiag);
+
   // LAPACK
   //
   //UNI10_COMPLEX128
@@ -167,6 +169,8 @@ namespace uni10{
       uni10_elem_complex128* U, uni10_elem_complex128* S, uni10_elem_complex128* vT);
 
   void matrixInv(const uni10_elem_complex128* A, const uni10_uint64* N, uni10_const_bool* isdiag);
+
+  uni10_complex128 matrixDet(const uni10_elem_complex128* A, const uni10_uint64* N, uni10_const_bool* isdiag);
 
 }
 

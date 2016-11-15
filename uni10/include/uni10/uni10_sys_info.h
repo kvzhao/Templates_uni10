@@ -1,7 +1,7 @@
 #ifndef __UNI10_SYS_INFO_H__
 #define __UNI10_SYS_INFO_H__
 
-#define OSX
+//#define OSX
 
 #if defined(LINUX)
 #include <sys/sysinfo.h>

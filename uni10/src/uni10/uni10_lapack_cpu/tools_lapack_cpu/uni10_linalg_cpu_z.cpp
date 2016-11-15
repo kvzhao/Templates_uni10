@@ -1,21 +1,36 @@
 #include <limits.h>
 
 #include "uni10/uni10_error.h"
-#include "uni10/uni10_lapack_cpu/uni10_tools_cpu.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_z.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_dz.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_tools_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_z.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_dz.h"
 
 #ifdef MKL
 #define MKL_Complex8  std::complex<float>
 #define MKL_Complex16 std::complex<double>
 #include "mkl.h"
 #else
-#include "uni10/uni10_lapack_cpu/uni10_lapack_wrapper_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_lapack_wrapper_cpu.h"
 #endif
 
 namespace uni10{
 
   namespace uni10_linalg{
+
+    void vectorAdd(std::complex<double> a, std::complex<double>* X, int incx, std::complex<double>* Y, int incy, size_t N){   // Y = aX + Y
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        zaxpy(&chunk, &a, X + offset, &incx, Y + offset, &incy);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
 
     // Blas
     void vectorAdd(std::complex<double>* Y, std::complex<double>* X, size_t N){
@@ -171,7 +186,7 @@ namespace uni10{
     //
     void matrixSVD(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* U, std::complex<double>* S_ori, std::complex<double>* vT){
 
-      int min = min(M, N);
+      int min = std::min(M, N);
       double* S = (double*)malloc(min * sizeof(double));
       matrixSVD(Mij_ori, M, N, U, S, vT);
       uni10_elem_cast_cpu(S_ori, S, min);
@@ -314,22 +329,42 @@ namespace uni10{
       int info;
       zgetrf(&N, &N, A, &N, ipiv, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgetrf': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zgetrf': Lapack INFO = ", info);
 
       int lwork = -1;
       std::complex<double> worktest;
       zgetri(&N, A, &N, ipiv, &worktest, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgetri': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zgetri': Lapack INFO = ", info);
 
       lwork = (int)(worktest.real());
       std::complex<double> *work = (std::complex<double>*)malloc(lwork * sizeof(std::complex<double>));
       zgetri(&N, A, &N, ipiv, work, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgetri': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'zgetri': Lapack INFO = ", info);
 
       free(ipiv);
       free(work);
+    }
+
+    std::complex<double> matrixDet(std::complex<double>* A, int N){
+
+      int *ipiv = (int*)malloc((N+1)*sizeof(int));
+      int lwork = 64 * N;
+      std::complex<double> *work = (std::complex<double>*)malloc(lwork * sizeof(std::complex<double>));
+      int info;
+      zgetrf(&N,&N,A,&N,ipiv,&info);
+      uni10_error_msg( info != 0, "%s %d", "Error in Lapack function 'zgetrf': Lapack INFO = ", info );
+      std::complex<double> det = 1;
+      int neg = 0;
+      for (int i = 0; i < N; i++) {
+        det *= A[i * N + i];
+        if (ipiv[i] != (i+1)) neg = !neg;
+      }
+      free(ipiv);
+      free(work);
+      return neg?-det:det;
+
     }
 
     void eigDecompose(std::complex<double>* Kij, int N, std::complex<double>* Eig, std::complex<double>* EigVec){
@@ -345,13 +380,13 @@ namespace uni10{
       int info;
       zgeev((char*)"N", (char*)"V", &N, A, &ldA, Eig, NULL, &ldvl, EigVec, &ldvr, &worktest, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgeev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s, %d", "Error in Lapack function 'zgeev': Lapack INFO = ", info);
 
       lwork = (int)worktest.real();
       std::complex<double>* work = (std::complex<double>*)malloc(sizeof(std::complex<double>)*lwork);
       zgeev((char*)"N", (char*)"V", &N, A, &ldA, Eig, NULL, &ldvl, EigVec, &ldvr, work, &lwork, rwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'zgeev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s, %d", "Error in Lapack function 'zgeev': Lapack INFO = ", info);
 
       free(work);
       free(rwork);

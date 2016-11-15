@@ -1,9 +1,9 @@
-#ifndef __UNI10_ELEM_CPU_H__
-#define __UNI10_ELEM_CPU_H__
+#ifndef __UNI10_ELEM_LAPACK_CPU_H__
+#define __UNI10_ELEM_LAPACK_CPU_H__
 
 #include <iostream>
 
-#include "uni10/uni10_lapack_cpu/uni10_tools_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_tools_cpu.h"
 
 namespace uni10{
 
@@ -27,6 +27,8 @@ namespace uni10{
         void setElem(const uni10_type* src, bool src_ongpu = false);
 
         void assign(uni10_uint64& _Rnum, uni10_uint64& _Cnum);
+
+        void clear();
 
         void print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag) const;
 

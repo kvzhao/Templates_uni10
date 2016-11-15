@@ -9,6 +9,8 @@ namespace uni10{
 
     // Blas 
     //
+    void vectorAdd(uni10_double64 a, uni10_double64* X, uni10_int32 incx, uni10_double64* Y, uni10_int32 incy, uni10_uint64 N);   // Y = a*X + Y
+
     void vectorAdd(uni10_double64* Y, uni10_double64* X, uni10_uint64 N);   // Y = Y + X
 
     void vectorSub(uni10_double64* Y, uni10_double64* X, uni10_uint64 N);   // Y = Y - X
@@ -53,6 +55,8 @@ namespace uni10{
     void matrixLQ(uni10_double64* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_double64* Q, uni10_double64* L);
 
     void matrixInv(uni10_double64* A, uni10_int32 N);
+
+    uni10_double64 matrixDet(uni10_double64* A, uni10_int32 N);
 
     //=====================================================================================//
     //

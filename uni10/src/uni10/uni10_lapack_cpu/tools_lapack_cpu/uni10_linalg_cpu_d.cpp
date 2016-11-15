@@ -1,19 +1,35 @@
 #include <limits.h>
 
 #include "uni10/uni10_error.h"
-#include "uni10/uni10_lapack_cpu/uni10_linalg_cpu_d.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_tools_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_linalg_cpu_d.h"
 
 #ifdef MKL
 #define MKL_Complex8  std::complex<float>
 #define MKL_Complex16 std::complex<double>
 #include "mkl.h"
 #else
-#include "uni10/uni10_lapack_cpu/uni10_lapack_wrapper_cpu.h"
+#include "uni10/uni10_lapack_cpu/tools_lapack_cpu/uni10_lapack_wrapper_cpu.h"
 #endif
 
 namespace uni10{
 
   namespace uni10_linalg{
+
+    void vectorAdd(double a, double* X, int incx, double* Y, int incy, size_t N){   // Y = aX + Y
+      int64_t left = N;
+      size_t offset = 0;
+      int chunk;
+      while(left > 0){
+        if(left > INT_MAX)
+          chunk = INT_MAX;
+        else
+          chunk = left;
+        daxpy(&chunk, &a, X + offset, &incx, Y + offset, &incy);
+        offset += chunk;
+        left -= INT_MAX;
+      }
+    }
 
     void vectorAdd(double* Y, double* X, size_t N){   // Y = Y + X
       double a = 1.0;
@@ -148,7 +164,7 @@ namespace uni10{
 
       double* Mij = (double*)malloc(M * N * sizeof(double));
       memcpy(Mij, Mij_ori, M * N * sizeof(double));
-      int min = min(M, N);
+      int min = std::min(M, N);
       int ldA = N, ldu = N, ldvT = min;
       int lwork = -1;
       double worktest;
@@ -156,13 +172,13 @@ namespace uni10{
 
       dgesvd((char*)"S", (char*)"S", &N, &M, Mij, &ldA, S, vT, &ldu, U, &ldvT, &worktest, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0,"Error in Lapack function 'dgesvd': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dgesvd': Lapack INFO = ", info);
 
       lwork = (int)worktest;
       double *work = (double*)malloc(lwork*sizeof(double));
       dgesvd((char*)"S", (char*)"S", &N, &M, Mij, &ldA, S, vT, &ldu, U, &ldvT, work, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0,"Error in Lapack function 'dgesvd': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dgesvd': Lapack INFO = ", info);
 
       free(work);
       free(Mij);
@@ -175,7 +191,7 @@ namespace uni10{
     // dorgql -> rq
     void matrixQR(double* Mij_ori, int M, int N, double* Q, double* R){
 
-      uni10_error_msg(M < N, "M must be larger than N in matrixQR()");
+      uni10_error_msg(M < N, "%s", "M must be larger than N in matrixQR()");
 
       double* Mij = (double*)malloc(N*M*sizeof(double));
       memcpy(Mij, Mij_ori, N*M*sizeof(double));
@@ -192,13 +208,14 @@ namespace uni10{
       double* workdge = (double*)malloc(lwork*sizeof(double));
       dgelqf(&N, &M, Mij, &lda, tau, workdge, &lwork, &info);
       //getQ
+      uni10_getUpTri_cpu(Mij, R, M, N);
       lwork = (int)worktestdor;
       double* workdor = (double*)malloc(lwork*sizeof(double));
       dorglq(&N, &M, &K, Mij, &lda, tau, workdor, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(double));
       //getR
-      double alpha = 1, beta = 0;
-      dgemm((char*)"N", (char*)"T", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
+      //double alpha = 1, beta = 0;
+      //dgemm((char*)"N", (char*)"T", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
 
       free(Mij);
       free(tau);
@@ -208,7 +225,7 @@ namespace uni10{
 
     void matrixRQ(double* Mij_ori, int M, int N, double* Q, double* R){
 
-      uni10_error_msg(N < M, "N must be larger than M in matrixRQ()");
+      uni10_error_msg(N < M, "%s", "N must be larger than M in matrixRQ()");
 
       double* Mij = (double*)malloc(M*N*sizeof(double));
       memcpy(Mij, Mij_ori, M*N*sizeof(double));
@@ -224,15 +241,22 @@ namespace uni10{
       lwork = (int)worktestdge;
       double* workdge = (double*)malloc(lwork*sizeof(double));
       dgeqlf(&N, &M, Mij, &lda, tau, workdge, &lwork, &info);
-      free(workdge);
+      //getR
+      //printf("\n\n");
+      //for(int i = 0; i < M; i++){
+      //  for(int j = 0; j < N; j++){
+      //    printf("%.4f ", Mij[i*N+j]);
+      //  }
+      //  printf("\n\n");
+      //}
+      uni10_getUpTri_cpu(Mij, R, M, N);
       ///getQ
       lwork = (int)worktestdor;
       double* workdor = (double*)malloc(lwork*sizeof(double));
       dorgql(&N, &M, &K, Mij, &lda, tau, workdor, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(double));
-      //getR
-      double alpha = 1, beta = 0;
-      dgemm((char*)"T", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, R, &M);
+      //double alpha = 1, beta = 0;
+      //dgemm((char*)"T", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, R, &M);
 
       free(Mij);
       free(tau);
@@ -243,7 +267,7 @@ namespace uni10{
 
     void matrixLQ(double* Mij_ori, int M, int N, double* Q, double* L){
 
-      uni10_error_msg(N < M, "N must be larger than M in matrixLQ()");
+      uni10_error_msg(N < M, "%s","N must be larger than M in matrixLQ()");
 
       double* Mij = (double*)malloc(M*N*sizeof(double));
       memcpy(Mij, Mij_ori, M*N*sizeof(double));
@@ -259,14 +283,16 @@ namespace uni10{
       lwork = (int)worktestdge;
       double* workdge = (double*)malloc(lwork*sizeof(double));
       dgeqrf(&N, &M, Mij, &lda, tau, workdge, &lwork, &info);
+      //getL
+      uni10_getDnTri_cpu(Mij, L, M, N);
       //getQ
       lwork = (int)worktestdor;
       double* workdor = (double*)malloc(lwork*sizeof(double));
       dorgqr(&N, &M, &K, Mij, &lda, tau, workdor, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(double));
       //getR
-      double alpha = 1, beta = 0;
-      dgemm((char*)"T", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, L, &M);
+      //double alpha = 1, beta = 0;
+      //dgemm((char*)"T", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, L, &M);
 
       free(Mij);
       free(tau);
@@ -274,9 +300,9 @@ namespace uni10{
       free(workdor);
     }
 
-    void matrixQL(double* Mij_ori, int M, int N, double* Q, double* R){
+    void matrixQL(double* Mij_ori, int M, int N, double* Q, double* L){
 
-      uni10_error_msg(M < N, "M must be larger than N in matrixQL()");
+      uni10_error_msg(M < N, "%s", "M must be larger than N in matrixQL()");
 
       double* Mij = (double*)malloc(N*M*sizeof(double));
       memcpy(Mij, Mij_ori, N*M*sizeof(double));
@@ -292,14 +318,15 @@ namespace uni10{
       lwork = (int)worktestdge;
       double* workdge = (double*)malloc(lwork*sizeof(double));
       dgerqf(&N, &M, Mij, &lda, tau, workdge, &lwork, &info);
+      //getR
+      uni10_getDnTri_cpu(Mij, L, M, N);
       //getQ
       lwork = (int)worktestdor;
       double* workdor = (double*)malloc(lwork*sizeof(double));
       dorgrq(&N, &M, &K, Mij, &lda, tau, workdor, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(double));
-      //getR
-      double alpha = 1, beta = 0;
-      dgemm((char*)"N", (char*)"T", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
+      //double alpha = 1, beta = 0;
+      //dgemm((char*)"N", (char*)"T", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
 
       free(Mij);
       free(tau);
@@ -313,22 +340,42 @@ namespace uni10{
       int info;
       dgetrf(&N, &N, A, &N, ipiv, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dgetrf': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dgetrf': Lapack INFO = ", info);
 
       int lwork = -1;
       double worktest = 0.;
       dgetri(&N, A, &N, ipiv, &worktest, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dgetri': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dgetri': Lapack INFO = ", info);
 
       lwork = (int)worktest;
       double *work = (double*)malloc(lwork * sizeof(double));
       dgetri(&N, A, &N, ipiv, work, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dgetri': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dgetri': Lapack INFO = ", info);
 
       free(ipiv);
       free(work);
+    }
+
+    double matrixDet(double* A, int N){
+
+      int *ipiv = (int*)malloc((N+1)*sizeof(int));
+      int lwork = 64 * N;
+      double *work = (double*)malloc(lwork * sizeof(double));
+      int info;
+      dgetrf(&N,&N,A,&N,ipiv,&info);
+      uni10_error_msg( info != 0, "%s %d", "Error in Lapack function 'dgetrf': Lapack INFO = ", info );
+      double det = 1;
+      int neg = 0;
+      for (int i = 0; i < N; i++) {
+        det *= A[i * N + i];
+        if (ipiv[i] != (i+1)) neg = !neg;
+      }
+      free(ipiv);
+      free(work);
+      return neg?-det:det;
+
     }
 
     void setIdentity(double* elem, size_t M, size_t N){
@@ -351,13 +398,13 @@ namespace uni10{
       int info;
       dsyev((char*)"V", (char*)"U", &N, EigVec, &ldA, Eig, &worktest, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dsyev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dsyev': Lapack INFO = ", info);
 
       lwork = (int)worktest;
       double* work= (double*)malloc(sizeof(double)*lwork);
       dsyev((char*)"V", (char*)"U", &N, EigVec, &ldA, Eig, work, &lwork, &info);
 
-      uni10_lapack_error_msg(info != 0, "Error in Lapack function 'dsyev': Lapack INFO = ", info);
+      uni10_error_msg(info != 0, "%s %d", "Error in Lapack function 'dsyev': Lapack INFO = ", info);
 
       free(work);
     }

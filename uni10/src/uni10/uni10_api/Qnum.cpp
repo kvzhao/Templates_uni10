@@ -37,21 +37,13 @@ namespace uni10{
   bool Qnum::Fermionic = false;
   Qnum::Qnum(int _U1, parityType _prt): m_U1(_U1), m_prt(_prt), m_prtF(PRTF_EVEN){
 
-    if(!(m_U1 < U1_UPB && m_U1 > U1_LOB)){
-      char err[512];
-      sprintf(err,"U1 is out of range. %d < U1 < %d.", U1_LOB, U1_UPB);
-      uni10_error_msg(true, err);
-    }
+    uni10_error_msg(!(m_U1 < U1_UPB && m_U1 > U1_LOB), "U1 is out of range. %d  < U1 < %d .",  U1_LOB, U1_UPB);
 
   }
 
   Qnum::Qnum(parityFType _prtF, int _U1, parityType _prt): m_U1(_U1), m_prt(_prt), m_prtF(_prtF){
 
-    if(!(m_U1 < U1_UPB && m_U1 > U1_LOB)){
-      char err[512];
-      sprintf(err,"U1 is out of range. %d < U1 < %d.", U1_LOB, U1_UPB);
-      uni10_error_msg(true, err);
-    }
+      uni10_error_msg(!(m_U1 < U1_UPB && m_U1 > U1_LOB), "U1 is out of range. %d < U1 < %d.", U1_LOB, U1_UPB );
 
     if(_prtF == PRTF_ODD)
       Fermionic = true;

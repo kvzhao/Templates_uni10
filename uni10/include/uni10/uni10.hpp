@@ -34,7 +34,9 @@
 #include "uni10/uni10_auxiliary.h"
 #include "uni10/uni10_api/Qnum.h"
 #include "uni10/uni10_api/linalg.h"
-#include "uni10/uni10_api/Matrix.h"
+#include "uni10/uni10_api/linalg_inplace.h"
+#include "uni10/uni10_api/rng.h"
+//#include "uni10/uni10_api/Matrix.h"
 //#include "uni10/uni10_api/linalg.h"
 
 #endif
