@@ -133,4 +133,4 @@ namespace uni10{
   template class Matrix<uni10_double64>;
   template class Matrix<uni10_complex128>;
 
-};  /* namespace uni10 */
+}  /* namespace uni10 */

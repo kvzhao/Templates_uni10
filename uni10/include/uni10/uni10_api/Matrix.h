@@ -78,22 +78,26 @@ namespace uni10{
 
         uni10_type& operator[](const uni10_uint64 idx){
           return this->elem.__elem[idx];
-        }
+        };
 
         Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
           matrixAdd(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Rnum, &_m.Cnum );
-        }
+          return *this;
+        };
 
         Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
           matrixSub(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Rnum, &_m.Cnum );
-        }
+          return *this;
+        };
 
         Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){               // elem-wise multiplication
           matrixMul(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Cnum );
+          return *this;
         }
 
         Matrix<uni10_type>& operator*=(uni10_type a){ 
             vectorScal(&a, &this->elem, &this->elem.__elemNum);
+            return *this;
         }
 
         template<typename Mat, typename... Args> 
