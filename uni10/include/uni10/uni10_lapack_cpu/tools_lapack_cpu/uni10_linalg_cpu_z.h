@@ -49,11 +49,17 @@ namespace uni10{
 
     void matrixQR(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
 
-    void matrixRQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* R);
+    void matrixRQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* R, uni10_complex128* Q);
 
     void matrixQL(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
 
-    void matrixLQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* L);
+    void matrixLQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* L, uni10_complex128* Q);
+
+    void matrixQDR(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* D, uni10_complex128* R);
+
+    void matrixLDQ(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* L, uni10_complex128* D, uni10_complex128* Q);
+
+    void matrixQDRCPIVOT(uni10_complex128* Mij_ori, uni10_int32 M, uni10_int32 N, uni10_complex128* Q, uni10_complex128* D, uni10_complex128* R);
 
     void matrixInv(uni10_complex128* A, uni10_int32 N);
 

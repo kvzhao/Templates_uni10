@@ -210,14 +210,15 @@ namespace uni10{
       lwork = (int)worktestzge.real();
       std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zgelqf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getUpTri_cpu(Mij, R, M, N);
       //getQ
       lwork = (int)worktestzun.real();
       std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zunglq(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
-      //getR
-      std::complex<double> alpha(1.0, 0.0), beta(0.0, 0.0);
-      zgemm((char*)"N", (char*)"C", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
+      //std::complex<double> alpha(1.0, 0.0), beta(0.0, 0.0);
+      //zgemm((char*)"N", (char*)"C", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
 
       free(Mij);
       free(tau);
@@ -225,7 +226,7 @@ namespace uni10{
       free(workzun);
     }
 
-    void matrixRQ(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* Q, std::complex<double>* R){
+    void matrixRQ(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* R, std::complex<double>* Q){
 
       std::complex<double>* Mij = (std::complex<double>*)malloc(M*N*sizeof(std::complex<double>));
       memcpy(Mij, Mij_ori, M*N*sizeof(std::complex<double>));
@@ -241,14 +242,15 @@ namespace uni10{
       lwork = (int)worktestzge.real();
       std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zgeqlf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getUpTri_cpu(Mij, R, M, N);
       //getQ
       lwork = (int)worktestzun.real();
       std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zungql(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
-      //getR
-      std::complex<double> alpha (1.0, 0.0), beta (0.0, 0.0);
-      zgemm((char*)"C", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, R, &M);
+      //std::complex<double> alpha (1.0, 0.0), beta (0.0, 0.0);
+      //zgemm((char*)"C", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, R, &M);
 
       free(Mij);
       free(tau);
@@ -257,7 +259,7 @@ namespace uni10{
 
     }
 
-    void matrixLQ(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* Q, std::complex<double>* L){
+    void matrixLQ(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* L, std::complex<double>* Q){
 
       std::complex<double>* Mij = (std::complex<double>*)malloc(M*N*sizeof(std::complex<double>));
       memcpy(Mij, Mij_ori, M*N*sizeof(std::complex<double>));
@@ -273,19 +275,21 @@ namespace uni10{
       lwork = (int)worktestzge.real();
       std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zgeqrf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getDnTri_cpu(Mij, L, M, N);
       //getQ
       lwork = (int)worktestzun.real();
       std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zungqr(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
-      //getR
-      std::complex<double> alpha (1.0, 0.0), beta (0.0, 0.0);
-      zgemm((char*)"C", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, L, &M);
+      //std::complex<double> alpha (1.0, 0.0), beta (0.0, 0.0);
+      //zgemm((char*)"C", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, L, &M);
 
       free(Mij);
       free(tau);
       free(workzge);
       free(workzun);
+
     }
 
     void matrixQL(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* Q, std::complex<double>* L){
@@ -304,20 +308,139 @@ namespace uni10{
       lwork = (int)worktestzge.real();
       std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zgerqf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getDnTri_cpu(Mij, L, M, N);
       //getQ
       lwork = (int)worktestzun.real();
       std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
       zungrq(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
       memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
       //getR
-      std::complex<double> alpha (1.0, 0.0), beta (1.0, 1.0);
-      zgemm((char*)"N", (char*)"C", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, L, &N);
+      //std::complex<double> alpha (1.0, 0.0), beta (1.0, 1.0);
+      //zgemm((char*)"N", (char*)"C", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, L, &N);
 
       free(Mij);
       free(tau);
       free(workzge);
       free(workzun);
     }
+
+    void matrixQDR(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* Q, std::complex<double>* D, std::complex<double>* R){
+
+      std::complex<double>* Mij = (std::complex<double>*)malloc(N*M*sizeof(std::complex<double>));
+      memcpy(Mij, Mij_ori, N*M*sizeof(std::complex<double>));
+      std::complex<double>* tau = (std::complex<double>*)malloc(M*sizeof(std::complex<double>));
+      int lda = N;
+      int lwork = -1;
+      std::complex<double> worktestzge;
+      std::complex<double> worktestzun;
+      int info;
+      int K = N;
+      zgelqf(&N, &M, Mij, &lda, tau, &worktestzge, &lwork, &info);
+      zunglq(&N, &M, &K, Mij, &lda, tau, &worktestzun, &lwork, &info);
+      lwork = (int)worktestzge.real();
+      std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
+      zgelqf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getUpTri_cpu(Mij, R, M, N);
+      uni10_getDiag_cpu(R, D, M, N, N);
+      for(int i = 0; i < N; i++)
+        for(int j = 0; j < N-i; j++)
+          R[i*N+i+j] /= D[i];
+      //getQ
+      lwork = (int)worktestzun.real();
+      std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
+      zunglq(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
+      memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
+      //std::complex<double> alpha(1.0, 0.0), beta(0.0, 0.0);
+      //zgemm((char*)"N", (char*)"C", &N, &N, &M, &alpha, Mij_ori, &N, Mij, &N, &beta, R, &N);
+
+      free(Mij);
+      free(tau);
+      free(workzge);
+      free(workzun);
+    }
+
+
+    void matrixLDQ(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* L, std::complex<double>* D, std::complex<double>* Q){
+
+      std::complex<double>* Mij = (std::complex<double>*)malloc(M*N*sizeof(std::complex<double>));
+      memcpy(Mij, Mij_ori, M*N*sizeof(std::complex<double>));
+      std::complex<double>* tau = (std::complex<double>*)malloc(M*sizeof(std::complex<double>));
+      int lda = N;
+      int lwork = -1;
+      std::complex<double> worktestzge;
+      std::complex<double> worktestzun;
+      int info;
+      int K = M;
+      zgeqrf(&N, &M, Mij, &lda, tau, &worktestzge, &lwork, &info);
+      zungqr(&N, &M, &K, Mij, &lda, tau, &worktestzun, &lwork, &info);
+      lwork = (int)worktestzge.real();
+      std::complex<double>* workzge = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
+      zgeqrf(&N, &M, Mij, &lda, tau, workzge, &lwork, &info);
+      //getR
+      uni10_getDnTri_cpu(Mij, L, M, N);
+      uni10_getDiag_cpu(L, D, M, N, M);
+      for(int i = 0; i < M; i++)
+        for(int j = 0; j < M-i; j++)
+          L[(i+j)*M+i] /= D[i];
+      //getQ
+      lwork = (int)worktestzun.real();
+      std::complex<double>* workzun = (std::complex<double>*)malloc(lwork*sizeof(std::complex<double>));
+      zungqr(&N, &M, &K, Mij, &lda, tau, workzun, &lwork, &info);
+      memcpy(Q, Mij, N*M*sizeof(std::complex<double>));
+      //std::complex<double> alpha (1.0, 0.0), beta (0.0, 0.0);
+      //zgemm((char*)"C", (char*)"N", &M, &M, &N, &alpha, Mij, &N, Mij_ori, &N, &beta, L, &M);
+
+      free(Mij);
+      free(tau);
+      free(workzge);
+      free(workzun);
+
+    }
+
+    void matrixQDRCPIVOT(std::complex<double>* Mij_ori, int M, int N, std::complex<double>* Q, std::complex<double>* D, std::complex<double>* R){
+
+      uni10_error_msg(M != N, "%s", "M must be equalt to N");
+
+      std::complex<double>* Mij = (std::complex<double>*)malloc(M * N * sizeof(std::complex<double>)); // Q(M x M): orthogonal basis
+      setTranspose(Mij_ori, M, N, Mij);                      //column major + square matrix  // TP(M x M)
+      int max = M > N ? M : N;
+      int min = M < N ? M : N;
+      int lda = max;
+      int lwork = N;
+      int lrwork = 2 * N;
+      std::complex<double>* work = (std::complex<double>*) malloc(lwork * sizeof(std::complex<double>));
+      double* rwork = (double*) malloc(lrwork * sizeof(double));
+      int* jpvt = (int*)malloc(N * sizeof(int));	//column vectors
+      memset(jpvt, 0, N * sizeof(int));
+      std::complex<double>* tau = (std::complex<double>*)malloc(min * sizeof(std::complex<double>));
+      int info;
+      zgeqpf(&M, &N, Mij, &lda, jpvt, tau, work, rwork, &info);
+      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      for(int i = 0; i < M; i++)
+        D[i] = Mij[i * N + i];                               // D
+      std::complex<double>* T = (std::complex<double>*)malloc(M * N * sizeof(std::complex<double>));
+      for(int i = 0; i < M; i++)
+        for(int j = i; j < N; j++)
+          if(i == j)
+            T[i * N + j] = 1;
+          else
+            T[i * N + j] = Mij[j * N + i] / D[i];
+      for(int i = 0; i < M; i++)
+        for(int j = 0; j < N; j++)
+          R[i * N + (jpvt[j]-1)] = T[i * N + j];              // R 
+      zungqr(&M, &N, &N, Mij, &lda, tau, work, &lwork, &info);
+      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      setTranspose(Mij, M, N, Q);                             // Q
+      free(Mij);
+      free(work);
+      free(jpvt);
+      free(tau);
+      free(T);
+
+    }
+
 
     void matrixInv(std::complex<double>* A, int N){
       //if(diag){

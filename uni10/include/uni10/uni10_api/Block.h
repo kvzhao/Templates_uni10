@@ -1,7 +1,7 @@
 /****************************************************************************
 *  @file Block.h
 *  @license
-*    Universal Tensor Network Library
+ *   Universal Tensor Network Library
 *    Copyright (c) 2013-2014
 *    National Taiwan University
 *    National Tsing-Hua University
@@ -41,6 +41,7 @@
 #include "uni10/uni10_type.h"
 #include "uni10/uni10_elem.h"
 #include "uni10/uni10_lapack_cpu/uni10_elem_linalg_lapack_cpu.h"
+//#include "uni10/uni10_api/Matrix.h"
 
 namespace uni10{
 
@@ -93,7 +94,6 @@ namespace uni10{
 
       public:
 
-        uni10_double64 operator[](uni10_uint64 idx)const;
 
         explicit Block();
 
@@ -119,7 +119,7 @@ namespace uni10{
 
         bool isOngpu()const;            // --> uni10_elem().isOngpu()
 
-        uni10_double64* getElem()const; // --> uni10_elem().getElem()
+        uni10_type* getElem()const;     // --> uni10_elem().getElem()
 
         uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
 
@@ -146,7 +146,7 @@ namespace uni10{
           friend Matrix<_uni10_type> dot( const Block<_uni10_type>& A, const Block<_uni10_type>& B );
 
         template<typename _uni10_type>
-          friend const std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
+          friend std::vector< Matrix<_uni10_type> > qr( const Block<_uni10_type>& M );
 
         template<typename _uni10_type>
           friend std::vector< Matrix<_uni10_type> > rq( const Block<_uni10_type>& M );
@@ -158,7 +158,22 @@ namespace uni10{
           friend std::vector< Matrix<_uni10_type> > ql( const Block<_uni10_type>& M );
 
         template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > qdr( const Block<_uni10_type>& M);
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > ldq( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > qdr_cpivot( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
           friend std::vector< Matrix<_uni10_type> > svd( const Block<_uni10_type>& M );
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<_uni10_type> > eigh( const Block<_uni10_type>& _Mij);
+
+        template<typename _uni10_type>
+          friend std::vector< Matrix<uni10_complex128> > eig( const Block<_uni10_type>& _Mij);
 
         template<typename _uni10_type>
           friend _uni10_type sum( const Block<_uni10_type>& Mij );
@@ -186,7 +201,7 @@ namespace uni10{
   template<typename uni10_type>
     std::ostream& operator<< (std::ostream& os, const Block<uni10_type>& _b){
 
-      fprintf(stdout, "\n%ld x %ld = %ld", _b.Rnum, _b.Cnum, _b.elemNum());
+      fprintf(stdout, "\n%ld x %ld = %ld [ Real ElemNum: %ld ]", _b.Rnum, _b.Cnum, _b.Rnum*_b.Cnum, _b.elemNum());
 
       if(_b.typeID() == 1)  fprintf(stdout, ", REAL");
       else if(_b.typeID() == 2)   os << ", COMPLEX";
@@ -231,7 +246,7 @@ namespace uni10{
 
       uni10_error_msg(m1.Rnum != m2.Rnum || m1.Cnum != m2.Cnum, "%s", "Lack err msg!!!");
 
-      Matrix<uni10_type> m3(m1.Rnum, m1.Cnum, m1.diag && m2.diag);
+      Matrix<uni10_type> m3(m1.Rnum, m1.Cnum, m1.diag || m2.diag);
       matrixMul(&m1.elem, &m1.diag, &m2.elem, &m2.diag, &m1.Rnum, &m1.Cnum, &m3.elem);
 
       return m3;
@@ -272,13 +287,7 @@ namespace uni10{
 };
 
 /*
-
         uni10_double64 trace()const;
-
-        std::vector<Block> eig()const;
-
-        std::vector<Block> eigh()const;
-
 */
 
 #endif

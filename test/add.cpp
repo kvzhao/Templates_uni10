@@ -39,9 +39,13 @@ int main(){
 
   //MR1 *= diag1;
 
-  cout << MR1 * 2.;
+  cout << diag1 * MR1;
 
-  cout << diag1 * 2.;
+  cout << diag1 + MR1;
+
+  cout << diag1 - MR1;
+
+  //cout << diag1 * 2.;
 
   //cout << diag1;
   //
@@ -51,7 +55,6 @@ int main(){
 
   //cout << diag1;
 
-  exit(0);
   Matrix< std::complex<double> > MC1(3, 3);
   MC1.setElem(elem_C);
 

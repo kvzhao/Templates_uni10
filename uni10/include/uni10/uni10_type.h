@@ -18,14 +18,17 @@
 #endif
 
 #ifdef LAPACK
-#define _package _lapack
+#define   _package   _lapack
 #elif ARMADILLO
-#define _package _armadillo
+#define   _package   _armadillo
 #elif MAGMA
-#define _package _magma
+#define   _package   _magma
 #elif CUDAONLY
-#define _package _cuda
+#define   _package   _cuda
 #endif
+
+
+#define uni10_clock            -1
 
 
 typedef int                    uni10_int32;       // shout int.

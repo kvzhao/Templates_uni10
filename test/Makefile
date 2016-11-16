@@ -6,10 +6,22 @@ CC := icpc
 FLAGS:=-O3 -m64 -std=c++11 -DCPU -DLAPACK
 OBJ := $(LIB)/libuni10.a
 
+eigh.e: eigh.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+add.e: add.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+qdr.e: qdr.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
 dots.e: dots.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 qr.e: qr_family.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+dot.e: matrixdot.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 arg2.e: arg2.cpp
@@ -22,12 +34,6 @@ rng.e: rng.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 main_cpu.e: main_cpu.cpp
-	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
-
-add.e: add.cpp
-	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
-
-dot.e: matrixdot.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 trans.e: trans.cpp

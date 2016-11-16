@@ -48,7 +48,9 @@ int main(){
 
   cout << "======= MR1 MR2 =======\n";
 
-  cout << dot(MR1, MR2);
+  cout << dot(MR1, diag1);
+
+  exit(0);
 
   cout << "======= diag1 MR1 =======\n";
 

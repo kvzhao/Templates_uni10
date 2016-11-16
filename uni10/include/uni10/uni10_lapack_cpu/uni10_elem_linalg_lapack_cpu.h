@@ -27,11 +27,19 @@ namespace uni10{
 
   uni10_double64 vectorNorm(const uni10_elem_double64* X, const uni10_uint64* N, uni10_int32* inc);
 
+  void matrixAdd(uni10_elem_double64* A, uni10_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
+      const uni10_uint64* M, const uni10_uint64* N );
+
   void matrixAdd(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* C);
 
+  void matrixSub(uni10_elem_double64* A, uni10_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
+      const uni10_uint64* M, const uni10_uint64* N );
+
   void matrixSub(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* C);
+
+  void matrixMul(uni10_elem_double64* A, uni10_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, const uni10_uint64* N );
 
   void matrixMul(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* C);
@@ -68,11 +76,19 @@ namespace uni10{
 
   uni10_double64   vectorNorm(const uni10_elem_complex128* X, const uni10_uint64* N, uni10_int32* inc);
 
-  void matrixAdd(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
+  void matrixAdd(uni10_elem_complex128* A, uni10_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdiag, 
+      const uni10_uint64* M, const uni10_uint64* N);
+
+  void matrixAdd(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* C);
 
-  void matrixSub(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
+  void matrixSub(uni10_elem_complex128* A, uni10_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdiag, 
+      const uni10_uint64* M, const uni10_uint64* N);
+
+  void matrixSub(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* C);
+
+  void matrixMul(uni10_elem_complex128* A, uni10_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, const uni10_uint64* N );
 
   void matrixMul(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C);
@@ -117,12 +133,19 @@ namespace uni10{
   void matrixDot(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C);
 
+  void matrixAdd(uni10_elem_complex128* A, uni10_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
+      const uni10_uint64* M, const uni10_uint64* N );
+
   void matrixAdd(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C);
+
+  void matrixSub(uni10_elem_complex128* A, uni10_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
+      const uni10_uint64* M, const uni10_uint64* N );
 
   void matrixSub(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C);
 
+  // Lack
   void matrixMul(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* C);
 
@@ -136,16 +159,31 @@ namespace uni10{
       uni10_elem_double64* Q, uni10_elem_double64* R);
 
   void matrixRQ(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
-      uni10_elem_double64* Q, uni10_elem_double64* R);
+      uni10_elem_double64* R, uni10_elem_double64* Q);
 
   void matrixQL(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
       uni10_elem_double64* Q, uni10_elem_double64* L);
 
   void matrixLQ(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
-      uni10_elem_double64* Q, uni10_elem_double64* L);
+      uni10_elem_double64* L, uni10_elem_double64* Q);
+
+  void matrixQDR(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_double64* Q, uni10_elem_double64* D, uni10_elem_double64* R);
+
+  void matrixQDRCPIVOT(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_double64* Q, uni10_elem_double64* D, uni10_elem_double64* R);
+
+  void matrixLDQ(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_double64* L, uni10_elem_double64* D, uni10_elem_double64* Q);
 
   void matrixSVD(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
       uni10_elem_double64* U, uni10_elem_double64* S, uni10_elem_double64* vT);
+
+  void matrixEigh(const uni10_elem_double64* Mij_ori, uni10_const_bool *isMdiag, const uni10_uint64* N, 
+      uni10_elem_double64* Eig, uni10_elem_double64* EigVec);
+
+  void matrixEig(const uni10_elem_double64* Mij_ori, uni10_const_bool *isMdiag, const uni10_uint64* N, 
+      uni10_elem_complex128* Eig, uni10_elem_complex128* EigVec);
 
   void matrixInv(const uni10_elem_double64* A, const uni10_uint64* N, uni10_const_bool* isdiag);
 
@@ -158,16 +196,31 @@ namespace uni10{
       uni10_elem_complex128* Q, uni10_elem_complex128* R);
 
   void matrixRQ(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
-      uni10_elem_complex128* Q, uni10_elem_complex128* R);
+      uni10_elem_complex128* R, uni10_elem_complex128* Q);
 
   void matrixQL(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
       uni10_elem_complex128* Q, uni10_elem_complex128* L);
 
   void matrixLQ(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
-      uni10_elem_complex128* Q, uni10_elem_complex128* L);
+      uni10_elem_complex128* L, uni10_elem_complex128* Q);
+
+  void matrixQDR(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_complex128* Q, uni10_elem_complex128* D, uni10_elem_complex128* R);
+
+  void matrixQDRCPIVOT(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_complex128* Q, uni10_elem_complex128* D, uni10_elem_complex128* R);
+
+  void matrixLDQ(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
+      uni10_elem_complex128* L, uni10_elem_complex128* D, uni10_elem_complex128* Q);
 
   void matrixSVD(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N, 
       uni10_elem_complex128* U, uni10_elem_complex128* S, uni10_elem_complex128* vT);
+
+  void matrixEigh(const uni10_elem_complex128* Mij_ori, uni10_const_bool *isMdiag, const uni10_uint64* N, 
+      uni10_elem_double64* Eig, uni10_elem_complex128* EigVec);
+
+  void matrixEig(const uni10_elem_complex128* Mij_ori, uni10_const_bool *isMdiag, const uni10_uint64* N, 
+      uni10_elem_complex128* Eig, uni10_elem_complex128* EigVec);
 
   void matrixInv(const uni10_elem_complex128* A, const uni10_uint64* N, uni10_const_bool* isdiag);
 

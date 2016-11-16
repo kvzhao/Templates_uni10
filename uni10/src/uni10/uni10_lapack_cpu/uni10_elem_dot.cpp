@@ -21,9 +21,9 @@ namespace uni10{
       uni10_uint64 data_col = std::min(*K, *N);
 
       for(int r = 0; r < (int)*M; r++)
-        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_double64));
+        uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col *sizeof(uni10_double64));
 
-      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+      uni10_linalg::diagColMul(C->__elem, B->__elem, *M, data_col);
 
     }
     else{
@@ -58,7 +58,7 @@ namespace uni10{
       for(int r = 0; r < (int)*M; r++)
         uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
 
-      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+      uni10_linalg::diagColMul(C->__elem, B->__elem, *M, data_col);
 
     }
     else{
@@ -93,7 +93,7 @@ namespace uni10{
       for(int r = 0; r < (int)*M; r++)
         uni10_elem_cast_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col);
 
-      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+      uni10_linalg::diagColMul(C->__elem, B->__elem, *M, data_col);
 
     }
     else{
@@ -128,7 +128,7 @@ namespace uni10{
       for(int r = 0; r < (int)*M; r++)
         uni10_elem_copy_cpu(&C->__elem[r*(*N)], &A->__elem[r*(*K)], data_col*sizeof(uni10_complex128));
 
-      uni10_linalg::diagColMul(C->__elem, A->__elem, *M, data_col);
+      uni10_linalg::diagColMul(C->__elem, B->__elem, *M, data_col);
 
     }
     else{

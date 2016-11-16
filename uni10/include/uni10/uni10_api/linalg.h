@@ -1,9 +1,10 @@
-#ifndef __UNI10_LINALG_LAPACK_CPU_H__
-#define __UNI10_LINALG_LAPACK_CPU_H__
+#ifndef __UNI10_LINALG_API_H__
+#define __UNI10_LINALG_API_H__
 
 #include <vector>
 
 #include "uni10/uni10_api/Block.h"
+#include "uni10/uni10_api/linalg_typemix.h"
 
 #if defined(CPU) && defined(LAPACK)
 #include "uni10/uni10_elem_linalg.h"
@@ -26,7 +27,7 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-    const std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
+    std::vector< Matrix<uni10_type> > qr( const Block<uni10_type>& Mij ){
 
       uni10_error_msg(Mij.Rnum < Mij.Cnum, "%s", "Cannot perform QR decomposition when Rnum < Cnum. Nothing to do." );
 
@@ -49,7 +50,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
-      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
 
       return outs;
 
@@ -64,7 +65,7 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
       outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
 
-      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[1].elem, &outs[0].elem);
+      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
 
       return outs;
 
@@ -80,6 +81,54 @@ namespace uni10{
       outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
 
       matrixQL(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > qdr( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "%s", "Cannot perform QDR decomposition when Rnum < Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
+
+      matrixQDR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
+
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > ldq( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "%s", "Cannot perform LDQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Rnum, true));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+
+      matrixLDQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
+
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > qdr_cpivot( const Block<uni10_type>& Mij ){
+
+      uni10_error_msg(Mij.Rnum != Mij.Cnum, "%s", "Cannot perform QDR decomposition when Rnum == Cnum. Nothing to do." );
+
+      std::vector<Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_type>(Mij.Cnum, Mij.Cnum));
+
+      matrixQDRCPIVOT(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &outs[0].elem, &outs[1].elem, &outs[2].elem);
 
       return outs;
 
@@ -167,6 +216,30 @@ namespace uni10{
       uni10_type res = matrixDet(&Mij.elem, &Mij.Rnum, &Mij.diag);
 
       return res;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > eigh( const Block<uni10_type >& Mij ){
+
+      std::vector< Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      matrixEigh(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_complex128> > eig( const Block<uni10_type>& Mij ){
+
+      std::vector< Matrix<uni10_complex128> > outs;
+      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum));
+      matrixEig(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
 
     }
 

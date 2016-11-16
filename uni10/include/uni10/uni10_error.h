@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#define uni10_error_msg(is_true, msg, ...) {error_msg ( __PRETTY_FUNCTION__,  __FILE__, __LINE__, (is_true), (msg), __VA_ARGS__);}           
+#define uni10_error_msg(is_true, format, ...) {error_msg ( __PRETTY_FUNCTION__,  __FILE__, __LINE__, (is_true), (format), __VA_ARGS__);}           
 static inline void error_msg( char const *const func, const char *const file, int const line, bool is_true, char const* format, ...){
   if (is_true)
   {

@@ -81,102 +81,15 @@ namespace uni10{
         }
 
         Matrix<uni10_type>& operator+=(const Matrix<uni10_type>& _m){
-
-          if(this->diag && !_m.diag){
-
-            uni10_uint64 elemNum = this->elem.__elemNum;
-
-            uni10_type* _elem = (uni10_type*)malloc(this->elem.__elemNum * sizeof(uni10_type));
-
-            uni10_elem_copy_cpu(_elem, this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
-
-            this->diag = false;
-
-            this->elem.init(_m.Rnum, _m.Cnum, _m.elem.__elem);
-
-            for(int i = 0; i < (int)elemNum; i++)
-              this->elem.__elem[i*_m.Cnum+i] += _elem[i];
-
-            free(_elem);
-
-          }
-          else if(!this->diag && _m.diag){
-
-            uni10_uint64 elemNum = _m.elem.__elemNum;
-
-            for(int i = 0; i < (int)elemNum; i++)
-              this->elem.__elem[i*this->Cnum+i] += _m.elem.__elem[i];
-
-          }
-          else
-            vectorAdd(&this->elem, &_m.elem, &_m.elem.__elemNum);
-
+          matrixAdd(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Rnum, &_m.Cnum );
         }
 
         Matrix<uni10_type>& operator-=(const Matrix<uni10_type>& _m){
-
-          if(this->diag && !_m.diag){
-
-            uni10_uint64 elemNum = this->elem.__elemNum;
-
-            uni10_type* _elem = (uni10_type*)malloc(this->elem.__elemNum * sizeof(uni10_type));
-
-            uni10_elem_copy_cpu(_elem, this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
-
-            this->diag = false;
-
-            this->elem.init(_m.Rnum, _m.Cnum, _m.elem.__elem);
-
-            uni10_double64 alpha = -1.;
-
-            vectorScal(&alpha , &this->elem, &this->elem.__elemNum);
-
-            for(int i = 0; i < (int)elemNum; i++)
-              this->elem.__elem[i*_m.Cnum+i] += _elem[i];
-
-            free(_elem);
-
-          }
-          else if(!this->diag && _m.diag){
-
-            uni10_uint64 elemNum = _m.elem.__elemNum;
-
-            for(int i = 0; i < (int)elemNum; i++)
-              this->elem.__elem[i*this->Cnum+i] -= _m.elem.__elem[i];
-
-          }
-          else
-            vectorSub(&this->elem, &_m.elem, &_m.elem.__elemNum);
-
+          matrixSub(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Rnum, &_m.Cnum );
         }
 
-        Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){  // elem-wise multiplication
-
-          if(this->diag && !_m.diag){
-            for(int i = 0; i < (int)this->elem.__elemNum; i++)
-              this->elem.__elem[i] *= _m.elem.__elem[i*_m.Cnum+i];
-          }
-          else if(!this->diag && _m.diag){
-
-            this->diag = true;
-
-            this->elem.__elemNum == _m.elem.__elemNum;
-
-            uni10_type* _elem = (uni10_type*)malloc(_m.elem.__elemNum * sizeof(uni10_type));
-
-            for(int i = 0; i < (int)_m.elem.__elemNum; i++)
-              _elem[i] = this->elem.__elem[i*this->Cnum+i] * _m.elem.__elem[i];
-
-            if(this->elem.__elem != NULL)
-              uni10_elem_free_cpu(this->elem.__elem, this->elem.__elemNum*sizeof(uni10_type));
-
-            this->elem.__elem = _elem;
-          }
-          else{
-            vectorMul(&this->elem, &_m.elem, &_m.elem.__elemNum);
-
-          }
-
+        Matrix<uni10_type>& operator*=(const Matrix<uni10_type>& _m){               // elem-wise multiplication
+          matrixMul(&this->elem, &this->diag, &_m.elem, &_m.diag, &_m.Cnum );
         }
 
         Matrix<uni10_type>& operator*=(uni10_type a){ 
@@ -208,7 +121,22 @@ namespace uni10{
           friend void ql( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
 
         template<typename _uni10_type>
+          friend void qdr( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& Q, Matrix<_uni10_type>& D, Matrix<_uni10_type>& R, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void ldq( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& L, Matrix<_uni10_type>& D, Matrix<_uni10_type>& Q, UNI10_INPLACE on  );
+
+        template<typename _uni10_type>
+          friend void qdr_cpivot( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& Q, Matrix<_uni10_type>& D, Matrix<_uni10_type>& R, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
           friend void svd( const Matrix<_uni10_type>& Mij, Matrix<_uni10_type>& U, Matrix<_uni10_type>& S, Matrix<_uni10_type>& VT, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void eigh( const Matrix<_uni10_type>& Mij, Matrix<uni10_double64>& Eig, Matrix<_uni10_type>& EigVec, UNI10_INPLACE on );
+
+        template<typename _uni10_type>
+          friend void eig( const Matrix<_uni10_type>& Mij, Matrix<uni10_complex128>& Eig, Matrix<uni10_complex128>& EigVec, UNI10_INPLACE on );
 
         template<typename _uni10_type>
           friend void inverse( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );

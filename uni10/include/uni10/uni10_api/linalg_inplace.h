@@ -1,5 +1,5 @@
-#ifndef __UNI10_LINALG_INPLACE_LAPACK_CPU_H__
-#define __UNI10_LINALG_INPLACE_LAPACK_CPU_H__
+#ifndef __UNI10_LINALG_INPLACE_API_H__
+#define __UNI10_LINALG_INPLACE_API_H__
 
 #include <vector>
 
@@ -88,7 +88,7 @@ namespace uni10{
       R.assign(Mij.Rnum, Mij.Rnum);
       Q.assign(Mij.Rnum, Mij.Cnum);
 
-      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &Q.elem, &R.elem);
+      matrixRQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &R.elem, &Q.elem);
 
     }
 
@@ -102,12 +102,12 @@ namespace uni10{
       L.assign(Mij.Rnum, Mij.Rnum);
       Q.assign(Mij.Rnum, Mij.Cnum);
 
-      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &Q.elem, &L.elem);
+      matrixLQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &L.elem, &Q.elem);
 
     }
 
   template<typename uni10_type>
-    void ql( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& L, Matrix<uni10_type>& Q, UNI10_INPLACE on  ){
+    void ql( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& Q, Matrix<uni10_type>& L, UNI10_INPLACE on  ){
 
       uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
 
@@ -121,6 +121,53 @@ namespace uni10{
     }
 
   template<typename uni10_type>
+    void qdr( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& Q, Matrix<uni10_type>& D, Matrix<uni10_type>& R, UNI10_INPLACE on ){
+
+      uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
+
+      uni10_error_msg(Mij.Rnum < Mij.Cnum, "%s", "Cannot perform QDR decomposition when Rnum < Cnum. Nothing to do." );
+
+      Q.assign(Mij.Rnum, Mij.Cnum);
+      D.assign(Mij.Cnum, Mij.Cnum, true);
+      R.assign(Mij.Cnum, Mij.Cnum);
+
+      matrixQDR(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &Q.elem, &D.elem, &R.elem);
+
+    }
+
+  template<typename uni10_type>
+    void ldq( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& L, Matrix<uni10_type>& D, Matrix<uni10_type>& Q, UNI10_INPLACE on  ){
+
+      uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
+
+      uni10_error_msg(Mij.Rnum > Mij.Cnum, "%s", "Cannot perform LDQ decomposition when Rnum > Cnum. Nothing to do." );
+
+      L.assign(Mij.Rnum, Mij.Rnum);
+      D.assign(Mij.Rnum, Mij.Rnum, true);
+      Q.assign(Mij.Rnum, Mij.Cnum);
+
+      matrixLDQ(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &L.elem, &D.elem, &Q.elem);
+
+    }
+
+  template<typename uni10_type>
+    void qdr_cpivot( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& Q, Matrix<uni10_type>& D, Matrix<uni10_type>& R, UNI10_INPLACE on ){
+
+      uni10_error_msg(true, "%s", "Developping" );
+      uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
+      uni10_error_msg(Mij.Rnum != Mij.Cnum, "%s", "Cannot perform QR decomposition when Rnum != Cnum. Nothing to do." );
+
+      Q.assign(Mij.Rnum, Mij.Cnum);
+      D.assign(Mij.Cnum, Mij.Cnum, true);
+      R.assign(Mij.Cnum, Mij.Cnum);
+
+      matrixQDRCPIVOT(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &Q.elem, &D.elem, &R.elem);
+
+    }
+
+
+
+  template<typename uni10_type>
     void svd( const Matrix<uni10_type>& Mij, Matrix<uni10_type>& U, Matrix<uni10_type>& S, Matrix<uni10_type>& VT, UNI10_INPLACE on ){
 
       uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
@@ -132,6 +179,34 @@ namespace uni10{
       VT.assign(min, Mij.Cnum);
 
       matrixSVD(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum, &U.elem, &S.elem, &VT.elem);
+
+    }
+
+  template<typename uni10_type>
+    void eigh( const Matrix<uni10_type>& Mij, Matrix<uni10_double64>& Eig, Matrix<uni10_type>& EigVec, UNI10_INPLACE on ){
+
+      uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
+      uni10_error_msg(Mij.Rnum != Mij.Cnum, "%s", "Setting a wrong flag of uni10_Inplace." );
+
+      //GPU_NOT_READY
+      Eig.assign(Mij.Rnum, Mij.Cnum, true);
+      EigVec.assign(Mij.Rnum, Mij.Cnum);
+
+      matrixEigh(&Mij.elem, &Mij.diag, &Mij.Cnum, &Eig.elem, &EigVec.elem);
+
+    }
+
+  template<typename uni10_type>
+    void eig( const Matrix<uni10_type>& Mij, Matrix<uni10_complex128>& Eig, Matrix<uni10_complex128>& EigVec, UNI10_INPLACE on ){
+
+      uni10_error_msg(on != 1, "%s", "Setting a wrong flag of uni10_Inplace." );
+      uni10_error_msg(Mij.Rnum != Mij.Cnum, "%s", "Setting a wrong flag of uni10_Inplace." );
+
+      //GPU_NOT_READY
+      Eig.assign(Mij.Rnum, Mij.Cnum, true);
+      EigVec.assign(Mij.Rnum, Mij.Cnum);
+
+      matrixEig(&Mij.elem, &Mij.diag, &Mij.Cnum, &Eig.elem, &EigVec.elem);
 
     }
 

@@ -76,6 +76,9 @@ void   zdotc_(std::complex<double>* res, const int32_t *n, const std::complex<do
 
 void dgeqpf_( const int32_t* m, const int32_t* n, double* a, const int32_t* lda, 
               int* jpvt, double* tau, double* work, int32_t* info );
+void zgeqpf_( const int32_t* m, const int32_t* n, std::complex<double>* a, const int32_t* lda, 
+              int* jpvt, std::complex<double>* tau, std::complex<double>* work, 
+              double* rwork, int32_t* info );
 
 void dgesvd_( const char* jobu, const char* jobvt, const int32_t* m,
               const int32_t* n, double* a, const int32_t* lda, double* s,
@@ -361,6 +364,12 @@ inline void zungrq( const int32_t* m, const int32_t* n, const int32_t* k, std::c
                     const int32_t* lda, const std::complex<double>* tau, std::complex<double>* work, const int32_t* lwork, int32_t* info )
 {
   zungrq_(m, n, k, a, lda, tau, work, lwork, info );
+}
+
+inline void zgeqpf( const int32_t* m, const int32_t* n, std::complex<double>* a, const int32_t* lda, 
+              int* jpvt, std::complex<double>* tau, std::complex<double>* work, 
+              double* rwork, int32_t* info ){
+  zgeqpf_(m, n, a, lda, jpvt, tau, work, rwork, info);
 }
 
 inline void zgelqf( const int32_t* m, const int32_t* n, std::complex<double>* a, 

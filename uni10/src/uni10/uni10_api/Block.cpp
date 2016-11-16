@@ -80,6 +80,9 @@ namespace uni10{
     int Block<uni10_type>::typeID()const{ return elem.__uni10_typeid;}
 
   template<typename uni10_type>
+    uni10_type* Block<uni10_type>::getElem()const{ return elem.__elem; }
+
+  template<typename uni10_type>
     void Block<uni10_type>::save(const std::string& fname)const{
 
       std::string a = fname;
