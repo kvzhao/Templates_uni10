@@ -35,15 +35,15 @@ int main(){
   cout << MR1;
 
   //MR1 *= MR1;
-  cout << diag1;
+  cout << trace(MR1) << std::endl;
 
   //MR1 *= diag1;
 
-  cout << diag1 * MR1;
+  //cout << diag1 * MR1;
 
-  cout << diag1 + MR1;
+  //cout << diag1 + MR1;
 
-  cout << diag1 - MR1;
+  //cout << diag1 - MR1;
 
   //cout << diag1 * 2.;
 
@@ -54,7 +54,7 @@ int main(){
   //diag1 *= MR1;
 
   //cout << diag1;
-
+  /*
   Matrix< std::complex<double> > MC1(3, 3);
   MC1.setElem(elem_C);
 
@@ -94,6 +94,6 @@ int main(){
   cout << dot(cdiag1, cdiag1);
 
   cout << "======= Complex =======\n";
-
+  */
   return 0;
 }

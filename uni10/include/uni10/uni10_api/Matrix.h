@@ -154,6 +154,9 @@ namespace uni10{
         template<typename _uni10_type>
           friend void conj( Matrix<_uni10_type>& Mij, UNI10_INPLACE on );
 
+        template<typename _uni10_type>
+          friend void identity( Matrix<_uni10_type>& Mij );
+
     };
 
 };  /* namespace uni10 */

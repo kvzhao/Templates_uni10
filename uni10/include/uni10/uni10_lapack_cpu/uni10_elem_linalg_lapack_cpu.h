@@ -47,6 +47,8 @@ namespace uni10{
   void matrixDot(const uni10_elem_double64* A, uni10_const_bool* Aisdag, const uni10_elem_double64* B, uni10_const_bool* Bisdiag, 
       const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_double64* C);
 
+  uni10_double64 matrixTrace(const uni10_elem_double64* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N);
+
   void setTranspose(const uni10_elem_double64* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_double64* AT);
 
   void setTranspose(uni10_elem_double64* A, uni10_uint64* M, uni10_uint64* N);
@@ -95,6 +97,8 @@ namespace uni10{
 
   void matrixDot(const uni10_elem_complex128* A, uni10_const_bool* Aisdag, const uni10_elem_complex128* B, uni10_const_bool* Bisdag, 
       const uni10_uint64* M, const uni10_uint64* N, const uni10_uint64* K, uni10_elem_complex128* C);
+
+  uni10_complex128 matrixTrace(const uni10_elem_complex128* Mij_ori, uni10_const_bool* isdiag, const uni10_uint64* M, const uni10_uint64* N);
 
   void setTranspose(const uni10_elem_complex128* A, const uni10_uint64* M, const uni10_uint64* N, uni10_elem_complex128* AT);
 

@@ -4,7 +4,8 @@
 #include <vector>
 
 #include "uni10/uni10_api/Block.h"
-#include "uni10/uni10_api/linalg_typemix.h"
+#include "uni10/uni10_api/Matrix.h"
+//#include "uni10/uni10_api/linalg_typemix.h"
 
 #if defined(CPU) && defined(LAPACK)
 #include "uni10/uni10_elem_linalg.h"
@@ -152,6 +153,31 @@ namespace uni10{
     }
 
   template<typename uni10_type>
+    std::vector< Matrix<uni10_type> > eigh( const Block<uni10_type >& Mij ){
+
+      std::vector< Matrix<uni10_type> > outs;
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
+      matrixEigh(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
+
+    }
+
+  template<typename uni10_type>
+    std::vector< Matrix<uni10_complex128> > eig( const Block<uni10_type>& Mij ){
+
+      std::vector< Matrix<uni10_complex128> > outs;
+      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum, true));
+      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum));
+      matrixEig(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+
+      return outs;
+
+    }
+
+
+  template<typename uni10_type>
     Matrix<uni10_type> inverse( const Block<uni10_type>& Mij ){
 
       Matrix<uni10_type> invM(Mij);
@@ -220,36 +246,14 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-    std::vector< Matrix<uni10_type> > eigh( const Block<uni10_type >& Mij ){
+    uni10_type trace( const Block<uni10_type>& Mij ){
 
-      std::vector< Matrix<uni10_type> > outs;
-      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum, true));
-      outs.push_back(Matrix<uni10_type>(Mij.Rnum, Mij.Cnum));
-      matrixEigh(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
+      uni10_type res = matrixTrace(&Mij.elem, &Mij.diag, &Mij.Rnum, &Mij.Cnum);
 
-      return outs;
-
-    }
-
-  template<typename uni10_type>
-    std::vector< Matrix<uni10_complex128> > eig( const Block<uni10_type>& Mij ){
-
-      std::vector< Matrix<uni10_complex128> > outs;
-      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum, true));
-      outs.push_back(Matrix<uni10_complex128>(Mij.Rnum, Mij.Cnum));
-      matrixEig(&Mij.elem, &Mij.diag, &Mij.Cnum, &outs[0].elem, &outs[1].elem);
-
-      return outs;
+      return res;
 
     }
 
 }
-
-  //template<typename uni10_type>
-  //  void vectorExp(Block<uni10_type> a, Block<uni10_type>* X, uni10_uint64 N);
-
-  //// Lapack
-  //template<typename uni10_type>
-  //  void eigSyDecompose(Block<uni10_type>* Kij, uni10_int32 N, Block<uni10_type>* Eig, Block<uni10_type>* EigVec);
 
 #endif

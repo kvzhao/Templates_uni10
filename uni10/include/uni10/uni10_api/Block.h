@@ -196,6 +196,9 @@ namespace uni10{
         template<typename _uni10_type>
           friend _uni10_type det( const Block<_uni10_type>& _Mij );
 
+        template<typename _uni10_type>
+          friend _uni10_type trace( const Block<_uni10_type>& _Mij );
+
     };
 
   template<typename uni10_type>
