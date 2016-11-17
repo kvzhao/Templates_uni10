@@ -68,6 +68,8 @@ namespace uni10{
 
         void setElem(const std::vector<uni10_type>& elem, bool src_ongpu = false);
 
+        void setDiag(uni10_bool _isdiag);
+
         Matrix& operator=(const Matrix& _m){
           this->Rnum = _m.Rnum;
           this->Cnum = _m.Cnum;

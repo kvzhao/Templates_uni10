@@ -95,6 +95,8 @@ namespace uni10{
       if(__elem != NULL)
         uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
 
+      __elem = NULL;
+
     }
 
 

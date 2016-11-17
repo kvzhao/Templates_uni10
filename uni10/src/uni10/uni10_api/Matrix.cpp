@@ -125,6 +125,13 @@ namespace uni10{
 
     };
 
+  template <typename uni10_type>
+    void Matrix<uni10_type>::setDiag(uni10_bool _isdiag){
+
+        this->diag = _isdiag;
+
+    };
+
   template class Matrix<uni10_double64>;
   template class Matrix<uni10_complex128>;
 
