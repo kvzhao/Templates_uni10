@@ -121,12 +121,7 @@ namespace uni10{
   template <typename uni10_type>
     void Matrix<uni10_type>::init(const uni10_type* elem){
 
-      if(this->diag){
-        this->elem.init(1, fmin(this->Rnum, this->Cnum), elem);
-      }
-      else{
-        this->elem.init(this->Rnum, this->Cnum, elem);
-      }
+        this->elem.init(this->Rnum, this->Cnum, this->diag, elem);
 
     };
 

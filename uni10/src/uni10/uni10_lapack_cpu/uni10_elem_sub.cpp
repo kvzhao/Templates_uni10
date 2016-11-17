@@ -15,7 +15,7 @@ namespace uni10{
 
       *isAdiag = false;
 
-      A->init(*M, *N, B->__elem);
+      A->init(*M, *N, false, B->__elem);
 
       uni10_double64 alpha = -1.;
 
@@ -54,7 +54,7 @@ namespace uni10{
 
       *isAdiag = false;
 
-      A->init(*M, *N, B->__elem);
+      A->init(*M, *N, false, B->__elem);
 
       uni10_double64 alpha = -1.;
 
@@ -92,7 +92,7 @@ namespace uni10{
 
       *isAdiag = false;
 
-      A->init(*M, *N, NULL);
+      A->init(*M, *N, false, NULL);
 
       uni10_elem_cast_cpu(A->__elem, B->__elem, B->__elemNum);
 

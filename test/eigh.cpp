@@ -23,7 +23,8 @@ int main(){
   
   eig(A, Eig, EigVec, INPLACE);
 
-  vector< Matrix<uni10_complex128> > EV = eig(B);
+  //vector< Matrix<uni10_complex128> > EV = eig(B);
+  vector< Matrix<double> > EV = eigh(B);
 
   cout << EV[0];
   cout << EV[1];

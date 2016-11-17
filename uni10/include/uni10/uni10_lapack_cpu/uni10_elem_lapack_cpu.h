@@ -14,9 +14,9 @@ namespace uni10{
 
         explicit uni10_elem_lapack_cpu();
 
-        explicit uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum);
+        explicit uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false);
 
-        explicit uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum);
+        explicit uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false);
 
         explicit uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem);
 
@@ -38,9 +38,11 @@ namespace uni10{
 
         uni10_type* __elem;
 
+        void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, const uni10_type* src=NULL);
+
+        // Is is going to be removed
         void resize(uni10_uint64 _row, uni10_uint64 _col, uni10_uint64& _Rnum, uni10_uint64& _Cnum, uni10_bool& _isdiag, uni10_const_bool& _fixHead = true);
 
-        void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src=NULL);
 
     };
 

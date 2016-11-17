@@ -8,23 +8,23 @@ namespace uni10{
     uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elemNum(0), __elem(NULL){};
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag): __uni10_typeid(UNI10_TYPE_ID(uni10_type)),__elem(NULL){
 
-      init(_Rnum, _Cnum, NULL);
+      init(_Rnum, _Cnum, _isdiag, NULL);
 
     }
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
 
-      init(_Rnum, _Cnum, src);
+      init(_Rnum, _Cnum, _isdiag, src);
 
     };
 
   template<typename uni10_type>
     uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __elemNum(_elem.__elemNum){
 
-      init(1, __elemNum, _elem.__elem);
+      init(1, __elemNum, false, _elem.__elem);
 
     };
 
@@ -48,9 +48,9 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, const uni10_type* src){
+    void uni10_elem_lapack_cpu<uni10_type>::init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, const uni10_type* src){
 
-      __elemNum =  _Rnum * _Cnum ;
+      __elemNum =  _isdiag ? std::min(_Rnum, _Cnum) : _Rnum * _Cnum ;
 
       if(__elem != NULL)
         uni10_elem_free_cpu(__elem, __elemNum*sizeof(uni10_type));

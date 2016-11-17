@@ -13,7 +13,7 @@ int main(){
   //vector< Matrix<double> > QDR = qdr( A );
   //vector< Matrix<double> > QR = qr( A );
 
-  vector< Matrix<double> > LDQ = qdr_cpivot( A );
+  vector< Matrix<double> > LDQ = qdr( A );
   vector< Matrix<double> > LQ  = qr( A );
   cout << "==== Ori =====\n";
 
