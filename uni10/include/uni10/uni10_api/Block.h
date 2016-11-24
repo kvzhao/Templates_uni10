@@ -50,6 +50,9 @@ namespace uni10{
   };
 
   template<typename uni10_type>
+    class UniTensor;
+
+  template<typename uni10_type>
     class Matrix;
 
   template<typename uni10_type>
@@ -94,7 +97,6 @@ namespace uni10{
 
       public:
 
-
         explicit Block();
 
         explicit Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag = false);
@@ -123,7 +125,11 @@ namespace uni10{
 
         uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
 
-        friend class Matrix<uni10_type>;
+        template<typename uni10_typ>
+          friend class Matrix;
+
+        template<typename uni10_typ>
+          friend class UniTensor;
 
         friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 

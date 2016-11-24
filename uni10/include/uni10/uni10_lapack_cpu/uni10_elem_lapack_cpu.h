@@ -14,9 +14,9 @@ namespace uni10{
 
         explicit uni10_elem_lapack_cpu();
 
-        explicit uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false);
+        explicit uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false, uni10_bool _ongpu = false);
 
-        explicit uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false);
+        explicit uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag = false, uni10_bool _ongpu = false);
 
         explicit uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem);
 
@@ -35,6 +35,8 @@ namespace uni10{
         uni10_type_id __uni10_typeid;  
 
         uni10_uint64 __elemNum;
+
+        uni10_bool __ongpu;
 
         uni10_type* __elem;
 

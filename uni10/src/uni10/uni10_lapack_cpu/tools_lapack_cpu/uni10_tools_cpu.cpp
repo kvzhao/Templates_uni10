@@ -21,8 +21,8 @@ namespace uni10{
   void uni10_elem_free_cpu(void* ptr, uni10_uint64 memsize){
 
     free(ptr);
-    ptr = NULL;
     env_variables.use_memsize(-memsize);
+    ptr = NULL;
 
   }
 

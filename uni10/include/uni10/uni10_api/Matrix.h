@@ -52,6 +52,8 @@ namespace uni10{
 
         explicit Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag=false);
 
+        explicit Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_type* _src, bool _diag=false);
+
         explicit Matrix<uni10_type>(Block<uni10_type> const& _b);
 
         explicit Matrix(const std::string& fname);

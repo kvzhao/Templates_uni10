@@ -32,6 +32,7 @@ int main(){
 
   cout << "======= Real =======\n";
 
+  MR1 + MR1;
   cout << MR1;
 
   //MR1 *= MR1;

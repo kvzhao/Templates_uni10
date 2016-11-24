@@ -44,6 +44,11 @@ namespace uni10{
     };
 
   template <typename uni10_type>
+    Matrix<uni10_type>::Matrix(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_type* _src, uni10_bool _diag): Block<uni10_type>(_Rnum, _Cnum, _diag){
+      init(_src);
+    };
+
+  template <typename uni10_type>
     Matrix<uni10_type>::Matrix(Matrix const& _m): Block<uni10_type>(_m.Rnum, _m.Cnum, _m.diag){
       init(_m.elem.__elem);
     };

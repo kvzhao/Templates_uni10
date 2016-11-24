@@ -33,6 +33,7 @@
 #include <vector>
 #include <map>
 
+#include "uni10/uni10_type.h"
 #include "uni10/uni10_api/Qnum.h"
 
 namespace uni10 {
@@ -43,7 +44,11 @@ namespace uni10 {
     BD_OUT = -1  ///<Defines an outgoing Bond
   };
 
-  class UniTensor;
+  template<typename uni10_type>
+    class UniTensor;
+
+  //template <typename uni10_type>
+  //  class UniTensor;
 
   /// @brief The Bond class holds the information of a bond.
   ///
@@ -174,17 +179,17 @@ namespace uni10 {
       /// The dimension of the bond is 4.
       friend std::ostream& operator<< (std::ostream& os, const Bond& b);
 
-      friend class UniTensor;
-      friend class CUniTensor;
-      friend class Node;
-      friend class CNode;
+      template<typename uni10_type>
+        friend class UniTensor;
+
+      //friend class Node;
     private:
       void setting(const std::vector<Qnum>& qnums);
       bondType m_type;
-      int m_dim;
+      uni10_int32 m_dim;
       std::vector<Qnum>Qnums; //Quantum numbers
-      std::vector<int>Qdegs;  //Degeneracy in each quantum sector
-      std::vector<int>offsets;
+      std::vector<uni10_int32>Qdegs;  //Degeneracy in each quantum sector
+      std::vector<uni10_int32>offsets;
   };
 
   Bond combine(bondType tp, const std::vector<Bond>& bds);

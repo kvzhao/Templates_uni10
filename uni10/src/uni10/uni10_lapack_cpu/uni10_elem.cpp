@@ -5,24 +5,24 @@
 namespace uni10{
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elemNum(0), __elem(NULL){};
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elemNum(0), __ongpu(false), __elem(NULL){};
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag): __uni10_typeid(UNI10_TYPE_ID(uni10_type)),__elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, uni10_bool _ongpu): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __ongpu(_ongpu),__elem(NULL){
 
       init(_Rnum, _Cnum, _isdiag, NULL);
 
     }
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elem(NULL){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_type* src, uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, uni10_bool _ongpu): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __ongpu(_ongpu), __elem(NULL){
 
       init(_Rnum, _Cnum, _isdiag, src);
 
     };
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __elemNum(_elem.__elemNum){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __elemNum(_elem.__elemNum), __ongpu(_elem.__ongpu){
 
       init(1, __elemNum, false, _elem.__elem);
 
@@ -31,8 +31,11 @@ namespace uni10{
   template<typename uni10_type>
     uni10_elem_lapack_cpu<uni10_type>::~uni10_elem_lapack_cpu(){
 
-      if(__elem != NULL)
+      if(__elem != NULL && __elemNum != 0)
         uni10_elem_free_cpu(__elem, __elemNum * sizeof(uni10_type));
+
+      __elem    = NULL;
+      __elemNum = 0;
 
     };
 

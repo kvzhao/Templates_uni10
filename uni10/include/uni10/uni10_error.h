@@ -14,11 +14,10 @@ static inline void error_msg( char const *const func, const char *const file, in
     char msg[512];
     va_start(args, format);
     vsprintf(msg, format, args);
-    fprintf(stderr, "\n# Uni10 error occur at %s\n# error: %s\n# file : %s (%d)\n\n", func, msg,file, line) ;
+    fprintf(stderr, "\n# Uni10 error occur at %s\n# error: %s\n# file : %s (%d)\n\n", func, msg, file, line) ;
     va_end(args);
     exit(EXIT_FAILURE);
   }
-
 }
 
 #endif
