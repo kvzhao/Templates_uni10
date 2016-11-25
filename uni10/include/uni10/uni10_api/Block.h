@@ -97,6 +97,13 @@ namespace uni10{
 
       public:
 
+        // Three except enforce functions which are designed for tensor_tools.
+        uni10_uint64& row_enforce(){return Rnum;};
+
+        uni10_uint64& col_enforce(){return Cnum;};
+
+        UELEM(uni10_elem, _package, _type)<uni10_type>& elem_enforce(){return elem;};
+
         explicit Block();
 
         explicit Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag = false);
@@ -125,11 +132,6 @@ namespace uni10{
 
         uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
 
-        template<typename uni10_typ>
-          friend class Matrix;
-
-        template<typename uni10_typ>
-          friend class UniTensor;
 
         friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 
@@ -148,6 +150,9 @@ namespace uni10{
         friend uni10_bool operator!= <>(const Block& m1, const Block& m2);
 
         //UNI10_LINALG_RETURN_VALUE
+        template<typename _uni10_type> 
+          friend Matrix<_uni10_type> getDiag( const Block<_uni10_type>& A );
+
         template<typename _uni10_type> 
           friend Matrix<_uni10_type> dot( const Block<_uni10_type>& A, const Block<_uni10_type>& B );
 
@@ -204,6 +209,12 @@ namespace uni10{
 
         template<typename _uni10_type>
           friend _uni10_type trace( const Block<_uni10_type>& _Mij );
+
+        template<typename uni10_typ>
+          friend class Matrix;
+
+        template<typename uni10_typ>
+          friend class UniTensor;
 
     };
 

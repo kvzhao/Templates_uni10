@@ -6,13 +6,8 @@
 #include <string>
 #include <vector>
 
-#include "uni10/uni10_api/Block.h"
 #include "uni10/uni10_api/Bond.h"
-
-#define meta_link(var, para)\
-  do{\
-   var = &para->var\
-  }while(0);
+#include "uni10/uni10_api/Block.h"
 
 namespace uni10{
 
@@ -31,7 +26,7 @@ namespace uni10{
       uni10_uint64 U_elemNum;
       std::map< Qnum, Block<uni10_type> > blocks;
       UELEM(uni10_elem, _package, _type)<uni10_type> U_elem;     // pointer to a real matrix
-      uni10_int32 status;                                        //Check initialization, 1 initialized, 3 initialized with label, 5 initialized with elements
+      uni10_int32 status;                                        // Check initialization, 1 initialized, 3 initialized with label, 5 initialized with elements
 
     };
 
@@ -40,7 +35,7 @@ namespace uni10{
     struct blk_sym_para{
 
       blk_sym_para(){};
-
+      // Developping 
       std::string name;
       std::vector<Bond> bonds;
       std::map<Qnum, Block<uni10_type> > blocks;
@@ -57,22 +52,43 @@ namespace uni10{
       std::map<uni10_int32, uni10_uint64> RQidx2Dim;
       std::map<uni10_int32, uni10_uint64> CQidx2Dim;
       uni10_int32 status;                               //Check initialization, 1 initialized, 3 initialized with label, 5 initialized with elements
+
     };
 
   template<typename uni10_type>
     struct spar_sym_para{
-      spar_sym_para(): a(0), b(0), c(0){};
+      spar_sym_para(){};
+      // Developping 
+      std::string name;
+      std::vector<Bond> bonds;
+      std::map<Qnum, Block<uni10_type> > blocks;
+      std::vector<uni10_int32>labels;
+      void packMeta();
+      uni10_int32 RBondNum;   //Row bond number
+      uni10_int32 RQdim;
+      uni10_int32 CQdim;
+      uni10_uint64 m_elemNum;
 
-      uni10_type a, b, c;
     };
 
   template<typename uni10_type>
     struct U_para{
-      U_para(): nsy(NULL), bsy(NULL), ssy(NULL){};
+      U_para(): nsy(NULL), bsy(NULL), ssy(NULL), check_status(-1){};
 
+      void nsy_alloc(){ nsy = new struct no_sym_para<uni10_type>[1]; }
+      void free(){
+          if(nsy != NULL)
+            delete nsy;
+          else if(bsy != NULL)
+            delete bsy;
+          if(ssy != NULL)
+            delete ssy;
+      }
       no_sym_para<uni10_type>*     nsy;
       blk_sym_para<uni10_type>*    bsy;
       spar_sym_para<uni10_type>*   ssy;
+
+      uni10_int32 check_status;
 
     };
 

@@ -4,6 +4,35 @@ namespace uni10{
   
   namespace tensor_tools{
 
+    // Overload for UniTensor<T>::init_para();
+    U_para<uni10_double64>* init_para(U_para<uni10_double64>* para, contain_type style){
+
+
+      para = init_para_d[style](para);
+      return para;
+
+    }
+
+    U_para<uni10_complex128>* init_para(U_para<uni10_complex128>* para, contain_type style){
+
+      para = init_para_z[style](para);
+      return para;
+
+    }
+
+    // Overload for UniTensor<T>::init_para();
+    void free_para(U_para<uni10_double64>* para, contain_type style){
+
+      para = init_para_d[style](para);
+
+    }
+
+    void free_para(U_para<uni10_complex128>* para, contain_type style){
+
+      para = init_para_z[style](para);
+
+    }
+
     // Overload for UniTensor<T>::init();
     void init(U_para<uni10_double64>* para, contain_type style){
 
@@ -14,19 +43,6 @@ namespace uni10{
     void init(U_para<uni10_complex128>* para, contain_type style){
 
       init_z[style](para);
-
-    }
-
-    // Overload for UniTensor<T>::UniTensor(T val, contain_type style);
-    void init_val(uni10_double64 val, U_para<uni10_double64>* para, contain_type style){
-
-      init_val_d[style](val, para);
-
-    }
-
-    void init_val(uni10_complex128 val, U_para<uni10_complex128>* para, contain_type style){
-
-      init_val_z[style](val, para);
 
     }
 

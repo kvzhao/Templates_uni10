@@ -14,6 +14,19 @@
 namespace uni10{
 
   template<typename uni10_type> 
+    Matrix<uni10_type> getDiag( const Block<uni10_type>& A ){
+      if(A.diag){
+        Matrix<uni10_type> D(A);
+        return D;
+      }
+      else{
+        Matrix<uni10_type> D(A.Rnum, A.Cnum, true);
+        uni10_error_msg(true, "%s", "Developping!!!\n");
+        return D;
+      }
+    }
+
+  template<typename uni10_type> 
     Matrix<uni10_type> dot( const Block<uni10_type>& A, const Block<uni10_type>& B ){
 
       uni10_error_msg(A.Cnum != B.Rnum, "%s", "The dimensions of the two matrices do not match for matrix multiplication.");

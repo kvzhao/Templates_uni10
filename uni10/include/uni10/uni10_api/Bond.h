@@ -179,6 +179,10 @@ namespace uni10 {
       /// The dimension of the bond is 4.
       friend std::ostream& operator<< (std::ostream& os, const Bond& b);
 
+      const std::vector<Qnum>& const_getQnums()const{return Qnums;}
+
+      const std::vector<uni10_int32>& const_getQdegs()const{return Qdegs;}
+
       template<typename uni10_type>
         friend class UniTensor;
 
@@ -187,7 +191,7 @@ namespace uni10 {
       void setting(const std::vector<Qnum>& qnums);
       bondType m_type;
       uni10_int32 m_dim;
-      std::vector<Qnum>Qnums; //Quantum numbers
+      std::vector<Qnum>Qnums;          //Quantum numbers
       std::vector<uni10_int32>Qdegs;  //Degeneracy in each quantum sector
       std::vector<uni10_int32>offsets;
   };

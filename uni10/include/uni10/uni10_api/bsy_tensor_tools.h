@@ -11,23 +11,36 @@ namespace uni10{
 
     //Function prototype.
     template<typename uni10_type>
+      U_para<uni10_type>* init_para_bsy(U_para<uni10_type>* para);
+
+    template<typename uni10_type>
+       void free_para_bsy(U_para<uni10_type>* para);
+
+    template<typename uni10_type>
       void init_bsy(U_para<uni10_type>* para);
 
     template<typename uni10_type>
-      void grouping_bsy(U_para<uni10_type>* _para);
+      uni10_uint64 grouping_bsy(U_para<uni10_type>* _para);
 
     template <typename uni10_type>
       void initBlocks_bsy(U_para<uni10_type>* para);
 
-    template<typename uni10_type>
-      void init_val_bsy(uni10_type val, U_para<uni10_type>* para);
-
-
-
     // Functions.
     template<typename uni10_type>
-      void init_val_bsy(uni10_type val, U_para<uni10_type>* para){
+      U_para<uni10_type>* init_para_bsy(U_para<uni10_type>* para){
 
+        para = new struct U_para<uni10_type>[1];
+        para->bsy = new struct blk_sym_para<uni10_type>[1];
+      
+        return para;   
+      }
+
+    template<typename uni10_type>
+       void free_para_bsy(U_para<uni10_type>* para){
+        
+         delete para->bsy;
+         delete para;
+        
       }
 
     template<typename uni10_type>
@@ -37,7 +50,7 @@ namespace uni10{
       }
 
     template<typename uni10_type>
-      void grouping_bsy(U_para<uni10_type>* _para){
+      uni10_uint64 grouping_bsy(U_para<uni10_type>* _para){
 
       }
 

@@ -42,6 +42,8 @@ namespace uni10{
 
         void init(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, const uni10_type* src=NULL);
 
+        void copy(uni10_uint64 begin_idx, const uni10_elem_lapack_cpu<uni10_type>& src, uni10_uint64 len);
+
         // Is is going to be removed
         void resize(uni10_uint64 _row, uni10_uint64 _col, uni10_uint64& _Rnum, uni10_uint64& _Cnum, uni10_bool& _isdiag, uni10_const_bool& _fixHead = true);
 

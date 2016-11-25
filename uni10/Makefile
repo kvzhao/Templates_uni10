@@ -307,7 +307,7 @@ EVERYTHING_TARGETS := all py$(PROJECT) test warn lint
 # Define build targets
 ##############################
 
-all: clean_buf lib install
+all: clean_header clean_buf lib install
 
 lib: $(STATIC_NAME) $(DYNAMIC_NAME)
 

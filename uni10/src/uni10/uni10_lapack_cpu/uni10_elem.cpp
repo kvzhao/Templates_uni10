@@ -102,6 +102,12 @@ namespace uni10{
 
     }
 
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::copy(uni10_uint64 begin_idx, const uni10_elem_lapack_cpu<uni10_type>& src, uni10_uint64 len){
+
+      uni10_elem_copy_cpu(__elem + begin_idx, src.__elem, len*sizeof(uni10_type));
+
+    }
 
   template<typename uni10_type>
     void uni10_elem_lapack_cpu<uni10_type>::print_elem(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _isdiag) const{
