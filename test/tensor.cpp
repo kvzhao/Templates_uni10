@@ -16,19 +16,15 @@ int main(){
   int label[] = {4, 5, 10};
   UniTensor<double> B(bonds, label);
 
-  cout << buf;
-
   cout << B;
 
-  cout << buf.getElem()[0] << endl;
-  cout << buf.getElem()[1] << endl;
-  cout << buf.getElem()[2] << endl;
-  cout << buf.getElem()[3] << endl;
+  cout << buf;
 
   double cc[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     ,1, 2, 3, 4, 5, 6, 7, 8, 9, 10
       ,1, 2, 3, 4, 5, 6, 7
   };
+
   B.setElem(cc);
   cout << B;
   B.putBlock(buf);

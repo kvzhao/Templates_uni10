@@ -131,6 +131,8 @@ namespace uni10{
 
         friend std::ostream& operator<< <>(std::ostream& os, const UniTensor& _b);  // --> uni10_elem().print_elem()
 
+        //friend UniTensor contract(UniTensor& Ta, UniTensor& Tb, bool fast);
+        //friend UniTensor otimes(const UniTensor& Ta, const UniTensor& Tb);
         //void set_zero();
         //void set_zero(const Qnum& qnum);
         //void identity();
@@ -143,8 +145,6 @@ namespace uni10{
         //UniTensor& permute(const std::vector<int>& newLabels, int inBondNum);
         //UniTensor& permute(int* newLabels, int inBondNum);
         //UniTensor& permute(int inBondNum);
-        //friend UniTensor contract(UniTensor& Ta, UniTensor& Tb, bool fast);
-        //friend UniTensor otimes(const UniTensor& Ta, const UniTensor& Tb);
         //UniTensor& combineBond(const std::vector<int>& combined_labels);
         //std::string printRawElem(bool print=true)const;
         //static std::string profile(bool print = true);
@@ -166,14 +166,11 @@ namespace uni10{
         //UniTensor& operator+= (const UniTensor& Tb);
         //friend UniTensor operator+ (const UniTensor& Ta, const UniTensor& Tb);
         //void setRawElem(const Block& blk);
-
         //bool similar(const UniTensor& Tb)const;
         //bool elemCmp(const UniTensor& UniT)const;
-
         //void clear();
         //Real operator[](size_t idx) const;
         //Complex operator()(size_t idx) const;
-
         //friend class Node;
         //friend class Network;
 
@@ -265,7 +262,7 @@ namespace uni10{
       typename std::map<Qnum, Block<uni10_type> >::const_iterator it = UniT.blocks->begin();
       for (; it != UniT.blocks->end(); it++ ){
         std::cout << "--- " << it->first << ": ";// << Rnum << " x " << Cnum << " = " << Rnum * Cnum << " ---\n\n";
-        if(!((*(UniT.status) & UniT.HAVEELEM) && printElem))
+        if(((*(UniT.status) & UniT.HAVEELEM) && printElem))
           std::cout<<it->second;
         else
           std::cout<<it->second.row() << " x "<<it->second.col()<<": "<<it->second.elemNum()<<std::endl<<std::endl;
