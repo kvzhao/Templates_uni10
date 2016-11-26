@@ -8,7 +8,11 @@ int main(){
   Block<double> A;
   Matrix<double> buf(3, 9);
 
+  cout << buf;
+
   uni10_rand(buf, uni10_mt19937, uni10_uniform_real, -1, 1, uni10_clock);
+
+  cout << buf;
 
   vector<Bond> bonds(3, Bond(BD_OUT, 3));
   bonds[0] = Bond(BD_IN, 3);
@@ -18,7 +22,6 @@ int main(){
 
   cout << B;
 
-  cout << buf;
 
   double cc[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
     ,1, 2, 3, 4, 5, 6, 7, 8, 9, 10
@@ -33,6 +36,10 @@ int main(){
 
   int label2[] = {1, 3, 2};
   B.setLabel(label2);
+  cout << B;
+
+  set_zeros(B);
+
   cout << B;
 
   return 0;

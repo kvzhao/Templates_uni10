@@ -93,16 +93,20 @@ namespace uni10{
 
         uni10_uint64 Cnum;
 
-        bool diag;
+        uni10_bool diag;
 
       public:
 
-        // Three except enforce functions which are designed for tensor_tools.
+        // Four except enforce functions which are designed for tensor_tools.
         uni10_uint64& row_enforce(){return Rnum;};
 
         uni10_uint64& col_enforce(){return Cnum;};
 
+        uni10_bool& diag_enforce(){return diag;};
+
         UELEM(uni10_elem, _package, _type)<uni10_type>& elem_enforce(){return elem;};
+
+        const UELEM(uni10_elem, _package, _type)<uni10_type>& const_elem_enforce()const{return elem;};
 
         explicit Block();
 
@@ -131,7 +135,6 @@ namespace uni10{
         uni10_type* getElem()const;     // --> uni10_elem().getElem()
 
         uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
-
 
         friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 

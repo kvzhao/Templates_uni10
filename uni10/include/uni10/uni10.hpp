@@ -35,6 +35,8 @@
 #include "uni10/uni10_api/rng.h"
 #include "uni10/uni10_api/linalg.h"
 #include "uni10/uni10_api/linalg_inplace.h"
+#include "uni10/uni10_api/hirnk_linalg.h"
+#include "uni10/uni10_api/hirnk_linalg_inplace.h"
 #include "uni10/uni10_api/UniTensor.h"
 //#include "uni10/uni10_api/Qnum.h"
 

@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "uni10/uni10_api/UniTensor_para.h"
 #include "uni10/uni10_api/Matrix.h"
+#include "uni10/uni10_api/UniTensor_para.h"
 
 namespace uni10{
 
@@ -22,6 +22,12 @@ namespace uni10{
   template<typename uni10_type>
     std::ostream& operator<< (std::ostream& os, const UniTensor<uni10_type>& _b);
 
+  template<typename uni10_type>
+    UniTensor<uni10_type> operator*(const UniTensor<uni10_type>& Ta, uni10_type a);
+
+  template<typename uni10_type>
+    UniTensor<uni10_type> operator*(uni10_type a, const UniTensor<uni10_type>& Ta);
+
   template <typename uni10_type>
     class UniTensor {
 
@@ -32,10 +38,11 @@ namespace uni10{
 
         void init_para();
         void meta_link();
+        void copy_para(U_para<uni10_type>* src_para);
         void init();
+        void initBlocks();
         void free_para();
-        //void initBlocks();
-        //uni10_uint64 grouping();
+        contain_type check_bonds()const;
 
         // General variables.
         std::string* name;
@@ -68,13 +75,13 @@ namespace uni10{
         static uni10_int32 GET_HAVEELEM(){return HAVEELEM;};      /**< A flag for having element assigned */
 
         explicit UniTensor();
-        explicit UniTensor(uni10_type val, contain_type _style = no_sym);
-        explicit UniTensor(const std::vector<Bond>& _bonds, const std::string& _name = "", contain_type _style = no_sym);
-        explicit UniTensor(const std::vector<Bond>& _bonds, int* labels, const std::string& _name = "", contain_type _style = no_sym);
-        explicit UniTensor(const std::vector<Bond>& _bonds, std::vector<int>& labels, const std::string& _name = "", contain_type _style = no_sym);
-        explicit UniTensor(const UniTensor& UniT);
+        explicit UniTensor(uni10_type val);
+        explicit UniTensor(const std::vector<Bond>& _bonds, const std::string& _name = "");
+        explicit UniTensor(const std::vector<Bond>& _bonds, int* labels, const std::string& _name = "");
+        explicit UniTensor(const std::vector<Bond>& _bonds, std::vector<int>& labels, const std::string& _name = "");
         //explicit UniTensor(const std::string& fname);
         explicit UniTensor(const Block<uni10_type>& UniT);
+        UniTensor(const UniTensor& UniT);
         ~UniTensor();
 
         void putBlock(const Block<uni10_type>& mat);
@@ -127,13 +134,57 @@ namespace uni10{
 
         void setElem(const std::vector<uni10_type>& _elem);
 
+        UniTensor& assign(const std::vector<Bond>& _bond);
+
         void printDiagram()const;
+
+        UniTensor& operator=(const UniTensor& UniT){
+
+          if(this->paras != NULL)
+            this->free_para();
+
+          style = UniT.style;
+          this->init_para();
+          this->meta_link();
+          this->copy_para(UniT.paras);
+          this->initBlocks();
+          
+          return *this; 
+        }
+
+        UniTensor& operator*= (uni10_type a){
+          vectorScal(&a, this->U_elem, &this->U_elem->__elemNum);
+          return *this;
+        };
+
+        //UniTensor& operator*= (const UniTensor& Tb);
+        //
+        //friend UniTensor operator*(const UniTensor& Ta, const UniTensor& Tb);
+
+        uni10_type operator[](uni10_uint64 idx)const{
+          uni10_error_msg(!(idx < (*U_elemNum)), "Index exceeds the number of elements( %ld ).", *U_elemNum);
+          return U_elem->__elem[idx];
+        }
 
         friend std::ostream& operator<< <>(std::ostream& os, const UniTensor& _b);  // --> uni10_elem().print_elem()
 
-        //friend UniTensor contract(UniTensor& Ta, UniTensor& Tb, bool fast);
-        //friend UniTensor otimes(const UniTensor& Ta, const UniTensor& Tb);
-        //void set_zero();
+        friend UniTensor<uni10_type> operator*<>(const UniTensor<uni10_type>& Ta, uni10_type a);
+
+        friend UniTensor<uni10_type> operator*<>(uni10_type a, const UniTensor<uni10_type>& Ta);
+
+        template<typename _uni10_type> 
+          friend void set_zeros( UniTensor<_uni10_type>& A );
+
+        template<typename _uni10_type>
+          friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, const std::vector<uni10_int32>& newLabels, uni10_int32 inBondNum);
+
+        template<typename _uni10_type>
+          friend UniTensor<_uni10_type> contract( UniTensor<_uni10_type>& Ta, UniTensor<_uni10_type>& Tb, uni10_uint64 fast );
+
+        template<typename _uni10_type>
+          friend UniTensor<_uni10_type> otimes( const UniTensor<_uni10_type>& Ta, const UniTensor<_uni10_type>& Tb);
+
+
         //void set_zero(const Qnum& qnum);
         //void identity();
         //void identity(const Qnum& qnum);
@@ -141,10 +192,6 @@ namespace uni10{
         //void orthoRand();
         //void orthoRand(const Qnum& qnum);
         //void save(const std::string& fname) const;
-        //UniTensor& transpose();
-        //UniTensor& permute(const std::vector<int>& newLabels, int inBondNum);
-        //UniTensor& permute(int* newLabels, int inBondNum);
-        //UniTensor& permute(int inBondNum);
         //UniTensor& combineBond(const std::vector<int>& combined_labels);
         //std::string printRawElem(bool print=true)const;
         //static std::string profile(bool print = true);
@@ -152,17 +199,6 @@ namespace uni10{
         //void addGate(const std::vector<_Swap>& swaps);
         //Complex trace()const;
         //UniTensor& partialTrace(int la, int lb);
-        //Matrix getRawElem()const;
-        //UniTensor& assign(const std::vector<Bond>& _bond);
-        //UniTensor& operator*= (Real a);
-        //UniTensor& operator*= (Complex a);
-        //UniTensor& operator*= (const UniTensor& Tb);
-        //friend UniTensor operator*(const UniTensor& Ta, const Complex& a);
-        //friend UniTensor operator*(const Complex& a, const UniTensor& Ta);
-        //friend UniTensor operator*(const UniTensor& Ta, Real a);
-        //friend UniTensor operator*(Real a, const UniTensor& Ta);
-        //friend UniTensor operator*(const UniTensor& Ta, const UniTensor& Tb);
-        //UniTensor& operator=(const UniTensor& UniT);
         //UniTensor& operator+= (const UniTensor& Tb);
         //friend UniTensor operator+ (const UniTensor& Ta, const UniTensor& Tb);
         //void setRawElem(const Block& blk);
@@ -173,6 +209,8 @@ namespace uni10{
         //Complex operator()(size_t idx) const;
         //friend class Node;
         //friend class Network;
+        
+        //Matrix getRawElem()const
 
     };
 
@@ -190,7 +228,6 @@ namespace uni10{
 
   template<typename uni10_type>
     std::ostream& operator<< (std::ostream& os, const UniTensor<uni10_type>& UniT){
-      std::cout << "===============================" << std::endl;
       if(!(*(UniT.status) & UniT.HAVEBOND)){
         if(UniT.U_elem->__ongpu)
           std::cout<<"\nScalar: " << UniT.U_elem->__elem[0]<<", onGPU";
@@ -272,6 +309,19 @@ namespace uni10{
       os << "\n";
       return os;
     }
+
+  template<typename uni10_type>
+    UniTensor<uni10_type> operator*(const UniTensor<uni10_type>& Ta, uni10_type a){
+      std::cout << "=======================1============================\n\n";
+      uni10_error_msg(!((*Ta.status) & Ta.HAVEELEM), "%s", "Cannot perform scalar multiplication on a tensor before setting its elements.");
+      std::cout << "=======================2============================\n\n";
+      UniTensor<uni10_type> Tb(Ta);
+      //vectorScal(&a, Ta.U_elem, &Ta.U_elem->__elemNum);
+      return Tb;
+    }
+
+  template<typename uni10_type>
+    UniTensor<uni10_type> operator*(uni10_type a, const UniTensor<uni10_type>& Ta){return Ta*a;}
 
 };
 

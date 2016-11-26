@@ -37,7 +37,8 @@ namespace uni10{
     Block<uni10_type>::Block(): Rnum(0), Cnum(0), diag(false){};
 
   template<typename uni10_type>
-    Block<uni10_type>::Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag): Rnum(_Rnum), Cnum(_Cnum), diag(_diag){}
+    Block<uni10_type>::Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag): Rnum(_Rnum), Cnum(_Cnum), diag(_diag){
+    }
 
   template<typename uni10_type>
     Block<uni10_type>::Block(const Block& _b): elem(_b.elem), Rnum(_b.Rnum), Cnum(_b.Cnum), diag(_b.diag){}

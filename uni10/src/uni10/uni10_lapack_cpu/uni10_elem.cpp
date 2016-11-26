@@ -5,7 +5,7 @@
 namespace uni10{
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __elemNum(0), __ongpu(false), __elem(NULL){};
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __ongpu(false), __elemNum(0), __elem(NULL){};
 
   template<typename uni10_type>
     uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(uni10_uint64 _Rnum, uni10_uint64 _Cnum, uni10_bool _isdiag, uni10_bool _ongpu): __uni10_typeid(UNI10_TYPE_ID(uni10_type)), __ongpu(_ongpu),__elem(NULL){
@@ -22,7 +22,7 @@ namespace uni10{
     };
 
   template<typename uni10_type>
-    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __elemNum(_elem.__elemNum), __ongpu(_elem.__ongpu){
+    uni10_elem_lapack_cpu<uni10_type>::uni10_elem_lapack_cpu(const uni10_elem_lapack_cpu& _elem): __uni10_typeid(_elem.__uni10_typeid), __ongpu(_elem.__ongpu), __elemNum(_elem.__elemNum){
 
       init(1, __elemNum, false, _elem.__elem);
 
@@ -36,6 +36,17 @@ namespace uni10{
 
       __elem    = NULL;
       __elemNum = 0;
+
+    };
+
+  template<typename uni10_type>
+    void uni10_elem_lapack_cpu<uni10_type>::set_zeros(){
+
+      uni10_error_msg( __elem == NULL || __elemNum == 0, "%s", "Please initialize the uni10_elem with the constructor uni10(uni10_uint64, uni10_uint64, bool) befero setting the elements.");
+
+      uni10_uint64 memsize = __elemNum * sizeof(uni10_type);
+
+      uni10_elemBzero_cpu( __elem, memsize );
 
     };
 

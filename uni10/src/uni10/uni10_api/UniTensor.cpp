@@ -31,19 +31,19 @@
 
 #include "uni10/uni10_error.h"
 #include "uni10/uni10_api/linalg.h"
-#include "uni10/uni10_api/tensor_tools.h"
+#include "uni10/uni10_api/tensor_tools/tensor_tools.h"
 
 namespace uni10{
 
   template <typename uni10_type>
-    UniTensor<uni10_type>::UniTensor(): style(no_sym){
-      this->init_para();
-      this->meta_link();
+    UniTensor<uni10_type>::UniTensor(): style(no_sym), paras(NULL){
+
     };
 
   template <typename uni10_type>
-    UniTensor<uni10_type>::UniTensor(uni10_type val, contain_type _style): style(_style){ 
+    UniTensor<uni10_type>::UniTensor(uni10_type val){ 
 
+      style = check_bonds();
       this->init_para();
       this->meta_link();
       *status = 0;
@@ -52,8 +52,9 @@ namespace uni10{
     }
 
   template <typename uni10_type>
-    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, const std::string& _name, contain_type _style): style(_style){
+    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, const std::string& _name){
      
+      style = check_bonds();
       this->init_para();
       this->meta_link();
       *name  = _name;
@@ -64,8 +65,9 @@ namespace uni10{
     }
 
   template <typename uni10_type>
-    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, int* _labels, const std::string& _name, contain_type _style): style(_style){
+    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, int* _labels, const std::string& _name){
 
+      style = check_bonds();
       this->init_para();
       this->meta_link();
       *name  = _name;
@@ -77,8 +79,9 @@ namespace uni10{
     }
 
   template <typename uni10_type>
-    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, std::vector<int>& _labels, const std::string& _name, contain_type _style): style(_style){
+    UniTensor<uni10_type>::UniTensor(const std::vector<Bond>& _bonds, std::vector<int>& _labels, const std::string& _name){
 
+      style = check_bonds();
       this->init_para();
       this->meta_link();
       *name  = _name;
@@ -94,7 +97,8 @@ namespace uni10{
 
       this->init_para();
       this->meta_link();
-      uni10_error_msg(true, "%s", "Developping!!\n");
+      this->copy_para(UniT.paras);
+      this->initBlocks();
      
     }
 
@@ -106,15 +110,16 @@ namespace uni10{
   template <typename uni10_type>
     UniTensor<uni10_type>::UniTensor(const Block<uni10_type>& blk){
 
+      this->style = no_sym;
       Bond bdi(BD_IN, blk.Rnum);
       Bond bdo(BD_OUT, blk.Cnum);
-      bonds->push_back(bdi);
-      bonds->push_back(bdo);
       this->init_para();
       this->meta_link();
+      bonds->push_back(bdi);
+      bonds->push_back(bdo);
       this->init();
       this->setElem(blk.getElem());
-      //uni10_error_msg(true, "%s", "Developping!!\n");
+      uni10_error_msg(true, "%s", "Developping!!\n");
       //this->putBlock(blk);
 
     }
@@ -127,6 +132,15 @@ namespace uni10{
     }
 
   template <typename uni10_type>
+    UniTensor<uni10_type>& UniTensor<uni10_type>::assign(const std::vector<Bond>& _bond ){
+  
+      UniTensor<uni10_type> T(_bond);
+      *this = T;
+      return *this;
+
+    }
+
+  template <typename uni10_type>
     void UniTensor<uni10_type>::putBlock(const Block<uni10_type>& mat){
       Qnum q0(0);
       putBlock(q0, mat);
@@ -135,26 +149,7 @@ namespace uni10{
   template <typename uni10_type>
     void UniTensor<uni10_type>::putBlock(const Qnum& qnum, const Block<uni10_type>& mat){
 
-      typename std::map<Qnum, Block<uni10_type> >::iterator it;
-
-      if(!((it = blocks->find(qnum)) != blocks->end())){
-        uni10_error_msg(true, "%s", "There is no block with the given quantum number ");
-        std::cout<<qnum;
-      }
-
-
-      uni10_error_msg(!(mat.row() == it->second.Rnum && mat.col() == it->second.Cnum), "%s", 
-          "The dimension of input matrix does not match for the dimension of the block with quantum number \n  Hint: Use Matrix::resize(int, int)");
-
-      if(mat.elem.__elem != it->second.elem.__elem){
-        if(mat.isDiag()){
-          uni10_error_msg(true, "%s","Developping!!!");
-        }
-        else
-          it->second.elem.copy(0, mat.elem, it->second.Rnum * it->second.Cnum );
-      }
-
-      *status |= HAVEELEM;
+      tensor_tools::putBlock(paras, qnum, mat, style);
 
     }
 
@@ -343,6 +338,13 @@ namespace uni10{
     }
 
   template <typename uni10_type>
+    void UniTensor<uni10_type>::copy_para(U_para<uni10_type>* src_para){
+
+      tensor_tools::copy_para(paras, src_para, style);
+
+    }
+
+  template <typename uni10_type>
     void UniTensor<uni10_type>::meta_link(){
 
       if(style == 0){
@@ -382,20 +384,25 @@ namespace uni10{
     }
 
   template <typename uni10_type>
+    void UniTensor<uni10_type>::initBlocks(){
+
+      tensor_tools::initBlocks(paras, style);
+
+    }
+
+
+  template <typename uni10_type>
     void UniTensor<uni10_type>::free_para(){
       // You should init_para() first. Then you can use this function to initialize the UniTensor.
       tensor_tools::free_para(paras, style);
     }
 
-  //template <typename uni10_type>
-  //  void UniTensor<uni10_type>::initBlocks(){
-
-  //  }
-
-  //template <typename uni10_type>
-  //  uni10_uint64 UniTensor<uni10_type>::grouping(){
-
-  //  }
+  template <typename uni10_type> 
+    contain_type UniTensor<uni10_type>::check_bonds()const{
+      // blk_sym && spar_sym are developping
+      contain_type s = no_sym;
+      return s;
+    }
 
   template class UniTensor<uni10_double64>;
   template class UniTensor<uni10_complex128>;
