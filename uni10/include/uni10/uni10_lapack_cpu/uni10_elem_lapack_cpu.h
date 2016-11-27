@@ -25,11 +25,12 @@ namespace uni10{
           __uni10_typeid = _m.__uni10_typeid;
           __ongpu        = _m.__ongpu;
           this->init(1, _m.__elemNum, false, _m.__elem);
-        };
+          return *this;
+        }
 
         ~uni10_elem_lapack_cpu();
 
-        inline bool empty() const{ return __elem == NULL; };
+        inline bool empty() const{ return __elem == NULL; }
 
         void set_zeros();
 

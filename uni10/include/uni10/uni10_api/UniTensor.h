@@ -312,11 +312,9 @@ namespace uni10{
 
   template<typename uni10_type>
     UniTensor<uni10_type> operator*(const UniTensor<uni10_type>& Ta, uni10_type a){
-      std::cout << "=======================1============================\n\n";
       uni10_error_msg(!((*Ta.status) & Ta.HAVEELEM), "%s", "Cannot perform scalar multiplication on a tensor before setting its elements.");
-      std::cout << "=======================2============================\n\n";
       UniTensor<uni10_type> Tb(Ta);
-      //vectorScal(&a, Ta.U_elem, &Ta.U_elem->__elemNum);
+      vectorScal(&a, Tb.U_elem, &Tb.U_elem->__elemNum);
       return Tb;
     }
 

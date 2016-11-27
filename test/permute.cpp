@@ -44,9 +44,11 @@ int main(){
  
   std::cout << "-=====================-\n";
   std::cout << B;
-  cout << permute(B, newlabel, 1);
+  B = permute(B, newlabel, 1);
   
-  cout << 2.0 * B;
+  cout << B;
+  cout << 4.0 * B;
+  cout << B* 2.0;
 
   return 0;
 }

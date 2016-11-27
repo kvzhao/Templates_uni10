@@ -53,7 +53,7 @@ resize.e: resize.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 leak_check:
-	valgrind --leak-check=yes ./dot.e
+	valgrind --leak-check=yes ./mute.e
 
 clean:
 	rm -f *.o *.e asd

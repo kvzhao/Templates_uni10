@@ -211,6 +211,7 @@ namespace uni10{
           return it->first;
         idx--;
       }
+      return Qnum();
     }
 
   template <typename uni10_type>
@@ -221,6 +222,7 @@ namespace uni10{
         Matrix<uni10_type> mat(it->second.Rnum, it->second.Cnum, it->second.elem.__elem);
         mats.insert(std::pair<Qnum, Matrix<uni10_type> >(it->first, mat));
       }
+      return std::map< Qnum, Matrix<uni10_type> >();
     }
 
   template <typename uni10_type>
