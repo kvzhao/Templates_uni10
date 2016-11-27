@@ -131,17 +131,8 @@ namespace uni10{
           }
         int conBond = interLabel.size();
 
-        std::cout << "--------QQQQQQQQQQQQQQ------------" << std::endl;
-        std::cout << Ta;
-        std::cout << Tb;
-        std::cout << "BBBBBB: " << AbondNum - conBond << std::endl;
-        std::cout << permute(Ta, newLabelA, AbondNum - conBond);
         Ta = permute(Ta, newLabelA, AbondNum - conBond);
-        //std::cout << Ta;
         Tb = permute(Tb, newLabelB, conBond);
-        std::cout << Tb;
-        std::cout << "--------QQQQQQQQQQQQQQ------------" << std::endl;
-        exit(0);
 
         std::vector<Bond> cBonds;
         for(int i = 0; i < AbondNum - conBond; i++)
@@ -159,10 +150,6 @@ namespace uni10{
             blockA = it->second;
             blockB = it2->second;
             blockC = (*Tc.blocks)[it->first];
-            //std::cout << blockA;
-            //std::cout << blockB;
-            //std::cout << blockC;
-            //exit(0);
             uni10_error_msg(!(blockA.row() == blockC.row() && blockB.col() == blockC.col() && blockA.col() == blockB.row()), 
                 "%s", "The dimensions the bonds to be contracted out are different.");
                        
@@ -232,8 +219,6 @@ namespace uni10{
       return contract(T1, T2, true);
 
     }
-  
-
 
 };
 

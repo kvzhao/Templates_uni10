@@ -1,8 +1,8 @@
 INC := $(TUNI10_ROOT)/include
 LIB := $(TUNI10_ROOT)/lib
 CC := icpc
-FLAGS:=-O3 -m64 -std=c++11 -DCPU -DLAPACK
-OBJ := $(LIB)/libuni10.a
+FLAGS:= -m64 -std=c++11 -DCPU -DLAPACK
+OBJ := $(LIB)/libuni10.so
 
 tract.e: contract.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
@@ -56,7 +56,7 @@ resize.e: resize.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 leak_check:
-	valgrind --leak-check=yes ./mute.e
+	valgrind --leak-check=yes ./tract.e
 
 clean:
 	rm -f *.o *.e asd

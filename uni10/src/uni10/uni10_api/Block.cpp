@@ -42,8 +42,11 @@ namespace uni10{
     }
 
   template<typename uni10_type>
-    Block<uni10_type>::Block(const Block& _b): elem(_b.elem), Rnum(_b.Rnum), Cnum(_b.Cnum), diag(_b.diag){
-      //std::cout << "Block copy constructor\n\n" << std::endl;
+    Block<uni10_type>::Block(const Block& _b): Rnum(_b.Rnum), Cnum(_b.Cnum), diag(_b.diag){
+      elem.__uni10_typeid = _b.elem.__uni10_typeid;
+      elem.__ongpu = _b.elem.__ongpu;
+      elem.__elemNum = _b.elem.__elemNum;
+      elem.__elem = _b.elem.__elem;
     }
 
   template<typename uni10_type>

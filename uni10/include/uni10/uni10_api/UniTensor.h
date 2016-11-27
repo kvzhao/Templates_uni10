@@ -106,9 +106,11 @@ namespace uni10{
 
         Bond bond(uni10_uint64 idx)const{return (*bonds)[idx];};
 
-        uni10_uint64 elemNum()const{return (*Rdim)*(*Cdim); };
+        uni10_uint64 elemNum()const{return (*U_elemNum); };
 
         uni10_uint64 blockNum()const{return blocks->size();};
+
+        uni10_type* getElem()const{return U_elem->__elem; }
 
         const Block<uni10_type>& const_getBlock()const;
 
@@ -177,6 +179,12 @@ namespace uni10{
 
         template<typename _uni10_type>
           friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, const std::vector<uni10_int32>& newLabels, uni10_int32 inBondNum);
+
+        template<typename _uni10_type>
+          friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, uni10_int32* newLabels, uni10_int32 inBondNum);
+
+        template<typename _uni10_type>
+          friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, uni10_int32 rowBondNum);
 
         template<typename _uni10_type>
           friend UniTensor<_uni10_type> contract( UniTensor<_uni10_type>& Ta, UniTensor<_uni10_type>& Tb, uni10_uint64 fast );

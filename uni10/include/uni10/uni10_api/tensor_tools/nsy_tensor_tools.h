@@ -46,7 +46,11 @@ namespace uni10{
     template<typename uni10_type>
        U_para<uni10_type>* init_para_nsy(U_para<uni10_type>* para){
 
+        //std::cout << para-> check_status;
         para = new struct U_para<uni10_type>[1];
+        para->check_status = 1;
+        //std::cout << para-> check_status;
+        //exit(0);
         para->nsy = new struct no_sym_para<uni10_type>[1];
 
         return para;
@@ -63,8 +67,8 @@ namespace uni10{
     template<typename uni10_type>
        void free_para_nsy(U_para<uni10_type>* para){
         
-         delete para->nsy;
-         delete para;
+         delete [] para->nsy;
+         delete [] para;
         
       }
 
@@ -131,6 +135,7 @@ namespace uni10{
             IN_BONDS_BEFORE_OUT_BONDS = false;
           }
         }
+        para->nsy->RBondNum = row_bondNum;
         para->nsy->blocks[q0] = Block<uni10_type>(para->nsy->Rdim, para->nsy->Cdim);
 
         return para->nsy->Rdim*para->nsy->Cdim;
