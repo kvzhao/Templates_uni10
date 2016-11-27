@@ -73,6 +73,7 @@ namespace uni10{
         void setDiag(uni10_bool _isdiag);
 
         Matrix& operator=(const Matrix& _m){
+          //std::cout << "Matrix =  !!\n\n";
           this->Rnum = _m.Rnum;
           this->Cnum = _m.Cnum;
           this->diag = _m.diag;

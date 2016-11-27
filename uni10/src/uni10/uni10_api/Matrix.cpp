@@ -50,12 +50,14 @@ namespace uni10{
 
   template <typename uni10_type>
     Matrix<uni10_type>::Matrix(Matrix const& _m): Block<uni10_type>(_m.Rnum, _m.Cnum, _m.diag){
+      //std::cout << "matrix constructor !!!!\n\n\n";
       init(_m.elem.__elem);
     };
 
   // Copy constructor
   template <typename uni10_type>
     Matrix<uni10_type>::Matrix(Block<uni10_type> const& _b): Block<uni10_type>(_b.Rnum, _b.Cnum, _b.diag){
+      //std::cout << "matrix block constructor !!!!\n\n\n";
       init(_b.elem.__elem);
     };
 

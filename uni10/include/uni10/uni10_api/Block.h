@@ -1,7 +1,7 @@
 /****************************************************************************
 *  @file Block.h
 *  @license
- *   Universal Tensor Network Library
+*    Universal Tensor Network Library
 *    Copyright (c) 2013-2014
 *    National Taiwan University
 *    National Tsing-Hua University
@@ -135,6 +135,18 @@ namespace uni10{
         uni10_type* getElem()const;     // --> uni10_elem().getElem()
 
         uni10_type at(uni10_uint64 i, uni10_uint64 j)const;
+
+        Block& operator=(const Block& _m){
+          //std::cout << "BLock QQ =  !!\n\n";
+          this->Rnum = _m.Rnum;
+          this->Cnum = _m.Cnum;
+          this->diag = _m.diag;
+          elem.__uni10_typeid = _m.elem.__uni10_typeid;
+          elem.__ongpu = _m.elem.__ongpu;
+          elem.__elemNum = _m.elem.__elemNum;
+          elem.__elem = _m.elem.__elem;
+          return *this;
+        };
 
         friend std::ostream& operator<< <>(std::ostream& os, const Block& _b); // --> uni10_elem().print_elem()
 

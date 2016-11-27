@@ -38,10 +38,13 @@ namespace uni10{
 
   template<typename uni10_type>
     Block<uni10_type>::Block(uni10_uint64 _Rnum, uni10_uint64 _Cnum, bool _diag): Rnum(_Rnum), Cnum(_Cnum), diag(_diag){
+      //std::cout << "Block constructor\n\n" << std::endl;
     }
 
   template<typename uni10_type>
-    Block<uni10_type>::Block(const Block& _b): elem(_b.elem), Rnum(_b.Rnum), Cnum(_b.Cnum), diag(_b.diag){}
+    Block<uni10_type>::Block(const Block& _b): elem(_b.elem), Rnum(_b.Rnum), Cnum(_b.Cnum), diag(_b.diag){
+      //std::cout << "Block copy constructor\n\n" << std::endl;
+    }
 
   template<typename uni10_type>
     Block<uni10_type>::~Block(){}

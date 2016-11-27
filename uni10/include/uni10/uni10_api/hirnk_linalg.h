@@ -19,7 +19,6 @@ namespace uni10{
       uni10_error_msg((*T.status) & UniTensor<uni10_type>::GET_HAVEBOND == 0, "%s", "There is no bond in the tensor(scalar) to permute.");
       uni10_error_msg((T.labels->size() == newLabels.size()) == 0, "%s", "The size of the input new labels does not match for the number of bonds.");
 
-
       uni10_int32 bondNum = T.bonds->size();
       std::vector<uni10_int32> rsp_outin(bondNum);
       uni10_int32 cnt = 0;
@@ -112,7 +111,8 @@ namespace uni10{
               interLabel.push_back((*Ta.labels)[a]);
               newLabelB.push_back((*Tb.labels)[b]);
 
-              uni10_error_msg(!( (*Ta.bonds)[a].dim() == (*Tb.bonds)[b].dim() ), "%s", "Cannot contract two bonds having different dimensions");
+              uni10_error_msg(!( (*Ta.bonds)[a].dim() == (*Tb.bonds)[b].dim() ), "%s", 
+                  "Cannot contract two bonds having different dimensions");
 
               match = true;
               break;
@@ -131,8 +131,17 @@ namespace uni10{
           }
         int conBond = interLabel.size();
 
+        std::cout << "--------QQQQQQQQQQQQQQ------------" << std::endl;
+        std::cout << Ta;
+        std::cout << Tb;
+        std::cout << "BBBBBB: " << AbondNum - conBond << std::endl;
+        std::cout << permute(Ta, newLabelA, AbondNum - conBond);
         Ta = permute(Ta, newLabelA, AbondNum - conBond);
+        //std::cout << Ta;
         Tb = permute(Tb, newLabelB, conBond);
+        std::cout << Tb;
+        std::cout << "--------QQQQQQQQQQQQQQ------------" << std::endl;
+        exit(0);
 
         std::vector<Bond> cBonds;
         for(int i = 0; i < AbondNum - conBond; i++)
@@ -150,7 +159,10 @@ namespace uni10{
             blockA = it->second;
             blockB = it2->second;
             blockC = (*Tc.blocks)[it->first];
-
+            //std::cout << blockA;
+            //std::cout << blockB;
+            //std::cout << blockC;
+            //exit(0);
             uni10_error_msg(!(blockA.row() == blockC.row() && blockB.col() == blockC.col() && blockA.col() == blockB.row()), 
                 "%s", "The dimensions the bonds to be contracted out are different.");
                        

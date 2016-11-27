@@ -22,6 +22,7 @@ namespace uni10{
 
         
         uni10_elem_lapack_cpu& operator=(const uni10_elem_lapack_cpu& _m){
+          //std::cout << "QQ!!! QQ!!QQ!!!!!\n\n\n";
           __uni10_typeid = _m.__uni10_typeid;
           __ongpu        = _m.__ongpu;
           this->init(1, _m.__elemNum, false, _m.__elem);

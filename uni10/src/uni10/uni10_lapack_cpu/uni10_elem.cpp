@@ -130,8 +130,11 @@ namespace uni10{
         fprintf(stdout, "[\n" );
       }
 
-      if(_isdiag){
-
+      if(__elem == NULL){
+        fprintf(stdout, "\nThe uni10_elem_lapack_cpu has not been allocated or linked. \n\n" );
+        fprintf(stdout, "];\n" );
+      }
+      else if(_isdiag){
         for( int i = 0; i < (int)_Rnum; ++i ) {
           for( int j = 0; j < (int)_Cnum; ++j ) {
             if ( i != j) {
@@ -153,7 +156,6 @@ namespace uni10{
 
       }
       else{
-
         for( int i = 0; i < (int)_Rnum; ++i ) {
           for( int j = 0; j < (int)_Cnum; ++j ) {
             if ( __elem[ i * _Cnum + j] == 0.) {
@@ -172,7 +174,6 @@ namespace uni10{
             fprintf(stdout, " " );
         }
         fprintf(stdout, "];\n" );
-
       }
 
     }
