@@ -50,14 +50,12 @@ int main(){
   cout << B;
   cout << C;
 
-  std::cout << "-=====================-\n";
-  
   //cout << B;
   //cout << C;
 
   UniTensor<double> E;
   //E = contract(B, C, true);
   E = otimes(B, C);
-  cout << E;
+  E.printDiagram();
   return 0;
 }

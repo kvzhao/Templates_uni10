@@ -327,8 +327,8 @@ namespace uni10{
         for(uni10_uint64 b = 0; b < _bonds.size(); b++)
           std::cout << _bonds[b];
 
-        std::cout << "Total elemNum: "<<(*U_elemNum)<<std::endl;
-        std::cout << "\n====================================\n";
+        std::cout << "\n\nTotal elemNum: "<<(*U_elemNum)<<std::endl;
+        std::cout << "====================================\n";
       }
     }
 

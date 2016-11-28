@@ -2,7 +2,7 @@ INC := $(TUNI10_ROOT)/include
 LIB := $(TUNI10_ROOT)/lib
 CC := icpc
 FLAGS:= -m64 -std=c++11 -DCPU -DLAPACK
-OBJ := $(LIB)/libuni10.so
+OBJ := $(LIB)/libuni10.a
 
 tract.e: contract.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel

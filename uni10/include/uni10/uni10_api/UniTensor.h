@@ -215,8 +215,12 @@ namespace uni10{
         //void clear();
         //Real operator[](size_t idx) const;
         //Complex operator()(size_t idx) const;
-        //friend class Node;
-        //friend class Network;
+        //
+        template <typename _uni10_type>
+          friend class Node;
+
+        template <typename _uni10_type>
+          friend class Network;
         
         //Matrix getRawElem()const
 
