@@ -35,15 +35,16 @@
 
 namespace uni10{
 
-  typedef struct{
-    int b1;
-    int b2;
-  }_Swap;
-
   class Bond;
 
   template<typename uni10_type>
     class UniTensor;
+
+  template<typename uni10_type>
+    class Node;
+
+  template<typename uni10_type>
+    std::ostream& operator<< (std::ostream& os, const Node<uni10_type>& nd);
 
   template <typename uni10_type>
     class Node {
@@ -57,7 +58,7 @@ namespace uni10{
         Node contract(Node* nd);
         uni10_float32 metric(Node* nd);
 
-        friend std::ostream& operator<< (std::ostream& os, const Node& nd);
+        friend std::ostream& operator<< <>(std::ostream& os, const Node& nd);
 
         template<typename _uni10_type>
           friend class Network;
@@ -76,6 +77,22 @@ namespace uni10{
         void delink();
 
     };
+
+  template <typename uni10_type>
+    std::ostream& operator<< (std::ostream& os, const Node<uni10_type>& nd){
+      os << "Tensor: " << nd.T<<std::endl;
+      os << "elemNum: " << nd.elemNum<<std::endl;
+      os << "parent: " << nd.parent<<std::endl;
+      os << "left: " << nd.left<<std::endl;
+      os << "right: " << nd.right<<std::endl;
+      os << "labels: ";
+      for(int i = 0; i < nd.labels.size(); i++)
+        os << nd.labels[i] << ", ";
+      os << std::endl;
+      for(int i = 0; i < nd.bonds.size(); i++)
+        os << "    " <<  nd.bonds[i];
+      return os;
+    }
 
 }; /* namespace uni10 */
 

@@ -1,38 +1,38 @@
 /****************************************************************************
-*  @file Network.cpp
-*  @license
-*    Universal Tensor Network Library
-*    Copyright (c) 2013-2014
-*    National Taiwan University
-*    National Tsing-Hua University
+ *  @file Network.cpp
+ *  @license
+ *    Universal Tensor Network Library
+ *    Copyright (c) 2013-2014
+ *    National Taiwan University
+ *    National Tsing-Hua University
 
-*
-*    This file is part of Uni10, the Universal Tensor Network Library.
-*
-*    Uni10 is free software: you can redistribute it and/or modify
-*    it under the terms of the GNU Lesser General Public License as published by
-*    the Free Software Foundation, either version 3 of the License, or
-*    (at your option) any later version.
-*
-*    Uni10 is distributed in the hope that it will be useful,
-*    but WITHOUT ANY WARRANTY; without even the implied warranty of
-*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*    GNU Lesser General Public License for more details.
-*
-*    You should have received a copy of the GNU Lesser General Public License
-*    along with Uni10.  If not, see <http://www.gnu.org/licenses/>.
-*  @endlicense
-*  @brief Implementation file for Node and Network classes 
-*  @author Yun-Da Hsieh, Ying-Jer Kao
-*  @date 2014-05-06
-*  @since 0.1.0
-*
-*****************************************************************************/
+ *
+ *    This file is part of Uni10, the Universal Tensor Network Library.
+ *
+ *    Uni10 is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Lesser General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    Uni10 is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Lesser General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Lesser General Public License
+ *    along with Uni10.  If not, see <http://www.gnu.org/licenses/>.
+ *  @endlicense
+ *  @brief Implementation file for Node and Network classes 
+ *  @author Yun-Da Hsieh, Ying-Jer Kao
+ *  @date 2014-05-06
+ *  @since 0.1.0
+ *
+ *****************************************************************************/
 #include <string>
-#include <algorithm>
-#include <iostream>
+#include <fstream>
 
 #include "uni10/uni10_api/Network.h"
+#include "uni10/uni10_api/network_tools/network_tools.h"
 
 
 namespace uni10{
@@ -255,7 +255,7 @@ namespace uni10{
         for(int i = 0; i < order.size(); i++){
 
           uni10_error_msg(leafs[order[i]] == NULL, "Tensor ' %s ' has not yet been given.\n  Hint: Use putTensor() to add a tensor to a network.\n", names[order[i]])
-          matching(leafs[order[i]], root);
+            matching(leafs[order[i]], root);
         }
       }
       int Tnum = label_arr.size() - 1;
@@ -297,7 +297,7 @@ namespace uni10{
         destruct();
       }
 
-      uni10_error_msg(!(UniT->RBondNum == Rnums[idx]), "The number of in-coming bonds does not match with the tensor ' %s ' specified in network file", names[idx]);
+      uni10_error_msg(!(*UniT->RBondNum == Rnums[idx]), "The number of in-coming bonds does not match with the tensor ' %s ' specified in network file", names[idx]);
 
       if(leafs[idx] != NULL){
         *(tensors[idx]) = *UniT;
@@ -336,16 +336,17 @@ namespace uni10{
 
   template <typename uni10_type>
     void Network<uni10_type>::putTensorT(const std::string& nameT, const UniTensor<uni10_type>* UniT, bool force){
-        std::map<std::string, size_t>::const_iterator itT = name2pos.find(nameT);
-        uni10_error_msg(!(itT != name2pos.end()), "There is no tensor named ' %s ' in the network file", nameT.c_str());
-        UniTensor<uni10_type> transT = *UniT;
-        transT.transpose();
-        putTensor(itT->second, &transT, force);
+      std::map<std::string, size_t>::const_iterator itT = name2pos.find(nameT);
+      uni10_error_msg(!(itT != name2pos.end()), "There is no tensor named ' %s ' in the network file", nameT.c_str());
+      UniTensor<uni10_type> transT = *UniT;
+      //transT.transpose();
+      uni10_error_msg(true, "%s", "Developping!!!");
+      putTensor(itT->second, &transT, force);
     }
 
   template <typename uni10_type>
     void Network<uni10_type>::putTensorT(const std::string& nameT, const UniTensor<uni10_type>& UniT, bool force){
-        putTensorT(nameT, &UniT, force);
+      putTensorT(nameT, &UniT, force);
     }
 
   template <typename uni10_type>
@@ -428,329 +429,260 @@ namespace uni10{
     }
 
   template <typename uni10_type>
-void Network::destruct(){
-	clean(root);
-	root = NULL;
-	for(int i = 0; i < leafs.size(); i++)
-		leafs[i]->delink();
-	conOrder.clear();
-	for(int t = 0; t < tensors.size(); t++){
-		if(Qnum::isFermionic() && swapflags[t]){
-			tensors[t]->addGate(swaps_arr[t]);
-			swapflags[t] = false;
-		}
-		swaps_arr[t].clear();
-	}
-	load = false;
-}
-
-
-  template <typename uni10_type>
-UniTensor Network::launch(const std::string& _name){
-  try{
-    if(!load)
-      construct();
-    for(int t = 0; t < tensors.size(); t++)
-      if(Qnum::isFermionic() && !swapflags[t]){
-	tensors[t]->addGate(swaps_arr[t]);
-	swapflags[t] = true;
+    void Network<uni10_type>::destruct(){
+      clean(root);
+      root = NULL;
+      for(int i = 0; i < (int)leafs.size(); i++)
+        leafs[i]->delink();
+      conOrder.clear();
+      for(int t = 0; t < (int)tensors.size(); t++){
+        if(Qnum::isFermionic() && swapflags[t]){
+          tensors[t]->addGate(swaps_arr[t]);
+          swapflags[t] = false;
+        }
+        swaps_arr[t].clear();
       }
-    UniTensor UniT = merge(root);
-    int idx = label_arr.size() - 1;
-    if(label_arr.size() > 0 && label_arr[idx].size() > 1)
-      UniT.permute(label_arr[idx], Rnums[idx]);
-    UniT.setName(_name);
-    return UniT;
-  }
-  catch(const std::exception& e){
-    propogate_exception(e, "In function Network::launch(std::string&):");
-    return UniTensor();
-  }
-}
+      load = false;
+    }
+
 
   template <typename uni10_type>
-UniTensor Network::merge(Node* nd){
-  if(nd->left->T == NULL){
-    UniTensor lftT = merge(nd->left);
-    if(nd->right->T == NULL){
-      UniTensor rhtT = merge(nd->right);
-      return contract(lftT, rhtT, true);
+    UniTensor<uni10_type> Network<uni10_type>::launch(const std::string& _name){
+        if(!load)
+          construct();
+        for(int t = 0; t < (int)tensors.size(); t++)
+          if(Qnum::isFermionic() && !swapflags[t]){
+            tensors[t]->addGate(swaps_arr[t]);
+            swapflags[t] = true;
+          }
+        UniTensor<uni10_type> UniT = merge(root);
+        int idx = label_arr.size() - 1;
+        if(label_arr.size() > 0 && label_arr[idx].size() > 1)
+          UniT = permute(UniT, label_arr[idx], Rnums[idx]);
+        UniT.setName(_name);
+        return UniT;
     }
-    else{
-      return contract(lftT, *(nd->right->T), true);
-    }
-  }
-  else{
-    if(nd->right->T == NULL){
-      UniTensor rhtT = merge(nd->right);
-      return contract(*(nd->left->T), rhtT, true);
-    }
-    else{
-      return contract(*(nd->left->T), *(nd->right->T), true);
-    }
-  }
-}
 
   template <typename uni10_type>
-Network::~Network(){
-  try{
-    if(load)
-      destruct();
-    for(int i = 0; i < leafs.size(); i++)
-      delete leafs[i];
-    for(int i = 0; i < tensors.size(); i++)
-      delete tensors[i];
-  }
-  catch(const std::exception& e){
-    propogate_exception(e, "In destructor Network::~Network():");
-  }
-}
-
-  template <typename uni10_type>
-int Network::rollcall(){
-  if(!load){
-    for(int i = 0; i < leafs.size(); i++)
-      if(leafs[i] == NULL){
-        return i;
+    UniTensor<uni10_type> Network<uni10_type>::merge(Node<uni10_type>* nd){
+      if(nd->left->T == NULL){
+        UniTensor<uni10_type> lftT = merge(nd->left);
+        if(nd->right->T == NULL){
+          UniTensor<uni10_type> rhtT = merge(nd->right);
+          return contract(lftT, rhtT, true);
+        }
+        else{
+          return contract(lftT, *(nd->right->T), true);
+        }
       }
-    construct();
-  }
-  return -1;
-}
+      else{
+        if(nd->right->T == NULL){
+          UniTensor<uni10_type> rhtT = merge(nd->right);
+          return contract(*(nd->left->T), rhtT, true);
+        }
+        else{
+          return contract(*(nd->left->T), *(nd->right->T), true);
+        }
+      }
+    }
 
   template <typename uni10_type>
-size_t Network::sum_of_memory_usage(){
-  if(rollcall() >= 0)
-    return 0;
-  return _sum_of_tensor_elem(root) * sizeof(Real);
-}
+    Network<uni10_type>::~Network(){
+      if(load)
+        destruct();
+      for(int i = 0; i < leafs.size(); i++)
+        delete leafs[i];
+      for(int i = 0; i < tensors.size(); i++)
+        delete tensors[i];
+    }
 
   template <typename uni10_type>
-size_t Network::_sum_of_tensor_elem(Node* nd) const{
-  if(nd == NULL)
-    return 0;
-  return nd->elemNum + _sum_of_tensor_elem(nd->left) + _sum_of_tensor_elem(nd->right);
-}
+    int Network<uni10_type>::rollcall(){
+      if(!load){
+        for(int i = 0; i < leafs.size(); i++)
+          if(leafs[i] == NULL){
+            return i;
+          }
+        construct();
+      }
+      return -1;
+    }
 
   template <typename uni10_type>
-size_t Network::memory_requirement(){
-  if(rollcall() >= 0)
-    return 0;
-  size_t usage = 0;
-  for(int i = 0; i < leafs.size(); i++)
-    usage += leafs[i]->elemNum;
-  usage *= 2;
-  size_t max_usage = 0;
-  _elem_usage(root, usage, max_usage);
-  return max_usage * sizeof(Real);
-}
+    size_t Network<uni10_type>::sum_of_memory_usage(){
+      if(rollcall() >= 0)
+        return 0;
+      return _sum_of_tensor_elem(root) * sizeof(uni10_type);
+    }
 
   template <typename uni10_type>
-size_t Network::_elem_usage(Node* nd, size_t& usage, size_t& max_usage)const{
-  if(nd == NULL)
-    return 0;
-  size_t child_usage = _elem_usage(nd->left, usage, max_usage) + _elem_usage(nd->right, usage, max_usage);
-  usage += nd->elemNum;
-  max_usage = usage > max_usage ? usage : max_usage;
-  usage -= child_usage;
-  return nd->elemNum;
-}
+    size_t Network<uni10_type>::_sum_of_tensor_elem(Node<uni10_type>* nd) const{
+      if(nd == NULL)
+        return 0;
+      return nd->elemNum + _sum_of_tensor_elem(nd->left) + _sum_of_tensor_elem(nd->right);
+    }
 
   template <typename uni10_type>
-size_t Network::max_tensor_elemNum(){
-  if(rollcall() >= 0)
-    return 0;
-  size_t max_num = 0;
-  Node max_nd;
-  _max_tensor_elemNum(root, max_num, max_nd);
-  return max_num;
-}
+    size_t Network<uni10_type>::memory_requirement(){
+      if(rollcall() >= 0)
+        return 0;
+      size_t usage = 0;
+      for(int i = 0; i < leafs.size(); i++)
+        usage += leafs[i]->elemNum;
+      usage *= 2;
+      size_t max_usage = 0;
+      _elem_usage(root, usage, max_usage);
+      return max_usage * sizeof(uni10_type);
+    }
 
   template <typename uni10_type>
-void Network::_max_tensor_elemNum(Node* nd, size_t& max_num, Node& max_nd) const{
-  if(nd == NULL)
-    return;
-  _max_tensor_elemNum(nd->left, max_num, max_nd);
-  _max_tensor_elemNum(nd->right, max_num, max_nd);
-  if(nd->elemNum > max_num){
-    max_num = nd->elemNum;
-    max_nd = *nd;
-  }
-}
+    size_t Network<uni10_type>::_elem_usage(Node<uni10_type>* nd, size_t& usage, size_t& max_usage)const{
+      if(nd == NULL)
+        return 0;
+      size_t child_usage = _elem_usage(nd->left, usage, max_usage) + _elem_usage(nd->right, usage, max_usage);
+      usage += nd->elemNum;
+      max_usage = usage > max_usage ? usage : max_usage;
+      usage -= child_usage;
+      return nd->elemNum;
+    }
 
   template <typename uni10_type>
-std::string Network::profile(bool print){
-  try{
-    std::ostringstream os;
-    int miss;
-    if((miss = rollcall()) >= 0){
-      os<<"\nTensor '"<<names[miss]<<"' has not yet been given!\n\n";
+    size_t Network<uni10_type>::max_tensor_elemNum(){
+      if(rollcall() >= 0)
+        return 0;
+      size_t max_num = 0;
+      Node<uni10_type> max_nd;
+      _max_tensor_elemNum(root, max_num, max_nd);
+      return max_num;
+    }
+
+  template <typename uni10_type>
+    void Network<uni10_type>::_max_tensor_elemNum(Node<uni10_type>* nd, size_t& max_num, Node<uni10_type>& max_nd) const{
+      if(nd == NULL)
+        return;
+      _max_tensor_elemNum(nd->left, max_num, max_nd);
+      _max_tensor_elemNum(nd->right, max_num, max_nd);
+      if(nd->elemNum > max_num){
+        max_num = nd->elemNum;
+        max_nd = *nd;
+      }
+    }
+
+  template <typename uni10_type>
+    std::string Network<uni10_type>::profile(bool print){
+      std::ostringstream os;
+      int miss;
+      if((miss = rollcall()) >= 0){
+        os<<"\nTensor '"<<names[miss]<<"' has not yet been given!\n\n";
+        if(print){
+          std::cout<<os.str();
+          return "";
+        }
+        return os.str();
+      }
+      os<<"\n===== Network profile =====\n";
+      os<<"Memory Requirement: "<<memory_requirement()<<std::endl;
+      //os<<"Sum of memory usage: "<<sum_of_memory_usage()<<std::endl;
+      size_t max_num = 0;
+      Node<uni10_type> max_nd;
+      _max_tensor_elemNum(root, max_num, max_nd);
+      os<<"Maximun tensor: \n";
+      os<<"  elemNum: "<<max_num<<"\n  "<<max_nd.labels.size()<<" bonds and labels: ";
+      for(int i = 0; i < (int)max_nd.labels.size(); i++)
+        os<< max_nd.labels[i] << ", ";
+      os<<std::endl;
+      os<<"===========================\n\n";
       if(print){
         std::cout<<os.str();
         return "";
       }
       return os.str();
     }
-    os<<"\n===== Network profile =====\n";
-    os<<"Memory Requirement: "<<memory_requirement()<<std::endl;
-    //os<<"Sum of memory usage: "<<sum_of_memory_usage()<<std::endl;
-    size_t max_num = 0;
-    Node max_nd;
-    _max_tensor_elemNum(root, max_num, max_nd);
-    os<<"Maximun tensor: \n";
-    os<<"  elemNum: "<<max_num<<"\n  "<<max_nd.labels.size()<<" bonds and labels: ";
-    for(int i = 0; i < max_nd.labels.size(); i++)
-      os<< max_nd.labels[i] << ", ";
-    os<<std::endl;
-    os<<"===========================\n\n";
-    if(print){
-      std::cout<<os.str();
-      return "";
-    }
-    return os.str();
-  }
-  catch(const std::exception& e){
-    propogate_exception(e, "In function Network::profile():");
-    return "";
-  }
-}
 
-void Network::preprint(std::ostream& os, Node* nd, int layer)const{
-	if(nd == NULL)
-		return;
-	for(int i = 0; i < layer; i++)
-		os<<"|   ";
-	if(nd->T)
-		os<<nd->name << "(" << nd->elemNum << "): ";
-	else
-		os<<"*("<<nd->elemNum<<"): ";
-	for(int i = 0; i < nd->labels.size(); i++)
-		os<< nd->labels[i] << ", ";
-	os<<std::endl;
-	preprint(os, nd->left, layer+1);
-	preprint(os, nd->right, layer+1);
-}
-
-std::ostream& operator<< (std::ostream& os, Network& net){
-  try{
-    os<<std::endl;
-    for(int i = 0; i < net.names.size(); i++){
-      os<<net.names[i]<< ": ";
-      if(net.Rnums[i])
-        os<<"i[";
-      for(int l = 0; l < net.Rnums[i]; l++){
-        os<<net.label_arr[i][l];
-        if(l < net.Rnums[i] - 1)
-          os<<", ";
-      }
-      if(net.Rnums[i])
-        os<<"] ";
-      if(net.label_arr[i].size() - net.Rnums[i])
-        os<<"o[";
-      for(int l = net.Rnums[i]; l < net.label_arr[i].size(); l++){
-        os<<net.label_arr[i][l];
-        if(l < net.label_arr[i].size() - 1)
-          os<<", ";
-      }
-      if(net.label_arr[i].size() - net.Rnums[i])
-        os<<"]";
+  template <typename uni10_type>
+    void Network<uni10_type>::preprint(std::ostream& os, Node<uni10_type>* nd, int layer)const{
+      if(nd == NULL)
+        return;
+      for(int i = 0; i < layer; i++)
+        os<<"|   ";
+      if(nd->T)
+        os<<nd->name << "(" << nd->elemNum << "): ";
+      else
+        os<<"*("<<nd->elemNum<<"): ";
+      for(int i = 0; i < (int)nd->labels.size(); i++)
+        os<< nd->labels[i] << ", ";
       os<<std::endl;
+      preprint(os, nd->left, layer+1);
+      preprint(os, nd->right, layer+1);
     }
-    os<<std::endl;
-    if(net.rollcall() < 0)
-      net.preprint(os, net.root, 0);
-    else
-      os<<"\nSome tensors have not yet been given!\n\n";
-  }
-  catch(const std::exception& e){
-    propogate_exception(e, "In function operator<<(std::ostream&, uni10::Network&):");
-  }
-	return os;
-}
-std::ostream& operator<< (std::ostream& os, const Node& nd){
-	os << "Tensor: " << nd.T<<std::endl;
-	os << "elemNum: " << nd.elemNum<<std::endl;
-	os << "parent: " << nd.parent<<std::endl;
-	os << "left: " << nd.left<<std::endl;
-	os << "right: " << nd.right<<std::endl;
-	os << "labels: ";
-	for(int i = 0; i < nd.labels.size(); i++)
-		os << nd.labels[i] << ", ";
-	os << std::endl;
-	for(int i = 0; i < nd.bonds.size(); i++)
-		os << "    " <<  nd.bonds[i];
-	return os;
-}
 
-void Network::findConOrd(Node* nd){
-	if(nd == NULL || conOrder.size() == tensors.size())
-		return;
-	if(nd->T){
-		bool found = false;
-		for(int i = 0; i < tensors.size(); i++)
-			if(nd->T == tensors[i]){
-				conOrder.push_back(i);
-				found = true;
-				break;
-			}
-    if(!found){
-      std::ostringstream err;
-      err<<"Fatal error(code = N2). Please contact the developer of the uni10 library.";
-      throw std::runtime_error(exception_msg(err.str()));
+  template <typename uni10_type>
+    void Network<uni10_type>::findConOrd(Node<uni10_type>* nd){
+      if(nd == NULL || conOrder.size() == tensors.size())
+        return;
+      if(nd->T){
+        bool found = false;
+        for(int i = 0; i < (int)tensors.size(); i++)
+          if(nd->T == tensors[i]){
+            conOrder.push_back(i);
+            found = true;
+            break;
+          }
+        uni10_error_msg(!found, "%s","Fatal error(code = N2). Please contact the developer of the uni10 library.");
+      }
+      findConOrd(nd->left);
+      findConOrd(nd->right);
     }
-	}
-	findConOrd(nd->left);
-	findConOrd(nd->right);
-}
 
-void Network::addSwap(){
-	int Tnum = leafs.size();
-	findConOrd(root);
-	if(!(Tnum == conOrder.size())){
-      std::ostringstream err;
-      err<<"Fatal error(code = N3). Please contact the developer of the uni10 library.";
-      throw std::runtime_error(exception_msg(err.str()));
-  }
-	//int tenOrder[conOrder.size()];
-  std::vector<int> tenOrder = conOrder;
-	//memcpy(tenOrder, &(conOrder[0]), Tnum * sizeof(int));
-	std::vector<_Swap> tenSwaps = recSwap(tenOrder);
-	std::vector<_Swap> swtmp;
-	for(int s = 0; s < tenSwaps.size(); s++){
-		swtmp = tensors[tenSwaps[s].b1]->exSwap(*(tensors[tenSwaps[s].b2]));
-		swaps_arr[tenSwaps[s].b1].insert(swaps_arr[tenSwaps[s].b1].end(), swtmp.begin(), swtmp.end());
-	}
-	//Distinct Swaps of each tensors
-	for(int t = 0; t < Tnum; t++){
-		std::map<int, bool> recs;
-		std::map<int, bool>::iterator it;
-		int bondNum = tensors[t]->bonds.size();
-		int is, ib;
-		int hash;
-		for(int s = 0; s < swaps_arr[t].size(); s++){
-			if(swaps_arr[t][s].b1 < swaps_arr[t][s].b2){
-				is = swaps_arr[t][s].b1;
-				ib = swaps_arr[t][s].b2;
-			}
-			else{
-				is = swaps_arr[t][s].b2;
-				ib = swaps_arr[t][s].b1;
-			}
-			int hash = is * bondNum + ib;
-			if((it = recs.find(hash)) != recs.end())
-				it->second ^= true;
-			else
-				recs[hash] = true;
-		}
-		swaps_arr[t].clear();
-		_Swap sp;
-		for (it=recs.begin(); it!=recs.end(); it++){
-			if(it->second){
-				sp.b1 = (it->first) / bondNum;
-				sp.b2 = (it->first) % bondNum;
-				swaps_arr[t].push_back(sp);
-			}
-		}
-	}
-}
+  template <typename uni10_type>
+    void Network<uni10_type>::addSwap(){
+      int Tnum = leafs.size();
+      findConOrd(root);
+      uni10_error_msg(!(Tnum == (int)conOrder.size()), "%s", "Fatal error(code = N3). Please contact the developer of the uni10 library.");
+      //int tenOrder[conOrder.size()];
+      std::vector<int> tenOrder = conOrder;
+      //memcpy(tenOrder, &(conOrder[0]), Tnum * sizeof(int));
+      std::vector<_Swap> tenSwaps = recSwap(tenOrder);
+      std::vector<_Swap> swtmp;
+      for(int s = 0; s < (int)tenSwaps.size(); s++){
+        swtmp = tensors[tenSwaps[s].b1]->exSwap(*(tensors[tenSwaps[s].b2]));
+        swaps_arr[tenSwaps[s].b1].insert(swaps_arr[tenSwaps[s].b1].end(), swtmp.begin(), swtmp.end());
+      }
+      //Distinct Swaps of each tensors
+      for(int t = 0; t < Tnum; t++){
+        std::map<int, bool> recs;
+        std::map<int, bool>::iterator it;
+        int bondNum = (int)tensors[t]->bonds->size();
+        int is, ib;
+        //int hash;
+        for(int s = 0; s < (int)swaps_arr[t].size(); s++){
+          if(swaps_arr[t][s].b1 < swaps_arr[t][s].b2){
+            is = swaps_arr[t][s].b1;
+            ib = swaps_arr[t][s].b2;
+          }
+          else{
+            is = swaps_arr[t][s].b2;
+            ib = swaps_arr[t][s].b1;
+          }
+          int hash = is * bondNum + ib;
+          if((it = recs.find(hash)) != recs.end())
+            it->second ^= true;
+          else
+            recs[hash] = true;
+        }
+        swaps_arr[t].clear();
+        _Swap sp;
+        for (it=recs.begin(); it!=recs.end(); it++){
+          if(it->second){
+            sp.b1 = (it->first) / bondNum;
+            sp.b2 = (it->first) % bondNum;
+            swaps_arr[t].push_back(sp);
+          }
+        }
+      }
+    }
+
+  template class Network<uni10_double64>;
+  template class Network<uni10_complex128>;
+
 }; /* namespace uni10 */
