@@ -42,6 +42,9 @@ namespace uni10{
       void permute_nsy(const U_para<uni10_type>* T1_para, const std::vector<uni10_int32>& rsp_outin,
         U_para<uni10_type>* T2_para, uni10_bool inorder);
 
+    template <typename uni10_type>
+      void addGate_nsy(U_para<uni10_type>* T1_para, const std::vector<_Swap>& swaps);
+
     //Functions.
     template<typename uni10_type>
        U_para<uni10_type>* init_para_nsy(U_para<uni10_type>* para){
@@ -230,6 +233,13 @@ namespace uni10{
           T2_para->nsy->U_elem.copy(0, T1_para->nsy->U_elem, T1_para->nsy->U_elemNum);
         }
         
+      }
+  
+    template <typename uni10_type>
+      void addGate_nsy(U_para<uni10_type>* T1_para, const std::vector<_Swap>& swaps){
+
+        return ;
+
       }
 
   };

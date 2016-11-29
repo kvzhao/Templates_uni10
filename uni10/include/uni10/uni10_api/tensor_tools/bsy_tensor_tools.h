@@ -40,6 +40,9 @@ namespace uni10{
     template <typename uni10_type>
       void permute_bsy(const U_para<uni10_type>* T1_para, const std::vector<uni10_int32>& rsp_outin,
         U_para<uni10_type>* T2_para, uni10_bool inorder);
+   
+    template <typename uni10_type>
+      void addGate_bsy(U_para<uni10_type>* T1_para, const std::vector<_Swap>& swaps);
 
     // Functions.
     template<typename uni10_type>
@@ -110,6 +113,13 @@ namespace uni10{
     template <typename uni10_type>
       void permute_bsy(const U_para<uni10_type>* T1_para, const std::vector<uni10_int32>& rsp_outin,
           U_para<uni10_type>* T2_para, uni10_bool inorder){
+
+        uni10_error_msg(true, "%s", "Developping");
+
+      }
+
+    template <typename uni10_type>
+      void addGate_bsy(U_para<uni10_type>* T1_para, const std::vector<_Swap>& swaps){
 
         uni10_error_msg(true, "%s", "Developping");
 

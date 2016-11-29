@@ -33,6 +33,7 @@
 
 #include "uni10/uni10_api/Network.h"
 #include "uni10/uni10_api/network_tools/network_tools.h"
+#include "uni10/uni10_api/hirnk_linalg.h"
 
 
 namespace uni10{

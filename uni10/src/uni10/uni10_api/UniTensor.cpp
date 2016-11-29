@@ -261,56 +261,38 @@ namespace uni10{
 
   template <typename uni10_type>
     void UniTensor<uni10_type>::addGate(const std::vector<_Swap>& swaps){
-      uni10_error_msg((*status & HAVEBOND) == 0, "%s", "Adding swap gates to a tensor without bonds(scalar).");
-      uni10_error_msg((*status & HAVEELEM) == 0,"%s", "Cannot add swap gates to a tensor before setting its elements.")
 
-        int sign = 1;
-      int bondNum = bonds->size();
-      std::vector<int> Q_idxs(bondNum, 0);
-      std::vector<int> Q_Bdims(bondNum, 0);
-      for(int b = 0; b < bondNum; b++)
-        Q_Bdims[b] = bonds[b].Qnums.size();
-      int Q_off;
-      int tmp;
-      int RQoff, CQoff;
-      size_t sB_r, sB_c;	//sub-block of a Qidx
-      size_t sB_rDim, sB_cDim;	//sub-block of a Qidx
-      size_t B_cDim;
-      uni10_type* Eptr;
-      typename std::map<int, size_t>::iterator it = QidxEnc.begin()
-    for(; it != QidxEnc.end(); it++){
-      Q_off = it->first;
-      tmp = Q_off;
-      for(int b = bondNum - 1; b >= 0; b--){
-        Q_idxs[b] = tmp % Q_Bdims[b];
-        tmp /= Q_Bdims[b];
-      }
-      RQoff = Q_off / CQdim;
-      CQoff = Q_off % CQdim;
-      B_cDim = RQidx2Blk[RQoff]->Cnum;
-      Eptr = RQidx2Blk[RQoff]->m_elem + (RQidx2Off[RQoff] * B_cDim) + CQidx2Off[CQoff];
-      sB_rDim = RQidx2Dim[RQoff];
-      sB_cDim = CQidx2Dim[CQoff];
-
-      int sign01 = 0;
-      for(size_t i = 0; i < swaps.size(); i++)
-        sign01 ^= (bonds[swaps[i].b1].Qnums[Q_idxs[swaps[i].b1]].prtF() & bonds[swaps[i].b2].Qnums[Q_idxs[swaps[i].b2]].prtF());
-      sign = sign01 ? -1 : 1;
-
-      for(sB_r = 0; sB_r < sB_rDim; sB_r++)
-        for(sB_c = 0; sB_c < sB_cDim; sB_c++)
-          Eptr[(sB_r * B_cDim) + sB_c] *= sign;
-    }
-  }
-  catch(const std::exception& e){
-    propogate_exception(e, "In function UniTensor::addGate(uni10::rflag, std::vector<_Swap>&):");
-  }
+      tensor_tools::addGate(this->paras, swaps, this->style);
 
     }
 
   template <typename uni10_type>
-    std::vector<_Swap> exSwap(const UniTensor<uni10_type>& Tb)const{
+    std::vector<_Swap> UniTensor<uni10_type>::exSwap(const UniTensor<uni10_type>& Tb)const{
 
+      std::vector<_Swap> swaps;
+      if(*status & *Tb.status & HAVEBOND){
+        int bondNumA = labels->size();
+        int bondNumB = Tb.labels->size();
+        std::vector<int> intersect;
+        std::vector<int> left;
+        for(int a = 0; a < bondNumA; a++){
+          bool found = false;
+          for(int b = 0; b < bondNumB; b++)
+            if(labels[a] == Tb.labels[b])
+              found = true;
+          if(found)
+            intersect.push_back(a);
+          else
+            left.push_back(a);
+        }
+        _Swap sp;
+        for(size_t i = 0; i < intersect.size(); i++)
+          for(size_t j = 0; j < left.size(); j++){
+            sp.b1 = intersect[i];
+            sp.b2 = left[j];
+            swaps.push_back(sp);
+          }
+      }
     }
 
 

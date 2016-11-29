@@ -41,6 +41,9 @@ namespace uni10{
     static void (*permute_z[])(const U_para<uni10_complex128>* T1_para, const std::vector<uni10_int32>& rsp_outin,
         U_para<uni10_complex128>* T2_para, uni10_bool inorder) = {permute_nsy, permute_bsy};
 
+    static void (*addGate_d[])(U_para<uni10_double64>* T1_para  , const std::vector<_Swap>& swaps) = {addGate_nsy, addGate_bsy};
+    static void (*addGate_z[])(U_para<uni10_complex128>* T1_para, const std::vector<_Swap>& swaps) = {addGate_nsy, addGate_bsy};
+
 
     // Function overload for initialize U_paras;
     U_para<uni10_double64>*   init_para(U_para<uni10_double64>*   const para, contain_type _style);
@@ -81,11 +84,12 @@ namespace uni10{
         U_para<uni10_double64>*   T2_para, uni10_bool inorder);
     void permute(const U_para<uni10_complex128>* T1_para, const contain_type T1_style, const std::vector<uni10_int32>& rsp_outin,
         U_para<uni10_complex128>* T2_para, uni10_bool inorder);
+
+    void addGate(U_para<uni10_double64>*   T1_para, const std::vector<_Swap>& swaps, const contain_type _style);
+    void addGate(U_para<uni10_complex128>* T1_para, const std::vector<_Swap>& swaps, const contain_type _style);
     
     //static void (*grouping_d[])(U_para<uni10_double64>*  ) = {grouping_nsy, grouping_bsy};
     //static void (*grouping_z[])(U_para<uni10_complex128>*) = {grouping_nsy, grouping_bsy};
-
-
   };
 
 };

@@ -121,5 +121,17 @@ namespace uni10{
 
     }
 
+    void addGate(U_para<uni10_double64>* para, const std::vector<_Swap>& swaps, const contain_type style){
+
+      addGate_d[style](para, swaps);
+
+    }
+
+    void addGate(U_para<uni10_complex128>* para, const std::vector<_Swap>& swaps, const contain_type style){
+
+      addGate_z[style](para, swaps);
+
+    }
+
   };
 };
