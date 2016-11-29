@@ -5,6 +5,7 @@
 
 #include "uni10/uni10_api/Matrix.h"
 #include "uni10/uni10_api/UniTensor_para.h"
+#include "uni10/uni10_api/network_tools/network_tools.h"
 
 namespace uni10{
 
@@ -138,6 +139,10 @@ namespace uni10{
 
         UniTensor& assign(const std::vector<Bond>& _bond);
 
+        void addGate(const std::vector<_Swap>& swaps);
+
+        std::vector<_Swap> exSwap(const UniTensor& Tb)const;
+
         void printDiagram()const;
 
         UniTensor& operator=(const UniTensor& UniT){
@@ -192,7 +197,6 @@ namespace uni10{
         template<typename _uni10_type>
           friend UniTensor<_uni10_type> otimes( const UniTensor<_uni10_type>& Ta, const UniTensor<_uni10_type>& Tb);
 
-
         //void set_zero(const Qnum& qnum);
         //void identity();
         //void identity(const Qnum& qnum);
@@ -203,8 +207,6 @@ namespace uni10{
         //UniTensor& combineBond(const std::vector<int>& combined_labels);
         //std::string printRawElem(bool print=true)const;
         //static std::string profile(bool print = true);
-        //std::vector<_Swap> exSwap(const UniTensor& Tb)const;
-        //void addGate(const std::vector<_Swap>& swaps);
         //Complex trace()const;
         //UniTensor& partialTrace(int la, int lb);
         //UniTensor& operator+= (const UniTensor& Tb);

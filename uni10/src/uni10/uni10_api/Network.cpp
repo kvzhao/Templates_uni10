@@ -143,7 +143,7 @@ namespace uni10{
                 brakets.push_back(-minus);
             }
             int sum = 0;
-            for(int i = 0; i < brakets.size(); i++){
+            for(int i = 0; i < (int)brakets.size(); i++){
               sum += brakets[i];
             }
 
@@ -192,17 +192,17 @@ namespace uni10{
       order.assign(numT, 0);
       if(ord.size() > 0){
 
-        uni10_error_msg(!(ord.size() == numT), "Error in the network file ' %s '. Some tensors are missing in the contraction order.", fname.c_str());
+        uni10_error_msg(!((int)ord.size() == numT), "Error in the network file ' %s '. Some tensors are missing in the contraction order.", fname.c_str());
 
         std::map<std::string, size_t>::iterator it;
         for(int i = 0; i < numT; i++){
           it = name2pos.find(ord[i]);
 
-          uni10_error_msg(!(it != name2pos.end()), "Error in the network file ' %s '. ' %d ' in the contraction order is not in the list of tensors above.", fname.c_str(), ord[i]);
+          uni10_error_msg(!(it != name2pos.end()), "Error in the network file ' %s '. ' %s ' in the contraction order is not in the list of tensors above.", fname.c_str(), ord[i].c_str());
 
           order[i] = it->second;
 
-          uni10_error_msg(!(found[order[i]] == false), "Error in the network file ' %s '. ' %d ' appears more than once in the contraction order.", fname.c_str(), ord[i]);
+          uni10_error_msg(!(found[order[i]] == false), "Error in the network file ' %s '. ' %s ' appears more than once in the contraction order.", fname.c_str(), ord[i].c_str());
         }
       }
       else{
@@ -252,17 +252,17 @@ namespace uni10{
         root = stack[0];
       }
       else{
-        for(int i = 0; i < order.size(); i++){
+        for(int i = 0; i < (int)order.size(); i++){
 
-          uni10_error_msg(leafs[order[i]] == NULL, "Tensor ' %s ' has not yet been given.\n  Hint: Use putTensor() to add a tensor to a network.\n", names[order[i]])
+          uni10_error_msg(leafs[order[i]] == NULL, "Tensor ' %s ' has not yet been given.\n  Hint: Use putTensor() to add a tensor to a network.\n", names[order[i]].c_str());
             matching(leafs[order[i]], root);
         }
       }
       int Tnum = label_arr.size() - 1;
       if(root->labels.size() == label_arr[Tnum].size()){
-        for(int l = 0; l < root->labels.size(); l++){
+        for(int l = 0; l < (int)root->labels.size(); l++){
           bool found = false;
-          for(int t = 0; t < label_arr[Tnum].size(); t++)
+          for(int t = 0; t < (int)label_arr[Tnum].size(); t++)
             if(root->labels[l] == label_arr[Tnum][t]){
               found = true;
               break;
@@ -272,7 +272,7 @@ namespace uni10{
             char err[2048];
             char num[8];
             sprintf(err, "%s", "Error when constructing the network. The labels of the resulting tensor, ( ");
-            for(int i = 0; i < root->labels.size(); i++){
+            for(int i = 0; i < (int)root->labels.size(); i++){
               sprintf(num , "%d ", root->labels[i]);
               strcat(err, num);
             }
@@ -297,7 +297,7 @@ namespace uni10{
         destruct();
       }
 
-      uni10_error_msg(!(*UniT->RBondNum == Rnums[idx]), "The number of in-coming bonds does not match with the tensor ' %s ' specified in network file", names[idx]);
+      uni10_error_msg(!(*UniT->RBondNum == Rnums[idx]), "The number of in-coming bonds does not match with the tensor ' %s ' specified in network file", names[idx].c_str());
 
       if(leafs[idx] != NULL){
         *(tensors[idx]) = *UniT;
