@@ -118,8 +118,6 @@ namespace uni10{
       bonds->push_back(bdi);
       bonds->push_back(bdo);
       this->init();
-      //this->setElem(blk.getElem());
-      //uni10_error_msg(true, "%s", "Developping!!\n");
       this->putBlock(blk);
 
     }
@@ -318,11 +316,11 @@ namespace uni10{
           else
             col++;
         uni10_uint64 layer = std::max(row, col);
-        uni10_uint64 nmlen = (*name).length() + 2;
+        uni10_uint64 nmlen = name->length() + 2;
         uni10_uint64 star = 12 + (14 - nmlen) / 2;
         for(uni10_uint64 s = 0; s < star; s++)
           std::cout << "*";
-        if((*name).length() > 0)
+        if(name->length() > 0)
           std::cout << " " << *name << " ";
         for(uni10_uint64 s = 0; s < star; s++)
           std::cout <<"*";
