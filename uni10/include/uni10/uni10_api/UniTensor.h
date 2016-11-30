@@ -264,11 +264,12 @@ namespace uni10{
         else
           col++;
       uni10_uint64 layer = std::max(row, col);
-      uni10_uint64 nmlen = (*UniT.name).length() + 2;
+      uni10_uint64 nmlen = UniT.name->length() + 2;
+
       uni10_uint64 star = 12 + (14 - nmlen) / 2;
       for(uni10_uint64 s = 0; s < star; s++)
         std::cout << "*";
-      if((*UniT.name).length() > 0)
+      if(UniT.name->length() > 0)
         std::cout << " " << (*UniT.name) << " ";
       for(uni10_uint64 s = 0; s < star; s++)
         std::cout <<"*";
