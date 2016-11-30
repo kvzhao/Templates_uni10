@@ -412,12 +412,12 @@ namespace uni10{
       int lrwork = 2 * N;
       std::complex<double>* work = (std::complex<double>*) malloc(lwork * sizeof(std::complex<double>));
       double* rwork = (double*) malloc(lrwork * sizeof(double));
-      int* jpvt = (int*)malloc(N * sizeof(int));	//column vectors
+      int* jpvt = (int*)malloc(N * sizeof(int));  //column vectors
       memset(jpvt, 0, N * sizeof(int));
       std::complex<double>* tau = (std::complex<double>*)malloc(min * sizeof(std::complex<double>));
       int info;
       zgeqpf(&M, &N, Mij, &lda, jpvt, tau, work, rwork, &info);
-      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      uni10_error_msg(info != 0, "Lapack Info = %d", info);
       for(int i = 0; i < M; i++)
         D[i] = Mij[i * N + i];                               // D
       std::complex<double>* T = (std::complex<double>*)malloc(M * N * sizeof(std::complex<double>));
@@ -431,7 +431,7 @@ namespace uni10{
         for(int j = 0; j < N; j++)
           R[i * N + (jpvt[j]-1)] = T[i * N + j];              // R 
       zungqr(&M, &N, &N, Mij, &lda, tau, work, &lwork, &info);
-      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      uni10_error_msg(info != 0, "Lapack Info = %d", info);
       setTranspose(Mij, M, N, Q);                             // Q
       free(Mij);
       free(work);

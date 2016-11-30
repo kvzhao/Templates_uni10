@@ -110,16 +110,16 @@ namespace uni10{
   template <typename uni10_type>
     UniTensor<uni10_type>::UniTensor(const Block<uni10_type>& blk){
 
-      this->style = no_sym;
       Bond bdi(BD_IN, blk.Rnum);
       Bond bdo(BD_OUT, blk.Cnum);
+      this->style = no_sym;
       this->init_para();
       this->meta_link();
       bonds->push_back(bdi);
       bonds->push_back(bdo);
       this->init();
       this->setElem(blk.getElem());
-      uni10_error_msg(true, "%s", "Developping!!\n");
+      //uni10_error_msg(true, "%s", "Developping!!\n");
       //this->putBlock(blk);
 
     }

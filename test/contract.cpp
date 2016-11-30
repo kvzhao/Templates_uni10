@@ -15,13 +15,20 @@ UniTensor<double> func2(const UniTensor<double>& A){
 
 int main(){
 
-  Matrix<double> buf(3, 9);
-  Matrix<double> buf2(3, 9);
+  Matrix<double> buf(3, 3);
+  Matrix<double> buf2(3, 3);
 
 
   uni10_rand(buf, uni10_mt19937, uni10_uniform_real, -1, 1, uni10_clock);
   uni10_rand(buf2, uni10_mt19937, uni10_uniform_real, -1, 1, uni10_clock);
 
+  UniTensor<double> U(buf);
+  UniTensor<double> U2(buf2);
+  cout << U;
+  cout << U2;
+  //cout << otimes(U, U2);
+  cout << otimes(buf, buf2);
+  exit(0);
   //cout << buf;
   //cout << buf2;
 

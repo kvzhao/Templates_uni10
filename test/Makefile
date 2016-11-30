@@ -4,6 +4,12 @@ CC := icpc
 FLAGS:= -m64 -std=c++11 -DCPU -DLAPACK
 OBJ := $(LIB)/libuni10.a
 
+tract.e: contract.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+qr.e: qr_family.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
 exph.e: exph.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
@@ -11,9 +17,6 @@ net.e: network.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 svd.e: svd.cpp
-	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
-
-tract.e: contract.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 mute.e: permute.cpp
@@ -38,9 +41,6 @@ qdr.e: qdr.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 copy_constructor.e: copy_constructor.cpp
-	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
-
-qr.e: qr_family.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 dot.e: matrixdot.cpp

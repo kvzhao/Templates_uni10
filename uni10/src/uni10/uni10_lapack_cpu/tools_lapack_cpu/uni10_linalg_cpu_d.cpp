@@ -381,7 +381,7 @@ namespace uni10{
       double* tau = (double*)malloc(min * sizeof(double));
       int info;
       dgeqpf(&M, &N, Mij, &lda, jpvt, tau, work, &info);
-      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      uni10_error_msg(info != 0, "Lapack Info = %d", info);
       for(int i = 0; i < M; i++)
         D[i] = Mij[i * N + i];                               // D
       double* T = (double*)malloc(M * N * sizeof(double));
@@ -395,7 +395,7 @@ namespace uni10{
         for(int j = 0; j < N; j++)
           R[i * N + (jpvt[j]-1)] = T[i * N + j];              // R 
       dorgqr(&M, &N, &N, Mij, &lda, tau, work, &lwork, &info);
-      uni10_error_msg(M == N, "Lapack Info = %d", info);
+      uni10_error_msg(info != 0, "Lapack Info = %d", info);
       setTranspose(Mij, M, N, Q);                             // Q
       free(Mij);
       free(work);

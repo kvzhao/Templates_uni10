@@ -221,6 +221,31 @@ namespace uni10{
 
     }
 
+  template<typename uni10_type>
+    Matrix<uni10_type> otimes(const Block<uni10_type>& Ta, const Block<uni10_type>& Tb){
+
+      UniTensor<uni10_type> T1(Ta);
+      UniTensor<uni10_type> T2(Tb);
+      std::vector<int> label1(T1.bondNum());
+      std::vector<int> label2(T2.bondNum());
+      for(size_t i = 0; i < T1.bondNum(); i++){
+        if(i < T1.inBondNum())
+          label1[i] = i;
+        else
+          label1[i] = T2.inBondNum() + i;
+      }
+      for(size_t i = 0; i < T2.bondNum(); i++){
+        if(i < T2.inBondNum())
+          label2[i] = i + T1.inBondNum();
+        else
+          label2[i] = i + T1.bondNum();
+      }
+      T1.setLabel(label1);
+      T2.setLabel(label2);
+      return contract(T1, T2, true).getBlock();
+
+    }
+
 };
 
 #endif
