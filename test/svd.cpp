@@ -25,36 +25,36 @@ int main(){
 
   A.setElem(elem_A);
 
-  cout << det( A ) << endl;
+  fprintf(stdout, "-----     M_ori   -----\n");
 
-  cout << det( C ) << endl;
+  cout << A;
 
-  //A += A;
+  fprintf(stdout, "----- SVD Example -----\n");
 
-  //cout << A;
+  vector< Matrix<double> > SVD = svd(A);
+  cout << SVD[0];
+  cout << SVD[1];
+  cout << SVD[2];
 
-  //A -= B;
+  fprintf(stdout, "----- Multi Example -----\n");
 
-  //cout << A;
+  Matrix<double> A_mul;
+  dots(A_mul, SVD[0], SVD[1], SVD[2]);
 
-  //cout << B;
-  //
+  cout << A_mul;
 
-  //fprintf(stdout, "-----     M_ori   -----\n");
+  fprintf(stdout, "----- SVD Inplace Example -----\n");
 
-  //cout << A;
+  Matrix<double> U, S, VT;
+  svd(A, U, S, VT, INPLACE);
+  cout << U;
+  cout << S;
+  cout << VT;
 
-  //fprintf(stdout, "----- SVD Example -----\n");
+  Matrix<double> A_mul1;
+  dots(A_mul1, SVD[0], SVD[1], SVD[2]);
 
-  //cout << svd( A )[0];
-  //cout << svd( A )[1];
-  //cout << svd( A )[2];
-
-  //fprintf(stdout, "----- INV Example -----\n");
-
-  //cout << inverse( A );
-
-  //fprintf(stdout, "-----     End    -----\n");
+  cout << A_mul1;
 
   return 0;
 }

@@ -8,6 +8,7 @@ namespace uni10{
   template<typename uni10_type>
     UniTensor<uni10_type> transpose( const UniTensor<uni10_type>& T ){
 
+      UniTensor<uni10_type> _T = T;
       uni10_error_msg(true, "%s","Developping!!!!");
       return UniTensor<uni10_type>();
 

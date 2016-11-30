@@ -245,8 +245,11 @@ namespace uni10{
       if(!(*(UniT.status) & UniT.HAVEBOND)){
         if(UniT.U_elem->__ongpu)
           std::cout<<"\nScalar: " << UniT.U_elem->__elem[0]<<", onGPU";
-        else
+        else{
+          std::cout.precision(10);
+          std::cout.setf(std::ios::fixed, std::ios::floatfield);
           std::cout<<"\nScalar: " << UniT.U_elem->__elem[0];
+        }
         std::cout<<"\n\n";
         return os;
       }

@@ -1,6 +1,7 @@
 #ifndef __UNI10_NETTOOLS_H__
 #define __UNI10_NETTOOLS_H__
 
+#include <vector>
 #include <algorithm>
 #include <functional>
 #include <cctype>
