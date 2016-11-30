@@ -31,16 +31,16 @@
 #include <string>
 #include <fstream>
 
+#include "uni10/uni10_api/hirnk_linalg.h"
 #include "uni10/uni10_api/Network.h"
 #include "uni10/uni10_api/network_tools/network_tools.h"
-#include "uni10/uni10_api/hirnk_linalg.h"
+#include "uni10/uni10_api/network_tools/NetOrder.h"
 
 
 namespace uni10{
 
   template <typename uni10_type>
-    Network<uni10_type>::Network(const std::string& fname): root(NULL), load(false), times(0), tot_elem(0), max_elem(0){
-
+    Network<uni10_type>::Network(const std::string& _fname): fname(_fname), root(NULL), load(false), times(0), tot_elem(0), max_elem(0), hasOrder(false), order_pos(0){
       fromfile(fname);
       int Tnum = label_arr.size() - 1;
       swapflags.assign(Tnum, false);
@@ -48,11 +48,10 @@ namespace uni10{
       swaps_arr.assign(Tnum, swaps);
       leafs.assign(Tnum, (Node<uni10_type>*)NULL);
       tensors.assign(Tnum, (UniTensor<uni10_type>*)NULL);
-
     }
 
   template <typename uni10_type>
-    Network<uni10_type>::Network(const std::string& fname, const std::vector<UniTensor<uni10_type>*>& tens): root(NULL), load(false), times(0), tot_elem(0), max_elem(0){
+    Network<uni10_type>::Network(const std::string& _fname, const std::vector<UniTensor<uni10_type>*>& tens): fname(_fname), root(NULL), load(false), times(0), tot_elem(0), max_elem(0), hasOrder(false), order_pos(0){
       fromfile(fname);
       uni10_error_msg(!((label_arr.size() - 1) == tens.size()), "The size of the input vector of tensors does not match for the number of tensors in the network file ' %s '.", fname.c_str());
       int Tnum = tens.size();
@@ -61,10 +60,8 @@ namespace uni10{
       swaps_arr.assign(Tnum, swaps);
       leafs.assign(Tnum, (Node<uni10_type>*)NULL);
       tensors.assign(Tnum, (UniTensor<uni10_type>*)NULL);
-
       for(int i = 0; i < Tnum; i++){
         uni10_error_msg(!(*tens[i]->RBondNum == Rnums[i]), "The number of in-coming bonds does not match with the tensor ' %s ' specified in network file ' %s '.", names[i].c_str(), fname.c_str());
-
         UniTensor<uni10_type>* ten = new UniTensor<uni10_type>(*(tens[i]));
         ten->setName(names[i]);
         ten->setLabel(label_arr[i]);
@@ -72,6 +69,23 @@ namespace uni10{
         Node<uni10_type>* ndp = new Node<uni10_type>(ten);
         leafs[i] = ndp;
       }
+
+      if(!hasOrder){
+
+        names = std::vector<std::string>();
+        label_arr = std::vector< std::vector<int> >();
+
+        FILE* fp = fopen(fname.c_str(), "rb+");
+        NetOrder _order(tensors);
+        char* netorder = _order.generate_order();
+        fseek(fp, order_pos, SEEK_SET);
+        fprintf(fp, "ORDER: %s", netorder);
+        fclose(fp);
+
+        fromfile(fname);
+
+      }
+
       construct();
     }
 
@@ -80,7 +94,6 @@ namespace uni10{
       std::string str;
       std::ifstream infile;
       infile.open (fname.c_str());
-
       uni10_error_msg(!(infile.is_open()), "Error in opening file ' %s '.", fname.c_str());
       int lnum = 0;
       int MAXLINES = 1000;
@@ -97,114 +110,113 @@ namespace uni10{
         if(pos == (int)std::string::npos)
           break;
         std::string name = str.substr(0, pos);
-        trim(name);
-        if(name == "ORDER"){
-          std::string bra("(");
-          if(str.find(bra, pos+1) == std::string::npos){
-            std::string del(" ,;");
-            while(((pos = (int)str.find_first_not_of(del, pos + 1)) != (int)std::string::npos)){
-              endpos = str.find_first_of(del, pos + 1);
-              if(endpos == (int)std::string::npos)
-                ord.push_back(str.substr(pos));
-              else
-                ord.push_back(str.substr(pos, endpos - pos));
-              pos = endpos;
-              if(pos == (int)std::string::npos)
-                break;
-            }
-          }
-          else{
-            std::string del(" ,;*()");
+      trim(name);
+      if(name == "ORDER"){
+        std::string bra("(");
+        if(str.find(bra, pos+1) == std::string::npos){
+          std::string del(" ,;");
+          while(((pos = str.find_first_not_of(del, pos + 1)) != (int)std::string::npos)){
             endpos = str.find_first_of(del, pos + 1);
-            while(((pos = str.find_first_not_of(del, pos + 1)) != (int)std::string::npos)){
-              std::string bras = str.substr(endpos, pos - endpos);
-              int minus = std::count(bras.begin(), bras.end(), ')');
-              int plus = std::count(bras.begin(), bras.end(), '(');
-              if(minus)
-                brakets.push_back(-minus);
-              if(plus)
-                brakets.push_back(plus);
-              endpos = str.find_first_of(del, pos + 1);
-              if(endpos == (int)std::string::npos){
-                ord.push_back(str.substr(pos));
-                brakets.push_back(0);
-              }
-              else{
-                ord.push_back(str.substr(pos, endpos - pos));
-                brakets.push_back(0);
-              }
-              pos = endpos;
-              if(pos == (int)std::string::npos)
-                break;
+            if(endpos == (int)std::string::npos)
+              ord.push_back(str.substr(pos));
+            else
+              ord.push_back(str.substr(pos, endpos - pos));
+            pos = endpos;
+            if(pos == (int)std::string::npos)
+              break;
+          }
+        }
+        else{
+          std::string del(" ,;*()");
+          endpos = str.find_first_of(del, pos + 1);
+          while(((pos = str.find_first_not_of(del, pos + 1)) != (int)std::string::npos)){
+            std::string bras = str.substr(endpos, pos - endpos);
+            int minus = std::count(bras.begin(), bras.end(), ')');
+            int plus = std::count(bras.begin(), bras.end(), '(');
+            if(minus)
+              brakets.push_back(-minus);
+            if(plus)
+              brakets.push_back(plus);
+            endpos = str.find_first_of(del, pos + 1);
+            if(endpos == (int)std::string::npos){
+              ord.push_back(str.substr(pos));
+              brakets.push_back(0);
             }
-            if(endpos != (int)std::string::npos){
-              std::string bras = str.substr(endpos);
-              int minus = std::count(bras.begin(), bras.end(), ')');
-              if(minus)
-                brakets.push_back(-minus);
+            else{
+              ord.push_back(str.substr(pos, endpos - pos));
+              brakets.push_back(0);
             }
-            int sum = 0;
-            for(int i = 0; i < (int)brakets.size(); i++){
-              sum += brakets[i];
-            }
+            pos = endpos;
+            if(pos == (int)std::string::npos)
+              break;
+          }
+          if(endpos != (int)std::string::npos){
+            std::string bras = str.substr(endpos);
+            int minus = std::count(bras.begin(), bras.end(), ')');
+            if(minus)
+              brakets.push_back(-minus);
+          }
+          int sum = 0;
+          for(int i = 0; i < (int)brakets.size(); i++){
+            sum += brakets[i];
+          }
 
-            uni10_error_msg(!(sum == 0), "Error in the network file ' %s '. There are imbalance brackets when specifying the contraction order.", fname.c_str());
-          }
-          break;
+          uni10_error_msg(!(sum == 0), "Error in the network file ' %s '. There are imbalance brackets when specifying the contraction order.", fname.c_str());
         }
-        name2pos[name] = names.size();
-        names.push_back(name);
-        std::vector<int> labels;
-        int Rnum = -1;
-        int cnt = 0;
-        int tmp;
-        while((pos = str.find_first_of(tar, pos + 1)) != (int)std::string::npos){
-          if(Rnum == -1){
-            tmp = str.find(";", endpos);
-            if(tmp != (int)std::string::npos && tmp < pos)
-              Rnum = cnt;
-          }
-          endpos = str.find_first_not_of(tar, pos + 1);
-          std::string label;
-          if(endpos == (int)std::string::npos)
-            label = str.substr(pos);
-          else
-            label = str.substr(pos, endpos - pos);
-          char* pEnd;
-          labels.push_back(strtol(label.c_str(), &pEnd, 10));
-          pos = endpos;
-          if(Rnum == -1)
-            cnt++;
-          if(pos == (int)std::string::npos)
-            break;
+        hasOrder = true;
+        break;
+      }
+      name2pos[name] = names.size();
+      if(name == "TOUT")
+        order_pos = infile.tellg();
+      names.push_back(name);
+      std::vector<int> labels;
+      int Rnum = -1;
+      int cnt = 0;
+      int tmp;
+      while((pos = str.find_first_of(tar, pos + 1)) != (int)std::string::npos){
+        if(Rnum == -1){
+          tmp = str.find(";", endpos);
+          if(tmp != (int)std::string::npos && tmp < pos)
+            Rnum = cnt;
         }
-        label_arr.push_back(labels);
+        endpos = str.find_first_not_of(tar, pos + 1);
+        std::string label;
+        if(endpos == (int)std::string::npos)
+          label = str.substr(pos);
+        else
+          label = str.substr(pos, endpos - pos);
+        char* pEnd;
+        labels.push_back(strtol(label.c_str(), &pEnd, 10));
+        pos = endpos;
         if(Rnum == -1)
-          Rnum = labels.size();
-        Rnums.push_back(Rnum);
-        lnum ++;
+          cnt++;
+        if(pos == (int)std::string::npos)
+          break;
+      }
+      label_arr.push_back(labels);
+      if(Rnum == -1)
+        Rnum = labels.size();
+      Rnums.push_back(Rnum);
+      lnum ++;
       }
       int numT = names.size() - 1;
       std::vector<bool> found(numT, false);
-      uni10_error_msg(!(names[numT] == "TOUT"),"Error in the network file ' %s '. Missing TOUT tensor. One must specify the bond labels for the resulting tensor by giving TOUT tag.\n  Hint: If the resulting tensor is a scalar(0-bond tensor), leave the TOUT empty like 'TOUT: '" , fname.c_str());
 
-      uni10_error_msg(!(names.size() > 2), "%s", "Error in the network file ' %s '. There must be at least two tensors in a tensor network.", fname.c_str());
+      uni10_error_msg(!(names[numT] == "TOUT"), "Error in the network file ' %s '. Missing TOUT tensor. One must specify the bond labels for the resulting tensor by giving TOUT tag.\n  Hint: If the resulting tensor is a scalar(0-bond tensor), leave the TOUT empty like 'TOUT: '", fname.c_str());
 
+      uni10_error_msg(!(names.size() > 2), "Error in the network file ' %s '. There must be at least two tensors in a tensor network.", fname.c_str());
       order.assign(numT, 0);
       if(ord.size() > 0){
-
         uni10_error_msg(!((int)ord.size() == numT), "Error in the network file ' %s '. Some tensors are missing in the contraction order.", fname.c_str());
-
-        std::map<std::string, size_t>::iterator it;
-        for(int i = 0; i < numT; i++){
-          it = name2pos.find(ord[i]);
-
-          uni10_error_msg(!(it != name2pos.end()), "Error in the network file ' %s '. ' %s ' in the contraction order is not in the list of tensors above.", fname.c_str(), ord[i].c_str());
-
-          order[i] = it->second;
-
-          uni10_error_msg(!(found[order[i]] == false), "Error in the network file ' %s '. ' %s ' appears more than once in the contraction order.", fname.c_str(), ord[i].c_str());
-        }
+      std::map<std::string, size_t>::iterator it;
+      for(int i = 0; i < numT; i++){
+        it = name2pos.find(ord[i]);
+        uni10_error_msg(!(it != name2pos.end()), "Error in the network file ' %s '. ' %s ' in the contraction order is not in the list of tensors above.", fname.c_str(), ord[i].c_str());
+        order[i] = it->second;
+        uni10_error_msg(!(found[order[i]] == false), "Error in the network file ' %s '. ' %s ' appears more than once in the contraction order.", fname.c_str(), ord[i].c_str());
+        found[order[i]] = true;
+      }
       }
       else{
         for(int i = 0; i < numT; i++)
@@ -219,7 +231,7 @@ namespace uni10{
         std::vector<Node<uni10_type>*> stack(leafs.size(), NULL);
         int cursor = 0;
         int cnt = 0;
-        for(int i = 0; i < brakets.size(); i++){
+        for(int i = 0; i < (int)brakets.size(); i++){
           if(brakets[i] < 0){
             for(int c = 0; c < -brakets[i]; c++){
               Node<uni10_type>* par = new Node<uni10_type>(stack[cursor - 2]->contract(stack[cursor - 1]));
@@ -229,64 +241,63 @@ namespace uni10{
               par->right->parent = par;
               stack[cursor - 2] = par;
               cursor--;
-              if(cursor < 2)	//prevent breakdown because of extra braket
-                break;
-            }
-          }
-          else if(brakets[i] == 0){
-
-            uni10_error_msg(leafs[order[cnt]] == NULL, "(((Tensor ' %s ' has not yet been given.\n  Hint: Use addTensor() to add a tensor to a network.\n", names[order[cnt]].c_str());
-            stack[cursor] = leafs[order[cnt]];
-            cnt++;
-            cursor++;
-          }
-        }
-        while(cursor > 1){//for imcomplete brakets
-          Node<uni10_type>* par = new Node<uni10_type>(stack[cursor - 2]->contract(stack[cursor - 1]));
-          par->left = stack[cursor - 2];
-          par->right = stack[cursor - 1];
-          par->left->parent = par;
-          par->right->parent = par;
-          stack[cursor - 2] = par;
-          cursor--;
-        }
-        root = stack[0];
-      }
-      else{
-        for(int i = 0; i < (int)order.size(); i++){
-
-          uni10_error_msg(leafs[order[i]] == NULL, "Tensor ' %s ' has not yet been given.\n  Hint: Use putTensor() to add a tensor to a network.\n", names[order[i]].c_str());
-            matching(leafs[order[i]], root);
-        }
-      }
-      int Tnum = label_arr.size() - 1;
-      if(root->labels.size() == label_arr[Tnum].size()){
-        for(int l = 0; l < (int)root->labels.size(); l++){
-          bool found = false;
-          for(int t = 0; t < (int)label_arr[Tnum].size(); t++)
-            if(root->labels[l] == label_arr[Tnum][t]){
-              found = true;
+            if(cursor < 2)	//prevent breakdown because of extra braket
               break;
-            }
-          if(!found){
-            //std::ostringstream err;
-            char err[2048];
-            char num[8];
-            sprintf(err, "%s", "Error when constructing the network. The labels of the resulting tensor, ( ");
-            for(int i = 0; i < (int)root->labels.size(); i++){
-              sprintf(num , "%d ", root->labels[i]);
-              strcat(err, num);
-            }
-            strcat(err, "), do not match with the labels of 'TOUT' in the network file");
           }
         }
+        else if(brakets[i] == 0){
+          uni10_error_msg(leafs[order[cnt]] == NULL, "(((Tensor ' %s 'has not yet been given.\n  Hint: Use addTensor() to add a tensor to a network.\n", names[order[cnt]].c_str());
+          stack[cursor] = leafs[order[cnt]];
+          cnt++;
+          cursor++;
+        }
+      }
+      while(cursor > 1){//for imcomplete brakets
+        Node<uni10_type>* par = new Node<uni10_type>(stack[cursor - 2]->contract(stack[cursor - 1]));
+        par->left = stack[cursor - 2];
+        par->right = stack[cursor - 1];
+        par->left->parent = par;
+        par->right->parent = par;
+        stack[cursor - 2] = par;
+        cursor--;
+      }
+      root = stack[0];
+    }
+    else{
+      for(int i = 0; i < (int)order.size(); i++){
+        uni10_error_msg(leafs[order[i]] == NULL, "Tensor ' %s ' has not yet been given.\n  Hint: Use putTensor() to add a tensor to a network.\n", names[order[i]].c_str());
+        matching(leafs[order[i]], root);
+      }
+    }
+    int Tnum = label_arr.size() - 1;
+    if(root->labels.size() == label_arr[Tnum].size()){
+      for(int l = 0; l < (int)root->labels.size(); l++){
+        bool found = false;
+        for(int t = 0; t < (int)label_arr[Tnum].size(); t++)
+          if(root->labels[l] == label_arr[Tnum][t]){
+            found = true;
+            break;
+          }
+        if(!found){
+          char err[2048];
+          char buf[8];
+          sprintf(err, "Error when constructing the network. The labels of the resulting tensor, ( ");
+          for(int i = 0; i < (int)root->labels.size(); i++){
+            sprintf(buf, "%d ", root->labels[i]);
+            strcat(err, buf);
+          }
+          strcat(err,"), do not match with the labels of 'TOUT' in the network file");
+          uni10_error_msg(true, "%s", err);
+        }
+      }
 
-      }
-      else{
-        uni10_error_msg(true, "%s", "Error when constructing the network. The bond number of the resulting tensor is different from the bond number of 'TOUT'");
-      }
-      addSwap();
-      load = true;
+    }
+    else{
+      uni10_error_msg(true, "%s", "Error when constructing the network. The bond number of the resulting tensor is different from the bond number of 'TOUT'");
+    }
+    addSwap();
+    load = true;
+
     }
 
   template <typename uni10_type>
@@ -353,28 +364,28 @@ namespace uni10{
   template <typename uni10_type>
     void Network<uni10_type>::branch(Node<uni10_type>* sbj, Node<uni10_type>* tar){
       Node<uni10_type>* par = new Node<uni10_type>(tar->contract(sbj));
-      if(sbj->parent == NULL){	//create a parent node
-        if(tar->parent != NULL){	//tar is not root
-          if(tar->parent->left == tar)	// tar on the left side of its parent
+      if(sbj->parent == NULL){  //create a parent node
+        if(tar->parent != NULL){  //tar is not root
+          if(tar->parent->left == tar)  // tar on the left side of its parent
             tar->parent->left = par;
           else
             tar->parent->right = par;
           par->parent = tar->parent;
         }
-        else{	//tar is root
+        else{ //tar is root
           par->parent = NULL;
           root = par;
         }
       }
-      else{	//sbj and tar have same parent and replace the parent node
+      else{ //sbj and tar have same parent and replace the parent node
         if(tar->parent->parent != NULL){
-          if(tar->parent->parent->left == tar->parent)	// tar on the left side of its parent
+          if(tar->parent->parent->left == tar->parent)  // tar on the left side of its parent
             tar->parent->parent->left = par;
           else
             tar->parent->parent->right = par;
           par->parent = tar->parent->parent;
         }
-        else{	//tar->parent is root
+        else{ //tar->parent is root
           par->parent = NULL;
           root = par;
         }
@@ -385,7 +396,7 @@ namespace uni10{
       tar->parent = par;
       sbj->parent = par;
       par->point = tar->metric(sbj);
-      if(sbj->parent->parent != NULL){	//propagate up
+      if(sbj->parent->parent != NULL){  //propagate up
         sbj = sbj->parent;
         branch(sbj->parent->right, sbj->parent->left);
       }
@@ -393,11 +404,11 @@ namespace uni10{
 
   template <typename uni10_type>
     void Network<uni10_type>::matching(Node<uni10_type>* sbj, Node<uni10_type>* tar){
-      if(tar == NULL){	//tar is root
+      if(tar == NULL){  //tar is root
         root = sbj;
       }
-      else if(tar->T == NULL){	//not leaf
-        if(sbj->metric(tar) > 0){	//has contracted bonds
+      else if(tar->T == NULL){  //not leaf
+        if(sbj->metric(tar) > 0){ //has contracted bonds
 
           uni10_error_msg(!(tar->left != NULL && tar->right != NULL), "%s", "Fatal error(code = N1). Please contact the developer of the uni10 library.");
 
@@ -409,13 +420,13 @@ namespace uni10{
             else
               matching(sbj, tar->right);
           }
-          else	//contract
+          else  //contract
             branch(sbj, tar);
         }
-        else	//contract
+        else  //contract
           branch(sbj, tar);
       }
-      else{	//contract
+      else{ //contract
         branch(sbj, tar);
       }
     }
@@ -449,19 +460,39 @@ namespace uni10{
 
   template <typename uni10_type>
     UniTensor<uni10_type> Network<uni10_type>::launch(const std::string& _name){
-        if(!load)
-          construct();
-        for(int t = 0; t < (int)tensors.size(); t++)
-          if(Qnum::isFermionic() && !swapflags[t]){
-            tensors[t]->addGate(swaps_arr[t]);
-            swapflags[t] = true;
-          }
-        UniTensor<uni10_type> UniT = merge(root);
-        int idx = label_arr.size() - 1;
-        if(label_arr.size() > 0 && label_arr[idx].size() > 1)
-          UniT = permute(UniT, label_arr[idx], Rnums[idx]);
-        UniT.setName(_name);
-        return UniT;
+
+      if(!hasOrder){
+
+        names = std::vector<std::string>();
+        label_arr = std::vector< std::vector<int> >();
+
+        FILE* fp = fopen(fname.c_str(), "rb+");
+        NetOrder _order(tensors);
+        char* netorder = _order.generate_order();
+        fseek(fp, order_pos, SEEK_SET);
+        fprintf(fp, "ORDER: %s\n", netorder);
+        fclose(fp);
+
+        fromfile(fname);
+
+      }
+
+      if(!load)
+        construct();
+
+      for(int t = 0; t < (int)tensors.size(); t++)
+        if(Qnum::isFermionic() && !swapflags[t]){
+          tensors[t]->addGate(swaps_arr[t]);
+          swapflags[t] = true;
+        }
+      UniTensor<uni10_type> UniT = merge(root);
+      int idx = label_arr.size() - 1;
+      if(label_arr.size() > 0 && label_arr[idx].size() > 1)
+        UniT = permute(UniT, label_arr[idx], Rnums[idx]);
+      UniT.setName(_name);
+      return UniT;
+
+
     }
 
   template <typename uni10_type>
@@ -491,16 +522,16 @@ namespace uni10{
     Network<uni10_type>::~Network(){
       if(load)
         destruct();
-      for(int i = 0; i < leafs.size(); i++)
+      for(int i = 0; i < (int)leafs.size(); i++)
         delete leafs[i];
-      for(int i = 0; i < tensors.size(); i++)
+      for(int i = 0; i < (int)tensors.size(); i++)
         delete tensors[i];
     }
 
   template <typename uni10_type>
     int Network<uni10_type>::rollcall(){
       if(!load){
-        for(int i = 0; i < leafs.size(); i++)
+        for(int i = 0; i < (int)leafs.size(); i++)
           if(leafs[i] == NULL){
             return i;
           }
@@ -640,9 +671,7 @@ namespace uni10{
       int Tnum = leafs.size();
       findConOrd(root);
       uni10_error_msg(!(Tnum == (int)conOrder.size()), "%s", "Fatal error(code = N3). Please contact the developer of the uni10 library.");
-      //int tenOrder[conOrder.size()];
       std::vector<int> tenOrder = conOrder;
-      //memcpy(tenOrder, &(conOrder[0]), Tnum * sizeof(int));
       std::vector<_Swap> tenSwaps = recSwap(tenOrder);
       std::vector<_Swap> swtmp;
       for(int s = 0; s < (int)tenSwaps.size(); s++){

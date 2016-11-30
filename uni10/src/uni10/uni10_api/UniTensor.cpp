@@ -271,14 +271,14 @@ namespace uni10{
 
       std::vector<_Swap> swaps;
       if(*status & *Tb.status & HAVEBOND){
-        int bondNumA = labels->size();
-        int bondNumB = Tb.labels->size();
-        std::vector<int> intersect;
-        std::vector<int> left;
-        for(int a = 0; a < bondNumA; a++){
-          bool found = false;
-          for(int b = 0; b < bondNumB; b++)
-            if(labels[a] == Tb.labels[b])
+        uni10_int32 bondNumA = labels->size();
+        uni10_int32 bondNumB = Tb.labels->size();
+        std::vector<uni10_int32> intersect;
+        std::vector<uni10_int32> left;
+        for(uni10_int32 a = 0; a < bondNumA; a++){
+          uni10_bool found = false;
+          for(uni10_int32 b = 0; b < bondNumB; b++)
+            if((*labels)[a] == (*Tb.labels)[b])
               found = true;
           if(found)
             intersect.push_back(a);
@@ -286,13 +286,14 @@ namespace uni10{
             left.push_back(a);
         }
         _Swap sp;
-        for(size_t i = 0; i < intersect.size(); i++)
-          for(size_t j = 0; j < left.size(); j++){
+        for(uni10_uint64 i = 0; i < intersect.size(); i++)
+          for(uni10_uint64 j = 0; j < left.size(); j++){
             sp.b1 = intersect[i];
             sp.b2 = left[j];
             swaps.push_back(sp);
           }
       }
+      return swaps;
     }
 
 

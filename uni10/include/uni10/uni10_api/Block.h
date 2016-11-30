@@ -226,6 +226,9 @@ namespace uni10{
           friend _uni10_type trace( const Block<_uni10_type>& _Mij );
 
         template<typename _uni10_type>
+          friend Matrix<_uni10_type> exph( uni10_double64 a, const Block<_uni10_type>& mat);
+
+        template<typename _uni10_type>
           friend class Matrix;
 
         template<typename _uni10_type>

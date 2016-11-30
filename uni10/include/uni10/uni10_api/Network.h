@@ -207,6 +207,7 @@ TOUT:
 
       private:
 
+        std::string fname;
         void preprint(std::ostream& os, Node<uni10_type>* nd, uni10_int32 layer)const;  //pre-order print
         std::vector<std::string> names;
         std::map<std::string, uni10_uint64> name2pos;
@@ -240,6 +241,8 @@ TOUT:
         void _max_tensor_elemNum(Node<uni10_type>* nd, uni10_uint64& max_num, Node<uni10_type>& max_nd) const;
         size_t _sum_of_tensor_elem(Node<uni10_type>* nd) const;
         size_t _elem_usage(Node<uni10_type>* nd, uni10_uint64& usage, uni10_uint64& max_usage)const;
+        bool hasOrder;
+        int order_pos;
     };
 
   template <typename uni10_type>

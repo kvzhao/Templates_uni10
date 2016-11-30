@@ -11,10 +11,10 @@ namespace uni10{
     tensor_set.assign(tens.size(), ary1d_pten());
     numT = tens.size();
 
-    int cnt = 0;
-    for(int t = 0; t < (int)tens.size(); t++){
+    uni10_int32 cnt = 0;
+    for(uni10_int32 t = 0; t < (uni10_int32)tens.size(); t++){
 
-      std::vector<int> label = tens[t]->label();
+      std::vector<uni10_int32> label = tens[t]->label();
 
       PseudoTensor tmp;
       tmp.order.push_back(tens[t]->getName());
@@ -23,10 +23,43 @@ namespace uni10{
       tmp.bit += pow(2, cnt);
       cnt++;
 
-      tmp.cost = 0.0;	
+      tmp.cost = 0.0;
 
-      for(int i = 0; i < (int)label.size(); i++){
-        int BDim = tens[t]->bond(i).dim();
+      for(uni10_int32 i = 0; i < (uni10_int32)label.size(); i++){
+        uni10_int32 BDim = tens[t]->bond(i).dim();
+        if(xi_min < 0 || xi_min > BDim)
+          xi_min = BDim;
+        tmp.label_dim[label[i]] = BDim;
+
+      }
+
+      tmp.max_label = tmp.label_dim.rbegin()->first;
+      tensor_set[0].push_back(tmp);
+    }
+
+  }
+
+  NetOrder::NetOrder(const ary1d_uptr_z& tens): xi_min(-1.), netorder(NULL){
+
+    tensor_set.assign(tens.size(), ary1d_pten());
+    numT = tens.size();
+
+    uni10_int32 cnt = 0;
+    for(uni10_int32 t = 0; t < (uni10_int32)tens.size(); t++){
+
+      std::vector<uni10_int32> label = tens[t]->label();
+
+      PseudoTensor tmp;
+      tmp.order.push_back(tens[t]->getName());
+
+      tmp.bit = 0;
+      tmp.bit += pow(2, cnt);
+      cnt++;
+
+      tmp.cost = 0.0;
+
+      for(uni10_int32 i = 0; i < (uni10_int32)label.size(); i++){
+        uni10_int32 BDim = tens[t]->bond(i).dim();
         if(xi_min < 0 || xi_min > BDim)
           xi_min = BDim;
         tmp.label_dim[label[i]] = BDim;
@@ -48,9 +81,9 @@ namespace uni10{
 
   char* NetOrder::generate_order(){
 
-    float mu_cap = 1.0;
-    float mu_old = 0.0;
-    float mu_next;
+    uni10_float32 mu_cap = 1.0;
+    uni10_float32 mu_old = 0.0;
+    uni10_float32 mu_next;
 
     while(tensor_set.back().size() == 0){
 
@@ -59,11 +92,11 @@ namespace uni10{
       for(int c = 1; c < numT; c++){
 
         for(int d1 = 0; d1 < (c+1)/2; d1++){
-          int d2 = c -d1 -1;
-          int n1 = tensor_set[d1].size();
-          int n2 = tensor_set[d2].size();
+          uni10_int32 d2 = c -d1 -1;
+          uni10_int32 n1 = tensor_set[d1].size();
+          uni10_int32 n2 = tensor_set[d2].size();
           for(int i1 = 0; i1 < n1; i1++){
-            int i2_start = d1==d2 ? i1+1 : 0;
+            uni10_int32 i2_start = d1==d2 ? i1+1 : 0;
             for(int i2 = i2_start; i2 < n2; i2++){
               PseudoTensor t1 = tensor_set[d1][i1];
               PseudoTensor t2 = tensor_set[d2][i2];
@@ -71,14 +104,14 @@ namespace uni10{
                 continue;
               if(this->is_overlap(t1, t2))
                 continue;
-              float mu = get_cost(t1, t2);
-              float mu_0 = (t1.is_new || t2.is_new) ? 0.0 : mu_old;
+              uni10_float32 mu = get_cost(t1, t2);
+              uni10_float32 mu_0 = (t1.is_new || t2.is_new) ? 0.0 : mu_old;
 
               if(mu > mu_cap && mu < mu_next)
                 mu_next = mu;
               if(mu > mu_0 && mu <= mu_cap){
                 PseudoTensor t3 = psesudocontract(t1, t2);
-                bool exsist = false;
+                uni10_bool exsist = false;
                 for(int i = 0; i < (int)tensor_set[c].size(); i++){
                   if(t3.bit == tensor_set[c][i].bit){
                     if(t3.cost < tensor_set[c][i].cost)
@@ -102,8 +135,8 @@ namespace uni10{
       }
       mu_old = mu_cap;
       mu_cap = std::max(mu_next, mu_cap*xi_min);
-      for(int s = 0; s < (int)tensor_set.size(); s++)
-        for(int t = 0; t < (int)tensor_set[s].size(); t++)
+      for(uni10_int32 s = 0; s < (uni10_int32)tensor_set.size(); s++)
+        for(uni10_int32 t = 0; t < (uni10_int32)tensor_set[s].size(); t++)
           tensor_set[s][t].is_new = false;
 
     }
@@ -115,12 +148,12 @@ namespace uni10{
 
   }
 
-  bool NetOrder::is_disjoint(const PseudoTensor& t1, const PseudoTensor& t2){
+  uni10_bool NetOrder::is_disjoint(const PseudoTensor& t1, const PseudoTensor& t2){
 
-    bool isdisjoint = true;
+    uni10_bool isdisjoint = true;
 
-    std::map<int, int>::const_iterator it1 = t1.label_dim.begin();
-    std::map<int, int>::const_iterator it2 = t2.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it1 = t1.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it2 = t2.label_dim.begin();
 
     while(it1 != t1.label_dim.end() && it2 != t2.label_dim.end()){
 
@@ -139,7 +172,7 @@ namespace uni10{
 
   }
 
-  bool NetOrder::is_overlap(const PseudoTensor& t1, const PseudoTensor& t2){
+  uni10_bool NetOrder::is_overlap(const PseudoTensor& t1, const PseudoTensor& t2){
 
     return (t1.bit & t2.bit) > 0;
 
@@ -155,8 +188,8 @@ namespace uni10{
     t3.order.insert(t3.order.end(), t2.order.begin(), t2.order.end());
     t3.order.push_back("#");
 
-    std::map<int, int>::const_iterator it1  = t1.label_dim.begin();
-    std::map<int, int>::const_iterator it2  = t2.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it1  = t1.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it2  = t2.label_dim.begin();
 
     while(it1 != t1.label_dim.end() && it2 != t2.label_dim.end()){
 
@@ -175,8 +208,8 @@ namespace uni10{
 
     }
 
-    std::map<int, int>::const_iterator itMax = t1.max_label > t2.max_label ? it1 : it2;
-    std::map<int, int>::const_iterator itMaxE = t1.max_label > t2.max_label ? t1.label_dim.end() : t2.label_dim.end();
+    std::map<uni10_int32, uni10_int32>::const_iterator itMax = t1.max_label > t2.max_label ? it1 : it2;
+    std::map<uni10_int32, uni10_int32>::const_iterator itMaxE = t1.max_label > t2.max_label ? t1.label_dim.end() : t2.label_dim.end();
 
     while(itMax != itMaxE){
       t3.label_dim[itMax->first] = itMax->second;
@@ -193,12 +226,12 @@ namespace uni10{
     return t3;
   }
 
-  float NetOrder::get_cost(const PseudoTensor& t1, const PseudoTensor& t2){
+  uni10_float32 NetOrder::get_cost(const PseudoTensor& t1, const PseudoTensor& t2){
 
-    float cost = 1.;
+    uni10_float32 cost = 1.;
 
-    std::map<int, int>::const_iterator it1 = t1.label_dim.begin();
-    std::map<int, int>::const_iterator it2 = t2.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it1 = t1.label_dim.begin();
+    std::map<uni10_int32, uni10_int32>::const_iterator it2 = t2.label_dim.begin();
 
     while(it1 != t1.label_dim.end() && it2 != t2.label_dim.end()){
 

@@ -267,6 +267,19 @@ namespace uni10{
 
     }
 
+  template<typename uni10_type>
+    Matrix<uni10_type> exph( uni10_double64 a, const Block<uni10_type>& mat){
+
+      std::vector< Matrix<uni10_type> > rets = eigh( mat );
+
+      Matrix<uni10_type> MT = dagger(rets[1]);
+
+      vectorExp( &a, &rets[0].elem, &rets[0].Rnum );
+
+      return MT * (rets[0] * rets[1]);
+
+    }
+
 }
 
 #endif

@@ -4,10 +4,13 @@ CC := icpc
 FLAGS:= -m64 -std=c++11 -DCPU -DLAPACK
 OBJ := $(LIB)/libuni10.a
 
-svd.e: svd.cpp
+exph.e: exph.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 net.e: network.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+svd.e: svd.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 tract.e: contract.cpp

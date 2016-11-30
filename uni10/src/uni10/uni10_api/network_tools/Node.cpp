@@ -52,7 +52,7 @@ namespace uni10{
     }
 
   template <typename uni10_type>
-    Node<uni10_type>::Node(std::vector<Bond>& _bonds, std::vector<int>& _labels): T(NULL), labels(_labels), bonds(_bonds), parent(NULL), left(NULL), right(NULL), point(0){
+    Node<uni10_type>::Node(std::vector<Bond>& _bonds, std::vector<uni10_int32>& _labels): T(NULL), labels(_labels), bonds(_bonds), parent(NULL), left(NULL), right(NULL), point(0){
       elemNum = cal_elemNum(bonds);
     }
 
