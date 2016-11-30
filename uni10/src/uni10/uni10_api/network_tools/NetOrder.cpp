@@ -1,3 +1,5 @@
+#include <float.h>
+
 #include "uni10/uni10_api/network_tools/NetOrder.h"
 
 namespace uni10{

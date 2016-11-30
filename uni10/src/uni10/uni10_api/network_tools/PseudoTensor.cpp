@@ -1,5 +1,6 @@
-#include "uni10/uni10_api/network_tools/PseudoTensor.h"
+#include <limits.h>
 
+#include "uni10/uni10_api/network_tools/PseudoTensor.h"
 
 namespace uni10{
 
