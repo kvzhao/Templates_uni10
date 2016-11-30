@@ -272,11 +272,13 @@ namespace uni10{
 
       std::vector< Matrix<uni10_type> > rets = eigh( mat );
 
-      Matrix<uni10_type> MT = dagger(rets[1]);
+      Matrix<uni10_type> EXPT = dagger(rets[1]);
 
       vectorExp( &a, &rets[0].elem, &rets[0].Rnum );
 
-      return MT * (rets[0] * rets[1]);
+      dots(EXPT, rets[0], rets[1]);
+
+      return EXPT;
 
     }
 
