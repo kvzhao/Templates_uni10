@@ -118,9 +118,9 @@ namespace uni10{
       bonds->push_back(bdi);
       bonds->push_back(bdo);
       this->init();
-      this->setElem(blk.getElem());
+      //this->setElem(blk.getElem());
       //uni10_error_msg(true, "%s", "Developping!!\n");
-      //this->putBlock(blk);
+      this->putBlock(blk);
 
     }
 

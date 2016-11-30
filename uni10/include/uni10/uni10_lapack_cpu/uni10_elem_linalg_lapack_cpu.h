@@ -61,6 +61,8 @@ namespace uni10{
 
   void setConjugate(uni10_elem_double64* A, uni10_uint64* N);
 
+  void setDiag(uni10_elem_double64* _elem, const uni10_elem_double64* src_elem, const uni10_uint64* M, const uni10_uint64* N);
+
   // Blas 
   //
   // UNI10_COMPLEX128
@@ -111,6 +113,8 @@ namespace uni10{
   void setConjugate(const uni10_elem_complex128* A, const uni10_uint64* N, uni10_elem_complex128* A_conj);
 
   void setConjugate(uni10_elem_complex128* A, uni10_uint64* N);
+
+  void setDiag(uni10_elem_complex128* _elem, const uni10_elem_complex128* src_elem, const uni10_uint64* M, const uni10_uint64* N);
 
   // Blas 
   //

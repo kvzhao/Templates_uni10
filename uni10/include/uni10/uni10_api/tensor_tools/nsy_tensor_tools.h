@@ -170,7 +170,7 @@ namespace uni10{
 
         if(mat.getElem() != it->second.getElem()){
           if(mat.isDiag()){
-            uni10_error_msg(true, "%s","Developping!!!");
+            setDiag(&it->second.elem_enforce(), &mat.const_elem_enforce(), &it->second.row_enforce(), &it->second.col_enforce());
           }
           else
             it->second.elem_enforce().copy(0, mat.const_elem_enforce(), it->second.row_enforce() * it->second.col_enforce() );

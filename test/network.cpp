@@ -20,10 +20,10 @@ int main(){
   Matrix<double> BA3(2, 4);
   uni10_rand(BA3, uni10_mt19937, uni10_normal, 0, 1, uni10_clock);
 
-  UniTensor<double> A(bonds1);
+  UniTensor<double> A(bonds1, "hahah");
   A.putBlock(BA);
 
-  UniTensor<double> A2(bonds2);
+  UniTensor<double> A2(bonds2, "hahah");
   A2.putBlock(BA2);
 
   vector<Bond> bonds3(2, Bond(BD_IN, 2));
