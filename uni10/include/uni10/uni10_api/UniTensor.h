@@ -186,6 +186,12 @@ namespace uni10{
           friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, const std::vector<uni10_int32>& newLabels, uni10_int32 inBondNum);
 
         template<typename _uni10_type>
+          friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, const std::vector<uni10_int32>& newLabels, uni10_int32 inBondNum, UniTensor<uni10_type>& Tout, UNI10_INPLACE on);
+
+        template<typename _uni10_type>
+          friend void contract(UniTensor<_uni10_type>& Ta, UniTensor<_uni10_type>& Tb, UniTensor<_uni10_type>& Tc, uni10_uint64 fast, UNI10_INPLACE on);
+
+        template<typename _uni10_type>
           friend UniTensor<_uni10_type> permute( const UniTensor<_uni10_type>& T, uni10_int32* newLabels, uni10_int32 inBondNum);
 
         template<typename _uni10_type>
