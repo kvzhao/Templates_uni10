@@ -49,12 +49,11 @@ namespace uni10{
     template<typename uni10_type>
        U_para<uni10_type>* init_para_nsy(U_para<uni10_type>* para){
 
-        //std::cout << para-> check_status;
-        para = new struct U_para<uni10_type>[1];
-        para->check_status = 1;
-        //std::cout << para-> check_status;
-        //exit(0);
-        para->nsy = new struct no_sym_para<uni10_type>[1];
+        U_para<uni10_type>* ptr;
+        ptr = new struct U_para<uni10_type>[1];
+        ptr->nsy = new struct no_sym_para<uni10_type>[1];
+        ptr->check_status = 1;
+        para = ptr;
 
         return para;
         
@@ -70,8 +69,10 @@ namespace uni10{
     template<typename uni10_type>
        void free_para_nsy(U_para<uni10_type>* para){
         
-         delete [] para->nsy;
-         delete [] para;
+         if(para!=NULL){
+           delete [] para->nsy;
+           delete [] para;
+         }
         
       }
 
@@ -174,6 +175,7 @@ namespace uni10{
           }
           else
             it->second.elem_enforce().copy(0, mat.const_elem_enforce(), it->second.row_enforce() * it->second.col_enforce() );
+
         }
 
         para->nsy->status |= UniTensor<uni10_type>::GET_HAVEELEM();

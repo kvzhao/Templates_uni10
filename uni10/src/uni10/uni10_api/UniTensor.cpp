@@ -37,7 +37,16 @@ namespace uni10{
 
   template <typename uni10_type>
     UniTensor<uni10_type>::UniTensor(): style(no_sym), paras(NULL){
-
+      name = NULL;
+      bonds = NULL;
+      labels = NULL;
+      RBondNum = NULL;     
+      Rdim = NULL;
+      Cdim = NULL;
+      U_elemNum = NULL;
+      blocks = NULL;
+      U_elem = NULL;   
+      status = NULL;    
     };
 
   template <typename uni10_type>
@@ -119,14 +128,13 @@ namespace uni10{
       bonds->push_back(bdo);
       this->init();
       this->putBlock(blk);
+      
 
     }
 
   template <typename uni10_type>
     UniTensor<uni10_type>::~UniTensor(){
-      UniTensor<uni10_type>::ELEMNUM -= *U_elemNum;
-      UniTensor<uni10_type>::COUNTER--;
-      free_para();
+      this->free_para();
     }
 
   template <typename uni10_type>

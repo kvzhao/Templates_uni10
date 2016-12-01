@@ -35,13 +35,13 @@ namespace uni10{
     // Overload for UniTensor<T>::init_para();
     void free_para(U_para<uni10_double64>* para, const contain_type style){
 
-      para = init_para_d[style](para);
+      free_para_d[style](para);
 
     }
 
     void free_para(U_para<uni10_complex128>* para, const contain_type style){
 
-      para = init_para_z[style](para);
+      free_para_z[style](para);
 
     }
 

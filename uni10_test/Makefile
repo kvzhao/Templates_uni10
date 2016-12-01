@@ -4,10 +4,13 @@ CC := icpc
 FLAGS:= -m64 -std=c++11 -DCPU -DLAPACK
 OBJ := $(LIB)/libuni10.a
 
-contract.e: contract.cpp
+tebd_1d.e: tebd_1d.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
-tebd_1d.e: tebd_1d.cpp
+constructor.e: constructor.cpp
+	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
+
+contract.e: contract.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 eigh.e: eigh.cpp
@@ -32,7 +35,7 @@ add.e: add.cpp
 	$(CC) -I$(INC) -L$(LIB) $(FLAGS) -o $@ $< $(OBJ) -mkl=parallel
 
 leak_check:
-	valgrind --leak-check=yes ./tract.e
+	valgrind --leak-check=yes ./constructor.e
 
 clean:
 	rm -f *.o *.e asd
