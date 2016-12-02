@@ -82,32 +82,6 @@ void bondrm(UniTensor<double>& T, const Matrix<double>& L, int bidx){
 	bondcat(T, invL, bidx);
 }
 
-/*
-int tebd_two_site( UniTensor &gate, vector<UniTensor> &gamma_tensors, vector<Matrix> &lambda_matrix, const int i_start, const bool if_nonunitary){
-  int Dbond = lambda_matrix.at(0).col();
-  int dbond = gamma_tensors.at(0).bond(2).dim();
-  int i_l = i_start, i_r = (i_start+1)%2;
-  
-  bondcat( gamma_tensors.at(i_l), lambda_matrix.at(i_r), 0);
-  bondcat( gamma_tensors.at(i_r), lambda_matrix.at(i_r), 1);
-  UniTensor theta; contract_theta( gamma_tensors, lambda_matrix, i_l, theta); 
-  theta.setLabel( {1, 2, 3, 4}); gate.setLabel( {3, 4, -3, -4});
-  theta = contract( theta, gate);///now theta label { 1, 2; -3, -4}
-  
-  if (if_nonunitary){
-    theta.combineBond( {-3, -4});
-    orthogonalization_one_site( theta, lambda_matrix.at(i_r));
-    seperBond( theta, 2, dbond);
-    theta.setLabel( { 1, 2, -3, -4});
-  }
-
-  theta.permute( {1, -3, 2, -4}, 2);
-  svd_update( theta, i_l, gamma_tensors, lambda_matrix);
-  bondrm( gamma_tensors.at(i_l), lambda_matrix.at(i_r), 0);
-  bondrm( gamma_tensors.at(i_r), lambda_matrix.at(i_r), 1);
-}
-*/
-
 int main(){
   const int Dbond = 5;
   const int dbond = 2;
@@ -167,12 +141,8 @@ int main(){
       UniTensor<double> theta_T =  theta;
       UniTensor<double> theta_H = contract( theta, hamiltonian, false ); ///now theta_H label 1, 3; 6, 7
       theta_H.setLabel( {1, 3, 4, 5} );
-      //UniTensor<double> norm = contract( theta, theta_T );
-      //UniTensor<double> expec = contract( theta, theta_H );
       double norm  = contract( theta, theta_T, false )[0];
       double expec = contract( theta, theta_H, false )[0];
-      //cout<<contract( theta, theta_T, false );
-      //cout<<contract( theta, theta_H, false );
       printf( "%22.14f\n",  expec/norm );
     }
     else{}
