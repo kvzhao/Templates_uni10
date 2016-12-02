@@ -1,5 +1,7 @@
 # Uni10 #
 
+This branch in link with the branch templates upder the uni10 repository on Bitbucket.
+
 Welcome to Uni10, the Universal Tensor Network Library.
 
 Uni10 is programmed in C++ and geared toward applications to the tensor
