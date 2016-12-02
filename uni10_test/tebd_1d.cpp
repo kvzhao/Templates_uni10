@@ -117,7 +117,9 @@ int main(){
   UniTensor<double> hamiltonian = oneD_Ising( 1.05 );
   UniTensor<double> gate = UniTensor<double>( hamiltonian.bond());
   gate.putBlock( exph( -1.0*tau, hamiltonian.getBlock()));
-  
+  hamiltonian.setLabel({4, 5, 6, 7});
+  gate.setLabel({4, 5, 6, 7});
+
   ///declare gamma and lambda
   vector<UniTensor<double> > gamma_tensors;
   vector<Matrix<double> > lambda_matrix;
@@ -132,9 +134,8 @@ int main(){
     bondcat( gamma_tensors.at(i_r), lambda_matrix.at(i_r), 1);
     gamma_tensors.at(i_l).setLabel({1, 2, 4});
     gamma_tensors.at(i_r).setLabel({2, 3, 5});
-    gate.setLabel({4, 5, 6, 7});
     UniTensor<double> theta; 
-    theta = contract( gamma_tensors.at(0), gamma_tensors.at(1), false );
+    theta = contract( gamma_tensors.at(i_l), gamma_tensors.at(i_r), false );
     theta = contract( theta, gate, false ); ///now theta label 1, 3; 6, 7
     theta = permute( theta, {1, 6, 3, 7}, 2 );
 
@@ -146,29 +147,33 @@ int main(){
     lambda_matrix.at(i_l) = usv.at(1);
     lambda_matrix.at(i_l) *= 1.0/norm( lambda_matrix.at(i_l));
 
-    gamma_tensors.at(i_l).setLabel( {1, 2, 3}); 
-    gamma_tensors.at(i_r).setLabel( {1, 2, 3});
-    gamma_tensors.at(i_l) = permute(gamma_tensors.at(i_l), {1, 3, 2}, 2); 
-    gamma_tensors.at(i_r) = permute(gamma_tensors.at(i_r), {1, 2, 3}, 1);
+    gamma_tensors.at(i_l) = permute(gamma_tensors.at(i_l), {1, 4, 2}, 2); 
+    gamma_tensors.at(i_r) = permute(gamma_tensors.at(i_r), {2, 3, 5}, 1);
     gamma_tensors.at(i_l).putBlock( usv.at(0)); 
     gamma_tensors.at(i_r).putBlock( usv.at(2));
-    gamma_tensors.at(i_l) = permute( gamma_tensors.at(i_l), {1, 2, 3}, 2); 
-    gamma_tensors.at(i_r) = permute( gamma_tensors.at(i_r), {1, 2, 3}, 2);
+    gamma_tensors.at(i_l) = permute( gamma_tensors.at(i_l), {1, 2, 4}, 2); 
+    gamma_tensors.at(i_r) = permute( gamma_tensors.at(i_r), {2, 3, 5}, 2);
 
     bondrm( gamma_tensors.at(i_l), lambda_matrix.at(i_r), 0);
     bondrm( gamma_tensors.at(i_r), lambda_matrix.at(i_r), 1);
 
     ///measure
     if (i%100==0){
-      vector<UniTensor<double>> gamma_now = gamma_tensors;
+      vector<UniTensor<double> > gamma_now = gamma_tensors;
       bondcat( gamma_now.at(i_l), lambda_matrix.at(i_r), 0);
       bondcat( gamma_now.at(i_l), lambda_matrix.at(i_l), 1);
       bondcat( gamma_now.at(i_r), lambda_matrix.at(i_r), 1);
-      theta = contract( gamma_now.at(0), gamma_now.at(1), false);
+      theta = contract( gamma_now.at(0), gamma_now.at(1), false); ///now theta label 1, 4; 3, 5
       UniTensor<double> theta_T =  theta;
-      UniTensor<double> theta_H = contract( theta, hamiltonian, false );
-      cout<<theta_H;
-    exit(0);
+      UniTensor<double> theta_H = contract( theta, hamiltonian, false ); ///now theta_H label 1, 3; 6, 7
+      theta_H.setLabel( {1, 3, 4, 5} );
+      //UniTensor<double> norm = contract( theta, theta_T );
+      //UniTensor<double> expec = contract( theta, theta_H );
+      double norm  = contract( theta, theta_T, false )[0];
+      double expec = contract( theta, theta_H, false )[0];
+      //cout<<contract( theta, theta_T, false );
+      //cout<<contract( theta, theta_H, false );
+      printf( "%22.14f\n",  expec/norm );
     }
     else{}
   }
